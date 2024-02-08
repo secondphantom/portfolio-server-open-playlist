@@ -1,0 +1,30 @@
+{
+  "include": ["src/**/*", "src/setupTestsAfterEnv.ts"],
+  "exclude": [
+    "node_modules",
+    "src/**/*.test.ts",
+    "src/**/tests",
+    "src/**/test",
+    "src/**/**/tests",
+    "src/**/**/test"
+  ],
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "declaration": true,
+    // "sourceMap": true,
+    "outDir": "./dist",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true
+    // "baseUrl": ".",
+    // "paths": {
+    //   "@src/*": ["src/*"]
+    // }
+  },
+  "_moduleAliases": {
+    "@src": "dist"
+  }
+}
