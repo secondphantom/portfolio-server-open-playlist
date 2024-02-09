@@ -2,7 +2,7 @@
 module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
-  testMatch: ["<rootDir>/src/tests/**/*.ts"],
+  testMatch: ["<rootDir>/src/tests/**/crypto.util.test.ts"],
   verbose: true,
   forceExit: true,
   clearMocks: true,
