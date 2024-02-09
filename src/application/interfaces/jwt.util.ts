@@ -12,7 +12,7 @@ export type JwtAuthSignPayload = {
 };
 
 export type JwtEmailVerifyPayload = {
-  email: number;
+  email: string;
   uuid: string;
 };
 

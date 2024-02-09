@@ -1,7 +1,10 @@
+import jwt from "@tsndr/cloudflare-worker-jwt";
+
 import { UserDomain } from "../../domain/user.domain";
 import { ICryptoUtil } from "../interfaces/crypto.util";
 import { IEmailUtil } from "../interfaces/email.util";
 import { IUserRepo } from "../interfaces/user.repo";
+import { IJwtUtil } from "../interfaces/jwt.util";
 
 export type ServiceSignUpDto = {
   email: string;
@@ -13,26 +16,30 @@ export class AuthService {
   private userRepo: IUserRepo;
   private cryptoUtil: ICryptoUtil;
   private emailUtil: IEmailUtil;
+  private jwtUtil: IJwtUtil;
 
   constructor({
     userRepo,
     cryptoUtil,
     emailUtil,
+    jwtUtil,
   }: {
     userRepo: IUserRepo;
     cryptoUtil: ICryptoUtil;
     emailUtil: IEmailUtil;
+    jwtUtil: IJwtUtil;
   }) {
     this.userRepo = userRepo;
     this.cryptoUtil = cryptoUtil;
     this.emailUtil = emailUtil;
+    this.jwtUtil = jwtUtil;
   }
 
-  //POST
+  // [POST] /auth/sign-up
   signUp = async ({ email, password, userName }: ServiceSignUpDto) => {
     // verify email is existed
-    const user = await this.userRepo.getUserByEmail(email);
-    if (user) {
+    const findUser = await this.userRepo.getUserByEmail(email);
+    if (findUser) {
       throw new ServerError({
         message: "This email is already registered",
         code: 409,
@@ -44,15 +51,30 @@ export class AuthService {
 
     const userDomain = new UserDomain({
       email,
-      key,
-      userName,
+      hashKey: key,
+      profileName: userName,
     });
 
-    await this.userRepo.createUser(userDomain);
+    const createUserDto = userDomain.getCreateUserDto();
 
+    await this.userRepo.createUser(userDomain.getCreateUserDto());
+
+    if (findUser) {
+      throw new ServerError({
+        message: "Internal Error",
+        code: 500,
+      });
+    }
+
+    const token = await this.jwtUtil.signEmailVerify({
+      email: createUserDto.email,
+      uuid: createUserDto.uuid,
+    });
+
+    return token;
     // send verify email
-    await this.emailUtil.sendEmail();
   };
+
   // verify-email
   // sign-in
   // find-password
