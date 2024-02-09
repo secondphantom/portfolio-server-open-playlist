@@ -25,7 +25,7 @@ export const users = mysqlTable(
     role: tinyint("role", { unsigned: true }).notNull().default(1),
     email: varchar("email", { length: 320 }).notNull(),
     hashKey: varchar("hash_key", { length: 200 }).notNull(),
-    emailVerified: boolean("email_verified").default(false),
+    emailVerified: boolean("email_verified").notNull().default(false),
     profileName: varchar("profile_name", { length: 100 }).notNull(),
     profileImage: varchar("profile_image", { length: 300 }),
     extra: json("extra").notNull().$type<UserExtra>(),
