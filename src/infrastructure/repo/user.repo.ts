@@ -4,6 +4,13 @@ import { DrizzleClient } from "../db/drizzle.client";
 import * as schema from "../../schema/schema";
 
 export class UserRepo implements IUserRepo {
+  static instance: UserRepo | undefined;
+  static getInstance = (drizzleClient: DrizzleClient) => {
+    if (this.instance) return this.instance;
+    this.instance = new UserRepo(drizzleClient);
+    return this.instance;
+  };
+
   private db: ReturnType<typeof this.drizzleClient.getDb>;
   constructor(private drizzleClient: DrizzleClient) {
     this.db = drizzleClient.getDb();

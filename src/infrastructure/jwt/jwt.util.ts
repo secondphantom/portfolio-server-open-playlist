@@ -5,25 +5,16 @@ import {
   JwtConfig,
   JwtEmailVerifyPayload,
 } from "../../application/interfaces/jwt.util";
-
+import { ENV } from "../../env";
 export class JwtUtil implements IJwtUtil {
-  private AUTH_SIGN_IN_JWT_SECRET: string;
-  private AUTH_SIGN_IN_EXP_DURATION_SEC: number;
-  private AUTH_EMAIL_VERIFY_JWT_SECRET: string;
-  private AUTH_EMAIL_VERIFY_EXP_DURATION_SEC: number;
+  static instance: JwtUtil | undefined;
+  static getInstance = (ENV: ENV) => {
+    if (this.instance) return this.instance;
+    this.instance = new JwtUtil(ENV);
+    return this.instance;
+  };
 
-  constructor({
-    AUTH_SIGN_IN_JWT_SECRET,
-    AUTH_SIGN_IN_EXP_DURATION_SEC,
-    AUTH_EMAIL_VERIFY_JWT_SECRET,
-    AUTH_EMAIL_VERIFY_EXP_DURATION_SEC,
-  }: JwtConfig) {
-    this.AUTH_SIGN_IN_JWT_SECRET = AUTH_SIGN_IN_JWT_SECRET;
-    this.AUTH_SIGN_IN_EXP_DURATION_SEC = AUTH_SIGN_IN_EXP_DURATION_SEC;
-    this.AUTH_EMAIL_VERIFY_JWT_SECRET = AUTH_EMAIL_VERIFY_JWT_SECRET;
-    this.AUTH_EMAIL_VERIFY_EXP_DURATION_SEC =
-      AUTH_EMAIL_VERIFY_EXP_DURATION_SEC;
-  }
+  constructor(private ENV: ENV) {}
 
   signAuth = async (payload: JwtAuthSignPayload) => {
     const nowSec = Math.floor(Date.now() / 1000);
@@ -31,9 +22,9 @@ export class JwtUtil implements IJwtUtil {
       {
         ...payload,
         iat: nowSec,
-        exp: nowSec + this.AUTH_SIGN_IN_EXP_DURATION_SEC,
+        exp: nowSec + parseInt(this.ENV.AUTH_SIGN_IN_EXP_DURATION_SEC),
       },
-      this.AUTH_SIGN_IN_JWT_SECRET
+      this.ENV.AUTH_SIGN_IN_JWT_SECRET
     );
     return token;
   };
@@ -44,20 +35,23 @@ export class JwtUtil implements IJwtUtil {
       {
         ...payload,
         iat: nowSec,
-        exp: nowSec + this.AUTH_EMAIL_VERIFY_EXP_DURATION_SEC,
+        exp: nowSec + parseInt(this.ENV.AUTH_EMAIL_VERIFY_EXP_DURATION_SEC),
       },
-      this.AUTH_EMAIL_VERIFY_JWT_SECRET
+      this.ENV.AUTH_EMAIL_VERIFY_JWT_SECRET
     );
     return token;
   };
 
   verifyAuth = async (token: string) => {
-    const isValid = await jwt.verify(token, this.AUTH_SIGN_IN_JWT_SECRET);
+    const isValid = await jwt.verify(token, this.ENV.AUTH_SIGN_IN_JWT_SECRET);
     return isValid;
   };
 
   verifyEmailVerify = async (token: string) => {
-    const isValid = await jwt.verify(token, this.AUTH_EMAIL_VERIFY_JWT_SECRET);
+    const isValid = await jwt.verify(
+      token,
+      this.ENV.AUTH_EMAIL_VERIFY_JWT_SECRET
+    );
     return isValid;
   };
 

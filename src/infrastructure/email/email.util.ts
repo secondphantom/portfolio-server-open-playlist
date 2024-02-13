@@ -4,6 +4,13 @@ import {
 } from "../../application/interfaces/email.util";
 
 export class EmailUtil implements IEmailUtil {
+  static instance: EmailUtil | undefined;
+  static getInstance = () => {
+    if (this.instance) return this.instance;
+    this.instance = new EmailUtil();
+    return this.instance;
+  };
+
   constructor() {}
 
   sendEmail = async (inputs: SendEmailInputs) => {

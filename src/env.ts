@@ -1,0 +1,11 @@
+export type ENV = {
+  DOMAIN_URL: string;
+  SERVICE_NAME: string;
+  AUTH_SIGN_IN_JWT_SECRET: string;
+  AUTH_SIGN_IN_EXP_DURATION_SEC: string;
+  AUTH_EMAIL_VERIFY_JWT_SECRET: string;
+  AUTH_EMAIL_VERIFY_EXP_DURATION_SEC: string;
+  DATABASE_HOST: string;
+  DATABASE_USERNAME: string;
+  DATABASE_PASSWORD: string;
+};

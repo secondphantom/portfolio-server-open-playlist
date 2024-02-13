@@ -6,7 +6,7 @@
   "scripts": {
     "watch": "tsc -w",
     "dev": "wrangler dev --remote src/tests/infrastructure/email/index.test.ts",
-    "test": "cross-env NODE_ENV=test DOTENV_CONFIG_PATH=./.env.test jest --runInBand --silent=false --config=jest.config.json",
+    "test": "cross-env NODE_ENV=test DOTENV_CONFIG_PATH=./.env.test jest --runInBand --silent=false --config=jest.config.js",
     "temp": "cross-env NODE_ENV=test node dist/infrastructure/db/drizzle.client.js",
     "migrations:generate": "drizzle-kit generate:mysql --config=drizzle.config.ts",
     "migrations:drop": "drizzle-kit drop --config=drizzle.config.ts",
