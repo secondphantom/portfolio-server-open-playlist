@@ -5,6 +5,7 @@ import { ICryptoUtil } from "../interfaces/crypto.util";
 import { IEmailUtil } from "../interfaces/email.util";
 import { IUserRepo } from "../interfaces/user.repo";
 import { IJwtUtil } from "../interfaces/jwt.util";
+import { ENV } from "../../env";
 
 export type ServiceSignUpDto = {
   email: string;
@@ -13,26 +14,43 @@ export type ServiceSignUpDto = {
 };
 
 export class AuthService {
+  static instance: AuthService | undefined;
+  static getInstance = (inputs: {
+    userRepo: IUserRepo;
+    cryptoUtil: ICryptoUtil;
+    emailUtil: IEmailUtil;
+    jwtUtil: IJwtUtil;
+    ENV: ENV;
+  }) => {
+    if (this.instance) return this.instance;
+    this.instance = new AuthService(inputs);
+    return this.instance;
+  };
+
   private userRepo: IUserRepo;
   private cryptoUtil: ICryptoUtil;
   private emailUtil: IEmailUtil;
   private jwtUtil: IJwtUtil;
+  private ENV: ENV;
 
   constructor({
     userRepo,
     cryptoUtil,
     emailUtil,
     jwtUtil,
+    ENV,
   }: {
     userRepo: IUserRepo;
     cryptoUtil: ICryptoUtil;
     emailUtil: IEmailUtil;
     jwtUtil: IJwtUtil;
+    ENV: ENV;
   }) {
     this.userRepo = userRepo;
     this.cryptoUtil = cryptoUtil;
     this.emailUtil = emailUtil;
     this.jwtUtil = jwtUtil;
+    this.ENV = ENV;
   }
 
   // [POST] /auth/sign-up
@@ -57,25 +75,38 @@ export class AuthService {
 
     const createUserDto = userDomain.getCreateUserDto();
 
-    await this.userRepo.createUser(userDomain.getCreateUserDto());
-
-    if (findUser) {
-      throw new ServerError({
-        message: "Internal Error",
-        code: 500,
-      });
-    }
+    await this.userRepo.createUser(createUserDto);
 
     const token = await this.jwtUtil.signEmailVerify({
       email: createUserDto.email,
       uuid: createUserDto.uuid,
     });
 
-    return token;
-    // send verify email
+    // send verification email
+    const { success: successSendEmail } = await this.emailUtil.sendEmail({
+      from: {
+        email: `noreplay@${this.ENV.DOMAIN_URL}`,
+        name: this.ENV.SERVICE_NAME,
+      },
+      to: [
+        {
+          email: email,
+        },
+      ],
+      subject: "Confirm Your Email Address",
+      message: `Welcome to ${this.ENV.SERVICE_NAME}! We're excited to have you on board.\nTo get started, we need to confirm your email address.\n This ensures that we have the right contact information for you and helps protect your account.\nPlease click the link below to confirm your email address:\n\nhttps://${this.ENV.DOMAIN_URL}/verify-email?token=${token}\n\nIf you did not request this email, please ignore it.\nBest regards,\nThe ${this.ENV.SERVICE_NAME} Team`,
+    });
+
+    if (!successSendEmail) {
+      throw new ServerError({
+        message: "Fail to send verification email",
+        code: 400,
+      });
+    }
   };
 
   // verify-email
+  // resend-verification-email
   // sign-in
   // find-password
 }
