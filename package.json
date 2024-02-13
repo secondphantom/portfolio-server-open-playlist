@@ -5,11 +5,12 @@
   "main": "index.js",
   "scripts": {
     "watch": "tsc -w",
-    "test": "cross-env NODE_ENV=test DOTENV_CONFIG_PATH=./.env.test jest --runInBand --silent=false",
+    "dev": "wrangler dev src/tests/infrastructure/jwt/index.ts",
+    "test": "cross-env NODE_ENV=test DOTENV_CONFIG_PATH=./.env.test jest --runInBand --silent=false --config=jest.config.json",
     "temp": "cross-env NODE_ENV=test node dist/infrastructure/db/drizzle.client.js",
     "migrations:generate": "drizzle-kit generate:mysql --config=drizzle.config.ts",
     "migrations:drop": "drizzle-kit drop --config=drizzle.config.ts",
-    "db:push": "drizzle-kit push:mysql --config=drizzle.config.ts",
+    "db-dev:push": "drizzle-kit push:mysql --config=drizzle.config.ts",
     "studio": "drizzle-kit studio"
   },
   "keywords": [],
@@ -23,6 +24,7 @@
     "dotenv": "^16.4.1",
     "drizzle-kit": "^0.20.14",
     "jest": "^29.7.0",
+    "miniflare": "^3.20240129.1",
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2"
   },
@@ -31,6 +33,7 @@
     "@tsndr/cloudflare-worker-jwt": "^2.4.5",
     "drizzle-orm": "^0.29.3",
     "mysql2": "^3.9.1",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "wrangler": "^3.28.1"
   }
 }

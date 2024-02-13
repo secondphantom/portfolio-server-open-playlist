@@ -1,12 +1,12 @@
 {
   "include": ["src/**/*", "src/setupTestsAfterEnv.ts"],
   "exclude": [
-    "node_modules",
-    "src/**/*.test.ts",
-    "src/**/tests",
-    "src/**/test",
-    "src/**/**/tests",
-    "src/**/**/test"
+    "node_modules"
+    // "src/**/*.test.ts",
+    // "src/**/tests",
+    // "src/**/test",
+    // "src/**/**/tests",
+    // "src/**/**/test"
   ],
   "compilerOptions": {
     "target": "ES6",
