@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "watch": "tsc -w",
-    "dev": "wrangler dev src/tests/infrastructure/jwt/index.ts",
+    "dev": "wrangler dev --remote src/tests/infrastructure/email/index.test.ts",
     "test": "cross-env NODE_ENV=test DOTENV_CONFIG_PATH=./.env.test jest --runInBand --silent=false --config=jest.config.json",
     "temp": "cross-env NODE_ENV=test node dist/infrastructure/db/drizzle.client.js",
     "migrations:generate": "drizzle-kit generate:mysql --config=drizzle.config.ts",
@@ -32,6 +32,7 @@
     "@planetscale/database": "^1.15.0",
     "@tsndr/cloudflare-worker-jwt": "^2.4.5",
     "drizzle-orm": "^0.29.3",
+    "mimetext": "^3.0.16",
     "mysql2": "^3.9.1",
     "uuid": "^9.0.1",
     "wrangler": "^3.28.1"
