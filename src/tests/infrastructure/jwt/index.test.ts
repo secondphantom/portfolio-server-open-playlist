@@ -5,11 +5,6 @@ const jwtUtil = new JwtUtil({
   AUTH_EMAIL_VERIFY_JWT_SECRET: "secret",
   AUTH_SIGN_IN_EXP_DURATION_SEC: "10",
   AUTH_SIGN_IN_JWT_SECRET: "secret",
-  DOMAIN_URL: "test",
-  SERVICE_NAME: "test",
-  DATABASE_HOST: "",
-  DATABASE_PASSWORD: "",
-  DATABASE_USERNAME: "",
 });
 
 export default {

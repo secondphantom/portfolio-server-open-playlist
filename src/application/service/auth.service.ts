@@ -13,6 +13,8 @@ export type ServiceSignUpDto = {
   userName: string;
 };
 
+type C_ENV = Pick<ENV, "DATABASE_HOST" | "DOMAIN_URL" | "SERVICE_NAME">;
+
 export class AuthService {
   static instance: AuthService | undefined;
   static getInstance = (inputs: {
@@ -20,7 +22,7 @@ export class AuthService {
     cryptoUtil: ICryptoUtil;
     emailUtil: IEmailUtil;
     jwtUtil: IJwtUtil;
-    ENV: ENV;
+    ENV: C_ENV;
   }) => {
     if (this.instance) return this.instance;
     this.instance = new AuthService(inputs);
@@ -31,7 +33,7 @@ export class AuthService {
   private cryptoUtil: ICryptoUtil;
   private emailUtil: IEmailUtil;
   private jwtUtil: IJwtUtil;
-  private ENV: ENV;
+  private ENV: C_ENV;
 
   constructor({
     userRepo,
@@ -44,7 +46,7 @@ export class AuthService {
     cryptoUtil: ICryptoUtil;
     emailUtil: IEmailUtil;
     jwtUtil: IJwtUtil;
-    ENV: ENV;
+    ENV: C_ENV;
   }) {
     this.userRepo = userRepo;
     this.cryptoUtil = cryptoUtil;

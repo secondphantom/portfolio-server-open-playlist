@@ -6,15 +6,24 @@ import {
   JwtEmailVerifyPayload,
 } from "../../application/interfaces/jwt.util";
 import { ENV } from "../../env";
+
+type C_ENV = Pick<
+  ENV,
+  | "AUTH_EMAIL_VERIFY_EXP_DURATION_SEC"
+  | "AUTH_EMAIL_VERIFY_JWT_SECRET"
+  | "AUTH_SIGN_IN_EXP_DURATION_SEC"
+  | "AUTH_SIGN_IN_JWT_SECRET"
+>;
+
 export class JwtUtil implements IJwtUtil {
   static instance: JwtUtil | undefined;
-  static getInstance = (ENV: ENV) => {
+  static getInstance = (ENV: C_ENV) => {
     if (this.instance) return this.instance;
     this.instance = new JwtUtil(ENV);
     return this.instance;
   };
 
-  constructor(private ENV: ENV) {}
+  constructor(private ENV: C_ENV) {}
 
   signAuth = async (payload: JwtAuthSignPayload) => {
     const nowSec = Math.floor(Date.now() / 1000);
