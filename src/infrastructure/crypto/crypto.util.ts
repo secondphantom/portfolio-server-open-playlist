@@ -3,6 +3,15 @@
 import { ICryptoUtil } from "../../application/interfaces/crypto.util";
 
 export class CryptoUtil implements ICryptoUtil {
+  static instance: CryptoUtil | undefined;
+  static getInstance = () => {
+    if (this.instance) return this.instance;
+    this.instance = new CryptoUtil();
+    return this.instance;
+  };
+
+  constructor() {}
+
   encryptPassword = async (password: string, iterations: number = 1e5) => {
     const pwUtf8 = new TextEncoder().encode(password);
 
