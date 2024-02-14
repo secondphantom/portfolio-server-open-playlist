@@ -10,9 +10,7 @@ describe("user repo", () => {
 
   beforeAll(() => {
     const dbClient = new DrizzleClient({
-      DATABASE_HOST: process.env["DATABASE_HOST"]!,
-      DATABASE_USERNAME: process.env["DATABASE_USERNAME"]!,
-      DATABASE_PASSWORD: process.env["DATABASE_PASSWORD"]!,
+      DATABASE_URL: process.env["DATABASE_URL"]!,
     });
     userRepo = new UserRepo(dbClient);
   });
