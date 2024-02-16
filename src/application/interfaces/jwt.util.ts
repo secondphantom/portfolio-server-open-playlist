@@ -17,10 +17,12 @@ export type JwtEmailVerifyPayload = {
 };
 
 export interface IJwtUtil {
-  signAuth: (payload: JwtAuthSignPayload) => Promise<string>;
+  signAuthAccess: (payload: JwtAuthSignPayload) => Promise<string>;
+  signAuthRefresh: (payload: JwtAuthSignPayload) => Promise<string>;
   signEmailVerify: (payload: JwtEmailVerifyPayload) => Promise<string>;
 
-  verifyAuth: (token: string) => Promise<boolean>;
+  verifyAuthAccess: (token: string) => Promise<boolean>;
+  verifyAuthRefresh: (token: string) => Promise<boolean>;
   verifyEmailVerify: (token: string) => Promise<boolean>;
 
   decode: <T = { [key in string]: any }>(token: string) => { payload: T };

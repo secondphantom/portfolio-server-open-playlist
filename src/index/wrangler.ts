@@ -113,10 +113,11 @@ export class WranglerSever {
       payload,
       headers: responseHeaders,
     } = controllerResponse.getResponse();
-    const headers = {
-      "Content-type": "application/json",
-      ...responseHeaders,
-    };
+    const headers = new Headers();
+    headers.append("Content-type", "application/json");
+    for (const { name, value } of responseHeaders) {
+      headers.append(name, value);
+    }
     const body = payload;
 
     return this.cors.corsify(

@@ -25,6 +25,10 @@ export type ServiceSingInDto = {
   password: string;
 };
 
+export type ServiceVerifyIsLoginDto = {
+  token: string;
+};
+
 type C_ENV = Pick<ENV, "DATABASE_HOST" | "DOMAIN_URL" | "SERVICE_NAME">;
 
 export class AuthService {
@@ -248,13 +252,18 @@ export class AuthService {
       });
     }
 
-    const token = await this.jwtUtil.signAuth({
+    const accessToken = await this.jwtUtil.signAuthAccess({
+      userId: user.id,
+      role: user.role,
+      uuid: user.uuid,
+    });
+    const refreshToken = await this.jwtUtil.signAuthRefresh({
       userId: user.id,
       role: user.role,
       uuid: user.uuid,
     });
 
-    return { token };
+    return { accessToken, refreshToken };
   };
 
   // verify-is-login

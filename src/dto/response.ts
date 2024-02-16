@@ -1,6 +1,6 @@
 export class ControllerResponse<T = any> {
   private code: number;
-  private headers: { [key in string]: string };
+  private headers: { name: string; value: string }[];
   private payload: {
     success: boolean;
     message: string;
@@ -12,7 +12,7 @@ export class ControllerResponse<T = any> {
     payload,
   }: {
     code: number;
-    headers?: { [key in string]: string };
+    headers?: { name: string; value: string }[];
     payload: {
       success: boolean;
       message?: string;
@@ -22,7 +22,7 @@ export class ControllerResponse<T = any> {
     this.code = code;
     payload.message ??= "";
     this.payload = payload as any;
-    this.headers = headers ? headers : {};
+    this.headers = headers ? headers : [];
   }
 
   getResponse = () => {

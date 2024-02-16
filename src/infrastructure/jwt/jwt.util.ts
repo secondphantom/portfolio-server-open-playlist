@@ -12,8 +12,10 @@ type C_ENV = Pick<
   ENV,
   | "AUTH_EMAIL_VERIFY_EXP_DURATION_SEC"
   | "AUTH_EMAIL_VERIFY_JWT_SECRET"
-  | "AUTH_SIGN_IN_EXP_DURATION_SEC"
-  | "AUTH_SIGN_IN_JWT_SECRET"
+  | "AUTH_SIGN_IN_ACCESS_EXP_DURATION_SEC"
+  | "AUTH_SIGN_IN_ACCESS_JWT_SECRET"
+  | "AUTH_SIGN_IN_REFRESH_JWT_SECRET"
+  | "AUTH_SIGN_IN_REFRESH_EXP_DURATION_SEC"
 >;
 
 export class JwtUtil implements IJwtUtil {
@@ -26,15 +28,28 @@ export class JwtUtil implements IJwtUtil {
 
   constructor(private ENV: C_ENV) {}
 
-  signAuth = async (payload: JwtAuthSignPayload) => {
+  signAuthAccess = async (payload: JwtAuthSignPayload) => {
     const nowSec = Math.floor(Date.now() / 1000);
     const token = await jwt.sign(
       {
         ...payload,
         iat: nowSec,
-        exp: nowSec + parseInt(this.ENV.AUTH_SIGN_IN_EXP_DURATION_SEC),
+        exp: nowSec + parseInt(this.ENV.AUTH_SIGN_IN_ACCESS_EXP_DURATION_SEC),
       },
-      this.ENV.AUTH_SIGN_IN_JWT_SECRET
+      this.ENV.AUTH_SIGN_IN_ACCESS_JWT_SECRET
+    );
+    return token;
+  };
+
+  signAuthRefresh = async (payload: JwtAuthSignPayload) => {
+    const nowSec = Math.floor(Date.now() / 1000);
+    const token = await jwt.sign(
+      {
+        ...payload,
+        iat: nowSec,
+        exp: nowSec + parseInt(this.ENV.AUTH_SIGN_IN_REFRESH_EXP_DURATION_SEC),
+      },
+      this.ENV.AUTH_SIGN_IN_REFRESH_JWT_SECRET
     );
     return token;
   };
@@ -52,8 +67,19 @@ export class JwtUtil implements IJwtUtil {
     return token;
   };
 
-  verifyAuth = async (token: string) => {
-    const isValid = await jwt.verify(token, this.ENV.AUTH_SIGN_IN_JWT_SECRET);
+  verifyAuthAccess = async (token: string) => {
+    const isValid = await jwt.verify(
+      token,
+      this.ENV.AUTH_SIGN_IN_ACCESS_JWT_SECRET
+    );
+    return isValid;
+  };
+
+  verifyAuthRefresh = async (token: string) => {
+    const isValid = await jwt.verify(
+      token,
+      this.ENV.AUTH_SIGN_IN_REFRESH_JWT_SECRET
+    );
     return isValid;
   };
 

@@ -105,13 +105,20 @@ export class AuthController {
   signIn = async (body: RequestAuthSignInBody) => {
     try {
       const dto = this.authValidator.signIn(body);
-      const { token } = await this.authService.signIn(dto);
+      const { accessToken, refreshToken } = await this.authService.signIn(dto);
 
       return new ControllerResponse({
         code: 301,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: [
+          {
+            name: "Set-Cookie",
+            value: `AccessToken=${accessToken}; Path=/; HttpOnly; Secure; SameSite=Strict`,
+          },
+          {
+            name: "Set-Cookie",
+            value: `RefreshToken=${refreshToken}; Path=/; HttpOnly; Secure; SameSite=Strict`,
+          },
+        ],
         payload: {
           success: true,
           message: "Success Sign In",
