@@ -12,6 +12,10 @@ export type ServiceSignUpDto = {
   userName: string;
 };
 
+export type ServiceVerifyEmailDto = {
+  token: string;
+};
+
 type C_ENV = Pick<ENV, "DATABASE_HOST" | "DOMAIN_URL" | "SERVICE_NAME">;
 
 export class AuthService {
@@ -110,8 +114,45 @@ export class AuthService {
     }
   };
 
+  // [GET] /auth/verify-email
+  verifyEmail = async ({ token }: ServiceVerifyEmailDto) => {
+    const isValidToken = await this.jwtUtil.verifyEmailVerify(token);
+
+    if (!isValidToken) {
+      throw new ServerError({
+        code: 400,
+        message: "Invalid Token",
+      });
+    }
+
+    const { payload } = this.jwtUtil.decode<{ email: string; uuid: string }>(
+      token
+    );
+
+    const user = await this.userRepo.getUserByEmail(payload.email, {
+      email: true,
+      uuid: true,
+      emailVerified: true,
+    });
+
+    if (!user) {
+      throw new ServerError({
+        code: 404,
+        message: "Not Found",
+      });
+    }
+
+    if (user.emailVerified) {
+      throw new ServerError({
+        code: 301,
+        message: "Email is already verified",
+      });
+    }
+
+    await this.userRepo.updateUserByEmail(user.email, { emailVerified: true });
+  };
+
   // resend-verification-email
-  // verify-email
   // verify-is-login
   // sign-in
   // find-password

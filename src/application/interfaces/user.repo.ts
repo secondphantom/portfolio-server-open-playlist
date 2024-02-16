@@ -13,5 +13,11 @@ export interface IUserRepo {
         }
       | { [key in keyof UserEntitySelect]?: boolean }
   ) => Promise<Pick<UserEntitySelect, T> | undefined>;
+
+  updateUserByEmail: (
+    email: string,
+    values: Partial<UserEntitySelect>
+  ) => Promise<void>;
+
   createUser: (user: RepoCreateUserDto) => Promise<void>;
 }

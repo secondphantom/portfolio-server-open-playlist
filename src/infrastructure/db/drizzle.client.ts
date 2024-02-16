@@ -3,6 +3,7 @@ import {
   PlanetScaleDatabase,
 } from "drizzle-orm/planetscale-serverless";
 import { Connection, connect } from "@planetscale/database";
+
 import * as schema from "../../schema/schema";
 import { ENV } from "../../env";
 

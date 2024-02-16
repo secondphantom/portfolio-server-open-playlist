@@ -1,3 +1,5 @@
+import { eq } from "drizzle-orm";
+
 import * as schema from "../../schema/schema";
 
 import { IUserRepo } from "../../application/interfaces/user.repo";
@@ -34,6 +36,16 @@ export class UserRepo implements IUserRepo {
         : undefined,
     });
     return user;
+  };
+
+  updateUserByEmail = async (
+    email: string,
+    value: Partial<UserEntitySelect>
+  ) => {
+    await this.db
+      .update(schema.users)
+      .set(value)
+      .where(eq(schema.users.email, email));
   };
 
   createUser = async (user: RepoCreateUserDto) => {

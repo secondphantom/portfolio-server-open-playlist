@@ -64,6 +64,12 @@ export class WranglerSever {
       return this.createJsonResponse(result);
     });
 
+    this.app.get("/api/auth/verify-email", async ({ query }) => {
+      const result = await this.authController.verifyEmail(query as any);
+
+      return this.createJsonResponse(result);
+    });
+
     this.app.all(
       "*",
       () =>

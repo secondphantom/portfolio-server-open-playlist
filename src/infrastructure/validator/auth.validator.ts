@@ -1,7 +1,10 @@
 import z from "zod";
 
 import { IAuthValidator } from "../../controller/auth/auth.interface";
-import { RequestAuthSignUpBody } from "../../requests/auth/auth.requests";
+import {
+  RequestAuthSignUpBody,
+  RequestAuthVerifyEmailQuery,
+} from "../../requests/auth/auth.requests";
 import { ServerError } from "../../dto/error";
 
 export class AuthValidator implements IAuthValidator {
@@ -11,6 +14,8 @@ export class AuthValidator implements IAuthValidator {
     this.instance = new AuthValidator();
     return this.instance;
   };
+
+  constructor() {}
 
   // Minimum 8 characters, at least one uppercase letter, one lowercase letter, one number and one special character
   private passwordValidation = new RegExp(
@@ -39,6 +44,24 @@ export class AuthValidator implements IAuthValidator {
   signUp = (body: RequestAuthSignUpBody) => {
     try {
       const dto = this.requestAuthSignUpBody.parse(body);
+      return dto;
+    } catch (error) {
+      throw new ServerError({
+        code: 400,
+        message: "Invalid Input",
+      });
+    }
+  };
+
+  private requestAuthVerifyEmailQuery = z
+    .object({
+      token: z.string().min(10),
+    })
+    .strict();
+
+  verifyEmail = (query: RequestAuthVerifyEmailQuery) => {
+    try {
+      const dto = this.requestAuthVerifyEmailQuery.parse(query);
       return dto;
     } catch (error) {
       throw new ServerError({

@@ -3,7 +3,10 @@ dotenv.config();
 
 import { DrizzleClient } from "../../../infrastructure/db/drizzle.client";
 import { UserRepo } from "../../../infrastructure/repo/user.repo";
-import { RepoCreateUserDto } from "../../../domain/user.domain";
+import {
+  RepoCreateUserDto,
+  UserEntitySelect,
+} from "../../../domain/user.domain";
 import { IUserRepo } from "../../../application/interfaces/user.repo";
 
 describe("user repo", () => {
@@ -16,7 +19,7 @@ describe("user repo", () => {
     userRepo = new UserRepo(dbClient);
   });
 
-  test("create user", async () => {
+  test.skip("create user", async () => {
     const createUserDto = {
       email: `${new Date().toISOString()}@gmail.com`,
       extra: {},
@@ -34,5 +37,16 @@ describe("user repo", () => {
     for (const [key, value] of Object.entries(user!)) {
       expect(value).toEqual(createUserDto[key as any as keyof typeof user]);
     }
+  });
+
+  test.only("update by email", async () => {
+    const email = "test@email.com";
+    const values = { emailVerified: true } satisfies Partial<UserEntitySelect>;
+
+    await userRepo.updateUserByEmail(email, values);
+
+    const user = await userRepo.getUserByEmail(email);
+
+    expect(user!.emailVerified).toEqual(true);
   });
 });

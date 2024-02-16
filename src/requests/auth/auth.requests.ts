@@ -4,6 +4,10 @@ export type RequestAuthSignUpBody = {
   password: string;
 };
 
+export type RequestAuthVerifyEmailQuery = {
+  token: string;
+};
+
 export type RequestAuthSignInBody = {
   username: string;
   email: string;
