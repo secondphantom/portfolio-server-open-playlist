@@ -8,7 +8,7 @@ export type RequestAuthVerifyEmailQuery = {
   token: string;
 };
 
-export type RequestAuthResendVerificationEmail = {
+export type RequestAuthResendVerificationEmailBody = {
   email: string;
 };
 

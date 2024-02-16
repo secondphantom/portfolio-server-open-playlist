@@ -20,6 +20,11 @@ export type ServiceResendVerificationEmailDto = {
   email: string;
 };
 
+export type ServiceSingInDto = {
+  email: string;
+  password: string;
+};
+
 type C_ENV = Pick<ENV, "DATABASE_HOST" | "DOMAIN_URL" | "SERVICE_NAME">;
 
 export class AuthService {
@@ -207,7 +212,51 @@ export class AuthService {
     }
   };
 
-  // sign-in
+  // [POST] /auth/sign-in
+  signIn = async ({ email, password }: ServiceSingInDto) => {
+    const user = await this.userRepo.getUserByEmail(email, {
+      emailVerified: true,
+      hashKey: true,
+      role: true,
+      uuid: true,
+      id: true,
+    });
+
+    if (!user) {
+      throw new ServerError({
+        code: 404,
+        message: "Not Found",
+      });
+    }
+
+    if (!user.emailVerified) {
+      throw new ServerError({
+        code: 401,
+        message: "Email is not verified",
+      });
+    }
+
+    const isValidPassword = await this.cryptoUtil.verifyPassword(
+      user.hashKey,
+      password
+    );
+
+    if (!isValidPassword) {
+      throw new ServerError({
+        code: 401,
+        message: "Unauthorized",
+      });
+    }
+
+    const token = await this.jwtUtil.signAuth({
+      userId: user.id,
+      role: user.role,
+      uuid: user.uuid,
+    });
+
+    return { token };
+  };
+
   // verify-is-login
   // find-password
 }

@@ -1,10 +1,12 @@
 import {
   ServiceResendVerificationEmailDto,
   ServiceSignUpDto,
+  ServiceSingInDto,
   ServiceVerifyEmailDto,
 } from "../../application/service/auth.service";
 import {
-  RequestAuthResendVerificationEmail,
+  RequestAuthResendVerificationEmailBody,
+  RequestAuthSignInBody,
   RequestAuthSignUpBody,
   RequestAuthVerifyEmailQuery,
 } from "../../requests/auth/auth.requests";
@@ -13,6 +15,7 @@ export interface IAuthValidator {
   signUp: (body: RequestAuthSignUpBody) => ServiceSignUpDto;
   verifyEmail: (query: RequestAuthVerifyEmailQuery) => ServiceVerifyEmailDto;
   resendVerificationEmail: (
-    body: RequestAuthResendVerificationEmail
+    body: RequestAuthResendVerificationEmailBody
   ) => ServiceResendVerificationEmailDto;
+  signIn: (body: RequestAuthSignInBody) => ServiceSingInDto;
 }

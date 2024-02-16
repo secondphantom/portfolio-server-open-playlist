@@ -2,7 +2,8 @@ import { AuthService } from "../../application/service/auth.service";
 import { errorResolver } from "../../dto/error.resolver";
 import { ControllerResponse } from "../../dto/response";
 import {
-  RequestAuthResendVerificationEmail,
+  RequestAuthResendVerificationEmailBody,
+  RequestAuthSignInBody,
   RequestAuthSignUpBody,
   RequestAuthVerifyEmailQuery,
 } from "../../requests/auth/auth.requests";
@@ -76,7 +77,7 @@ export class AuthController {
   };
 
   resendVerificationEmail = async (
-    body: RequestAuthResendVerificationEmail
+    body: RequestAuthResendVerificationEmailBody
   ) => {
     try {
       const dto = this.authValidator.resendVerificationEmail(body);
@@ -87,6 +88,33 @@ export class AuthController {
         payload: {
           success: true,
           message: "Success Resend Verification Email",
+        },
+      });
+    } catch (error) {
+      const { code, message } = errorResolver(error);
+      return new ControllerResponse({
+        code,
+        payload: {
+          success: false,
+          message,
+        },
+      });
+    }
+  };
+
+  signIn = async (body: RequestAuthSignInBody) => {
+    try {
+      const dto = this.authValidator.signIn(body);
+      const { token } = await this.authService.signIn(dto);
+
+      return new ControllerResponse({
+        code: 301,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        payload: {
+          success: true,
+          message: "Success Sign In",
         },
       });
     } catch (error) {

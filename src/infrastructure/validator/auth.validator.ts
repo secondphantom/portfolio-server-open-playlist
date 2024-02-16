@@ -2,12 +2,16 @@ import z from "zod";
 
 import { IAuthValidator } from "../../controller/auth/auth.interface";
 import {
-  RequestAuthResendVerificationEmail,
+  RequestAuthResendVerificationEmailBody,
+  RequestAuthSignInBody,
   RequestAuthSignUpBody,
   RequestAuthVerifyEmailQuery,
 } from "../../requests/auth/auth.requests";
 import { ServerError } from "../../dto/error";
-import { ServiceResendVerificationEmailDto } from "../../application/service/auth.service";
+import {
+  ServiceResendVerificationEmailDto,
+  ServiceSingInDto,
+} from "../../application/service/auth.service";
 
 export class AuthValidator implements IAuthValidator {
   static instance: AuthValidator | undefined;
@@ -82,9 +86,37 @@ export class AuthValidator implements IAuthValidator {
     })
     .strict();
 
-  resendVerificationEmail = (body: RequestAuthResendVerificationEmail) => {
+  resendVerificationEmail = (body: RequestAuthResendVerificationEmailBody) => {
     try {
       const dto = this.requestAuthResendVerificationEmailBody.parse(body);
+      return dto;
+    } catch (error) {
+      throw new ServerError({
+        code: 400,
+        message: "Invalid Input",
+      });
+    }
+  };
+
+  private requestAuthSignInBody = z
+    .object({
+      email: z
+        .string()
+        .min(1, { message: "Must have at least 1 character" })
+        .email("This is not a valid email."),
+      password: z
+        .string()
+        .min(1, { message: "Must have at least 1 character" })
+        .regex(this.passwordValidation, {
+          message:
+            "Minimum 8 characters, at least one uppercase letter, one lowercase letter, one number and one special character",
+        }),
+    })
+    .strict();
+
+  signIn = (body: RequestAuthSignInBody) => {
+    try {
+      const dto = this.requestAuthSignInBody.parse(body);
       return dto;
     } catch (error) {
       throw new ServerError({

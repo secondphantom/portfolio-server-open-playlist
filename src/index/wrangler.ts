@@ -96,15 +96,27 @@ export class WranglerSever {
 
       return this.createJsonResponse(result);
     });
+
+    this.app.post("/api/auth/sign-in", async (req) => {
+      const body = await req.json();
+      const result = await this.authController.signIn(body as any);
+
+      return this.createJsonResponse(result);
+    });
   };
 
   private createJsonResponse = async (
     controllerResponse: ControllerResponse
   ) => {
+    const {
+      code,
+      payload,
+      headers: responseHeaders,
+    } = controllerResponse.getResponse();
     const headers = {
       "Content-type": "application/json",
+      ...responseHeaders,
     };
-    const { code, payload } = controllerResponse.getResponse();
     const body = payload;
 
     return this.cors.corsify(
