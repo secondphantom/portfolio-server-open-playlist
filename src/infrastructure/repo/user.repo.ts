@@ -1,7 +1,7 @@
 import * as schema from "../../schema/schema";
 
 import { IUserRepo } from "../../application/interfaces/user.repo";
-import { RepoCreateUserDto } from "../../domain/user.domain";
+import { RepoCreateUserDto, UserEntitySelect } from "../../domain/user.domain";
 import { DrizzleClient } from "../db/drizzle.client";
 
 export class UserRepo implements IUserRepo {
@@ -17,11 +17,21 @@ export class UserRepo implements IUserRepo {
     this.db = drizzleClient.getDb();
   }
 
-  getUserByEmail = async (email: string) => {
+  getUserByEmail = async <T extends keyof UserEntitySelect = any>(
+    email: string,
+    columns?:
+      | {
+          [key in T]?: boolean;
+        }
+      | { [key in keyof UserEntitySelect]?: boolean }
+  ) => {
     const user = await this.db.query.users.findFirst({
       where: (user, { eq }) => {
         return eq(user.email, email);
       },
+      columns: columns
+        ? (columns as { [key in keyof UserEntitySelect]: boolean })
+        : undefined,
     });
     return user;
   };

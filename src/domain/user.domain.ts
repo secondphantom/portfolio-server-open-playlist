@@ -1,10 +1,11 @@
 import { users } from "../schema/schema";
 import { v4 as uuidv4 } from "uuid";
 
-export type UserEntity = typeof users.$inferInsert;
+export type UserEntitySelect = typeof users.$inferSelect;
+export type UserEntityInsert = typeof users.$inferInsert;
 
 export type RepoCreateUserDto = Pick<
-  Required<UserEntity>,
+  Required<UserEntityInsert>,
   "uuid" | "email" | "hashKey" | "profileName" | "extra"
 >;
 
@@ -38,8 +39,8 @@ export class UserDomain {
     extra,
     createdAt,
     updatedAt,
-  }: Omit<UserEntity, "uuid" | "extra"> &
-    Partial<Pick<UserEntity, "uuid" | "extra">>) {
+  }: Omit<UserEntityInsert, "uuid" | "extra"> &
+    Partial<Pick<UserEntityInsert, "uuid" | "extra">>) {
     this.id = id;
     this.uuid = uuid ? uuid : uuidv4();
     this.role = role ? role : this.ROLE["user"];

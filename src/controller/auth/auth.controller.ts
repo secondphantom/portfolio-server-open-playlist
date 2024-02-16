@@ -1,6 +1,6 @@
 import { AuthService } from "../../application/service/auth.service";
 import { errorResolver } from "../../dto/error.resolver";
-import { ControllerResponse } from "../../dto/reponse";
+import { ControllerResponse } from "../../dto/response";
 import { RequestAuthSignUpBody } from "../../requests/auth/auth.requests";
 import { IAuthValidator } from "./auth.interface";
 

@@ -57,7 +57,11 @@ export class AuthService {
   // [POST] /auth/sign-up
   signUp = async ({ email, password, userName }: ServiceSignUpDto) => {
     // verify email is existed
-    const findUser = await this.userRepo.getUserByEmail(email);
+    const findUser = await this.userRepo.getUserByEmail(email, {
+      email: true,
+      emailVerified: true,
+    });
+
     if (findUser) {
       throw new ServerError({
         message: "This email is already registered",
@@ -108,6 +112,7 @@ export class AuthService {
 
   // resend-verification-email
   // verify-email
+  // verify-is-login
   // sign-in
   // find-password
 }

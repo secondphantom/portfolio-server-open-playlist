@@ -4,9 +4,10 @@ dotenv.config();
 import { DrizzleClient } from "../../../infrastructure/db/drizzle.client";
 import { UserRepo } from "../../../infrastructure/repo/user.repo";
 import { RepoCreateUserDto } from "../../../domain/user.domain";
+import { IUserRepo } from "../../../application/interfaces/user.repo";
 
 describe("user repo", () => {
-  let userRepo: UserRepo;
+  let userRepo: IUserRepo;
 
   beforeAll(() => {
     const dbClient = new DrizzleClient({
@@ -26,10 +27,12 @@ describe("user repo", () => {
 
     await userRepo.createUser(createUserDto);
 
-    const user = await userRepo.getUserByEmail(createUserDto.email);
+    const user = await userRepo.getUserByEmail(createUserDto.email, {
+      email: true,
+    });
 
-    for (const [key, value] of Object.entries(createUserDto)) {
-      expect(value).toEqual(user[key as any as keyof typeof user]);
+    for (const [key, value] of Object.entries(user!)) {
+      expect(value).toEqual(createUserDto[key as any as keyof typeof user]);
     }
   });
 });

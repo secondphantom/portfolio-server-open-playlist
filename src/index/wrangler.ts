@@ -7,7 +7,7 @@ import { DrizzleClient } from "../infrastructure/db/drizzle.client";
 import { CryptoUtil } from "../infrastructure/crypto/crypto.util";
 import { JwtUtil } from "../infrastructure/jwt/jwt.util";
 import { EmailUtil } from "../infrastructure/email/email.util";
-import { ControllerResponse } from "../dto/reponse";
+import { ControllerResponse } from "../dto/response";
 import { AuthValidator } from "../infrastructure/validator/auth.validator";
 export class WranglerSever {
   static instance: WranglerSever;
