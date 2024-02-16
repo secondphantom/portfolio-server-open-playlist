@@ -2,10 +2,12 @@ import z from "zod";
 
 import { IAuthValidator } from "../../controller/auth/auth.interface";
 import {
+  RequestAuthResendVerificationEmail,
   RequestAuthSignUpBody,
   RequestAuthVerifyEmailQuery,
 } from "../../requests/auth/auth.requests";
 import { ServerError } from "../../dto/error";
+import { ServiceResendVerificationEmailDto } from "../../application/service/auth.service";
 
 export class AuthValidator implements IAuthValidator {
   static instance: AuthValidator | undefined;
@@ -62,6 +64,27 @@ export class AuthValidator implements IAuthValidator {
   verifyEmail = (query: RequestAuthVerifyEmailQuery) => {
     try {
       const dto = this.requestAuthVerifyEmailQuery.parse(query);
+      return dto;
+    } catch (error) {
+      throw new ServerError({
+        code: 400,
+        message: "Invalid Input",
+      });
+    }
+  };
+
+  private requestAuthResendVerificationEmailBody = z
+    .object({
+      email: z
+        .string()
+        .min(1, { message: "Must have at least 1 character" })
+        .email("This is not a valid email."),
+    })
+    .strict();
+
+  resendVerificationEmail = (body: RequestAuthResendVerificationEmail) => {
+    try {
+      const dto = this.requestAuthResendVerificationEmailBody.parse(body);
       return dto;
     } catch (error) {
       throw new ServerError({

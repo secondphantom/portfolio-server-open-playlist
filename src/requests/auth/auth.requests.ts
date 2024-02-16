@@ -8,6 +8,10 @@ export type RequestAuthVerifyEmailQuery = {
   token: string;
 };
 
+export type RequestAuthResendVerificationEmail = {
+  email: string;
+};
+
 export type RequestAuthSignInBody = {
   username: string;
   email: string;

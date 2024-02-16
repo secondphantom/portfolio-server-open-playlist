@@ -56,6 +56,24 @@ export class WranglerSever {
       return this.cors.preflight(request);
     });
 
+    this.initAuthRouter();
+
+    this.app.all(
+      "*",
+      () =>
+        new Response(
+          JSON.stringify({
+            success: false,
+            message: "Not Found",
+          }),
+          {
+            status: 404,
+          }
+        )
+    );
+  }
+
+  private initAuthRouter = () => {
     this.app.post("/api/auth/sign-up", async (req: Request) => {
       const body = await req.json();
 
@@ -70,22 +88,15 @@ export class WranglerSever {
       return this.createJsonResponse(result);
     });
 
-    this.app.all(
-      "*",
-      () =>
-        new Response(
-          JSON.stringify({
-            success: false,
-            data: {
-              message: "Not found",
-            },
-          }),
-          {
-            status: 404,
-          }
-        )
-    );
-  }
+    this.app.post("/api/auth/resend-verification-email", async (req) => {
+      const body = await req.json();
+      const result = await this.authController.resendVerificationEmail(
+        body as any
+      );
+
+      return this.createJsonResponse(result);
+    });
+  };
 
   private createJsonResponse = async (
     controllerResponse: ControllerResponse

@@ -16,6 +16,10 @@ export type ServiceVerifyEmailDto = {
   token: string;
 };
 
+export type ServiceResendVerificationEmailDto = {
+  email: string;
+};
+
 type C_ENV = Pick<ENV, "DATABASE_HOST" | "DOMAIN_URL" | "SERVICE_NAME">;
 
 export class AuthService {
@@ -109,7 +113,7 @@ export class AuthService {
     if (!successSendEmail) {
       throw new ServerError({
         message: "Fail to send verification email",
-        code: 400,
+        code: 500,
       });
     }
   };
@@ -152,8 +156,58 @@ export class AuthService {
     await this.userRepo.updateUserByEmail(user.email, { emailVerified: true });
   };
 
-  // resend-verification-email
-  // verify-is-login
+  // [POST] /auth/resend-verification-email
+  resendVerificationEmail = async ({
+    email,
+  }: ServiceResendVerificationEmailDto) => {
+    const user = await this.userRepo.getUserByEmail(email, {
+      email: true,
+      emailVerified: true,
+      uuid: true,
+    });
+
+    if (!user) {
+      throw new ServerError({
+        code: 404,
+        message: "Not Found User",
+      });
+    }
+
+    if (user.emailVerified) {
+      throw new ServerError({
+        code: 400,
+        message: "Email is already verified",
+      });
+    }
+
+    const token = await this.jwtUtil.signEmailVerify({
+      email: user.email,
+      uuid: user.uuid,
+    });
+
+    const { success: successSendEmail } = await this.emailUtil.sendEmail({
+      from: {
+        email: `noreplay@${this.ENV.DOMAIN_URL}`,
+        name: this.ENV.SERVICE_NAME,
+      },
+      to: [
+        {
+          email: email,
+        },
+      ],
+      subject: "Resend: Confirm Your Email Address",
+      message: `We noticed that you haven't confirmed your email address yet.\nTo ensure you can fully enjoy all the benefits of ${this.ENV.SERVICE_NAME}, it's important to verify your email.\nSimply click the link below to confirm your email address:\n\nhttps://${this.ENV.DOMAIN_URL}/auth/verify-email?token=${token}\n\nIf you did not request this email, please ignore it.\nBest regards,\nThe ${this.ENV.SERVICE_NAME} Team`,
+    });
+
+    if (!successSendEmail) {
+      throw new ServerError({
+        message: "Fail to send verification email",
+        code: 500,
+      });
+    }
+  };
+
   // sign-in
+  // verify-is-login
   // find-password
 }

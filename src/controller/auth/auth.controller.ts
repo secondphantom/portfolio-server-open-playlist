@@ -2,6 +2,7 @@ import { AuthService } from "../../application/service/auth.service";
 import { errorResolver } from "../../dto/error.resolver";
 import { ControllerResponse } from "../../dto/response";
 import {
+  RequestAuthResendVerificationEmail,
   RequestAuthSignUpBody,
   RequestAuthVerifyEmailQuery,
 } from "../../requests/auth/auth.requests";
@@ -50,9 +51,9 @@ export class AuthController {
     }
   };
 
-  verifyEmail = async (params: RequestAuthVerifyEmailQuery) => {
+  verifyEmail = async (query: RequestAuthVerifyEmailQuery) => {
     try {
-      const dto = this.authValidator.verifyEmail(params);
+      const dto = this.authValidator.verifyEmail(query);
       await this.authService.verifyEmail(dto);
 
       return new ControllerResponse({
@@ -60,6 +61,32 @@ export class AuthController {
         payload: {
           success: true,
           message: "Success Verify Email",
+        },
+      });
+    } catch (error) {
+      const { code, message } = errorResolver(error);
+      return new ControllerResponse({
+        code,
+        payload: {
+          success: false,
+          message,
+        },
+      });
+    }
+  };
+
+  resendVerificationEmail = async (
+    body: RequestAuthResendVerificationEmail
+  ) => {
+    try {
+      const dto = this.authValidator.resendVerificationEmail(body);
+      await this.authService.resendVerificationEmail(dto);
+
+      return new ControllerResponse({
+        code: 301,
+        payload: {
+          success: true,
+          message: "Success Resend Verification Email",
         },
       });
     } catch (error) {
