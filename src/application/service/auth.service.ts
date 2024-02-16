@@ -95,7 +95,7 @@ export class AuthService {
         },
       ],
       subject: "Confirm Your Email Address",
-      message: `Welcome to ${this.ENV.SERVICE_NAME}! We're excited to have you on board.\nTo get started, we need to confirm your email address.\n This ensures that we have the right contact information for you and helps protect your account.\nPlease click the link below to confirm your email address:\n\nhttps://${this.ENV.DOMAIN_URL}/verify-email?token=${token}\n\nIf you did not request this email, please ignore it.\nBest regards,\nThe ${this.ENV.SERVICE_NAME} Team`,
+      message: `Welcome to ${this.ENV.SERVICE_NAME}! We're excited to have you on board.\nTo get started, we need to confirm your email address.\nThis ensures that we have the right contact information for you and helps protect your account.\nPlease click the link below to confirm your email address:\n\nhttps://${this.ENV.DOMAIN_URL}/auth/verify-email?token=${token}\n\nIf you did not request this email, please ignore it.\nBest regards,\nThe ${this.ENV.SERVICE_NAME} Team`,
     });
 
     if (!successSendEmail) {
