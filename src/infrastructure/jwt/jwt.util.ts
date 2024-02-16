@@ -1,4 +1,5 @@
 import jwt from "@tsndr/cloudflare-worker-jwt";
+
 import {
   IJwtUtil,
   JwtAuthSignPayload,

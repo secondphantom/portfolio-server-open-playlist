@@ -1,7 +1,8 @@
+import * as schema from "../../schema/schema";
+
 import { IUserRepo } from "../../application/interfaces/user.repo";
 import { RepoCreateUserDto } from "../../domain/user.domain";
 import { DrizzleClient } from "../db/drizzle.client";
-import * as schema from "../../schema/schema";
 
 export class UserRepo implements IUserRepo {
   static instance: UserRepo | undefined;
@@ -22,11 +23,6 @@ export class UserRepo implements IUserRepo {
         return eq(user.email, email);
       },
     });
-
-    if (!user) {
-      throw new ServerError({ code: 404, message: "Not Found" });
-    }
-
     return user;
   };
 

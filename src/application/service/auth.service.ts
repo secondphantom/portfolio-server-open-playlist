@@ -1,11 +1,10 @@
-import jwt from "@tsndr/cloudflare-worker-jwt";
-
 import { UserDomain } from "../../domain/user.domain";
 import { ICryptoUtil } from "../interfaces/crypto.util";
 import { IEmailUtil } from "../interfaces/email.util";
 import { IUserRepo } from "../interfaces/user.repo";
 import { IJwtUtil } from "../interfaces/jwt.util";
 import { ENV } from "../../env";
+import { ServerError } from "../../dto/error";
 
 export type ServiceSignUpDto = {
   email: string;
@@ -107,8 +106,8 @@ export class AuthService {
     }
   };
 
-  // verify-email
   // resend-verification-email
+  // verify-email
   // sign-in
   // find-password
 }

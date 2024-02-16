@@ -9,4 +9,5 @@ export type ENV = {
   DATABASE_USERNAME: string;
   DATABASE_PASSWORD: string;
   DATABASE_URL: string;
+  CORS_ALLOW_ORIGIN: string;
 };
