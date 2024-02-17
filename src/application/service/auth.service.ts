@@ -2,7 +2,7 @@ import { UserDomain } from "../../domain/user.domain";
 import { ICryptoUtil } from "../interfaces/crypto.util";
 import { IEmailUtil } from "../interfaces/email.util";
 import { IUserRepo } from "../interfaces/user.repo";
-import { IJwtUtil } from "../interfaces/jwt.util";
+import { IJwtUtil, JwtAuthSignPayload } from "../interfaces/jwt.util";
 import { ENV } from "../../env";
 import { ServerError } from "../../dto/error";
 
@@ -27,6 +27,10 @@ export type ServiceSingInDto = {
 
 export type ServiceVerifyAccessTokenDto = {
   accessToken: string;
+};
+
+export type ServiceRefreshAccessTokenDto = {
+  refreshToken: string;
 };
 
 type C_ENV = Pick<ENV, "DATABASE_HOST" | "DOMAIN_URL" | "SERVICE_NAME">;
@@ -252,18 +256,22 @@ export class AuthService {
       });
     }
 
-    const accessToken = await this.jwtUtil.signAuthAccess({
-      userId: user.id,
-      role: user.role,
-      uuid: user.uuid,
-    });
-    const refreshToken = await this.jwtUtil.signAuthRefresh({
+    const token = this.getSignAuthToken({
       userId: user.id,
       role: user.role,
       uuid: user.uuid,
     });
 
-    return { accessToken, refreshToken };
+    return token;
+  };
+
+  private getSignAuthToken = async (payload: JwtAuthSignPayload) => {
+    const accessToken = await this.jwtUtil.signAuthAccess(payload);
+    const refreshToken = await this.jwtUtil.signAuthRefresh(payload);
+    return {
+      accessToken,
+      refreshToken,
+    };
   };
 
   // GET /auth/verify-access-token
@@ -286,6 +294,54 @@ export class AuthService {
     return {
       role: payload.role,
     };
+  };
+
+  // POST /auth/refresh-access-token
+  refreshAccessToken = async ({
+    refreshToken,
+  }: ServiceRefreshAccessTokenDto) => {
+    const isValidToken = await this.jwtUtil.verifyAuthRefresh(refreshToken);
+    if (!isValidToken) {
+      throw new ServerError({
+        code: 401,
+        message: "Unauthorized",
+      });
+    }
+
+    const { payload } = this.jwtUtil.decode<{
+      userId: number;
+      role: number;
+      uuid: string;
+      exp: number;
+    }>(refreshToken);
+
+    const user = await this.userRepo.getUserById(payload.userId, {
+      uuid: true,
+      id: true,
+      role: true,
+    });
+
+    if (!user) {
+      throw new ServerError({
+        code: 404,
+        message: "Not Found",
+      });
+    }
+
+    if (user.uuid !== payload.uuid) {
+      throw new ServerError({
+        code: 401,
+        message: "Unauthorized",
+      });
+    }
+
+    const token = this.getSignAuthToken({
+      userId: user.id,
+      role: user.role,
+      uuid: user.uuid,
+    });
+
+    return token;
   };
 
   // find-password

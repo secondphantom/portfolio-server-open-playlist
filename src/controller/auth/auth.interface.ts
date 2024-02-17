@@ -1,4 +1,5 @@
 import {
+  ServiceRefreshAccessTokenDto,
   ServiceResendVerificationEmailDto,
   ServiceSignUpDto,
   ServiceSingInDto,
@@ -10,7 +11,8 @@ import {
   RequestAuthSignInBody,
   RequestAuthSignUpBody,
   RequestAuthVerifyEmailQuery,
-  RequestVerifyAccessTokenCookies,
+  RequestAuthRefreshAccessTokenCookies,
+  RequestAuthVerifyAccessTokenCookies,
 } from "../../requests/auth/auth.requests";
 
 export interface IAuthValidator {
@@ -21,6 +23,9 @@ export interface IAuthValidator {
   ) => ServiceResendVerificationEmailDto;
   signIn: (body: RequestAuthSignInBody) => ServiceSingInDto;
   verifyAccessToken: (
-    cookies: RequestVerifyAccessTokenCookies
+    cookies: RequestAuthVerifyAccessTokenCookies
   ) => ServiceVerifyAccessTokenDto;
+  refreshAccessToken: (
+    cookies: RequestAuthRefreshAccessTokenCookies
+  ) => ServiceRefreshAccessTokenDto;
 }

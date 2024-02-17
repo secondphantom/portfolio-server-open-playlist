@@ -1,4 +1,7 @@
-import { AuthService } from "../../application/service/auth.service";
+import {
+  AuthService,
+  ServiceRefreshAccessTokenDto,
+} from "../../application/service/auth.service";
 import { errorResolver } from "../../dto/error.resolver";
 import { ControllerResponse } from "../../dto/response";
 import {
@@ -6,7 +9,7 @@ import {
   RequestAuthSignInBody,
   RequestAuthSignUpBody,
   RequestAuthVerifyEmailQuery,
-  RequestVerifyAccessTokenCookies,
+  RequestAuthVerifyAccessTokenCookies,
 } from "../../requests/auth/auth.requests";
 import { IAuthValidator } from "./auth.interface";
 
@@ -137,7 +140,7 @@ export class AuthController {
     }
   };
 
-  verifyAccessToken = async (cookies: RequestVerifyAccessTokenCookies) => {
+  verifyAccessToken = async (cookies: RequestAuthVerifyAccessTokenCookies) => {
     try {
       const dto = this.authValidator.verifyAccessToken(cookies);
       const data = await this.authService.verifyAccessToken(dto);
@@ -147,6 +150,41 @@ export class AuthController {
         payload: {
           success: true,
           data,
+        },
+      });
+    } catch (error) {
+      const { code, message } = errorResolver(error);
+      return new ControllerResponse({
+        code,
+        payload: {
+          success: false,
+          message,
+        },
+      });
+    }
+  };
+
+  refreshAccessToken = async (cookies: ServiceRefreshAccessTokenDto) => {
+    try {
+      const dto = this.authValidator.refreshAccessToken(cookies);
+      const { accessToken, refreshToken } =
+        await this.authService.refreshAccessToken(dto);
+
+      return new ControllerResponse({
+        code: 200,
+        headers: [
+          {
+            name: "Set-Cookie",
+            value: `RefreshToken=${refreshToken}; Path=/; HttpOnly; Secure; SameSite=Strict`,
+          },
+          {
+            name: "Set-Cookie",
+            value: `AccessToken=${accessToken}; Path=/; HttpOnly; Secure; SameSite=Strict`,
+          },
+        ],
+        payload: {
+          success: true,
+          message: "Success Refresh Token",
         },
       });
     } catch (error) {

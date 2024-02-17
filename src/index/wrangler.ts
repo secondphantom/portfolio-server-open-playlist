@@ -115,6 +115,18 @@ export class WranglerSever {
         return this.createJsonResponse(result);
       }
     );
+
+    this.app.get(
+      "/api/auth/refresh-access-token",
+      withCookies,
+      async ({ cookies }) => {
+        const result = await this.authController.refreshAccessToken({
+          refreshToken: cookies["RefreshToken"],
+        });
+
+        return this.createJsonResponse(result);
+      }
+    );
   };
 
   private createJsonResponse = async (

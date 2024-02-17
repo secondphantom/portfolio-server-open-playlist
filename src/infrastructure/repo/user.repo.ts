@@ -48,6 +48,25 @@ export class UserRepo implements IUserRepo {
       .where(eq(schema.users.email, email));
   };
 
+  getUserById = async <T extends keyof UserEntitySelect = any>(
+    id: number,
+    columns?:
+      | {
+          [key in T]?: boolean;
+        }
+      | { [key in keyof UserEntitySelect]?: boolean }
+  ) => {
+    const user = await this.db.query.users.findFirst({
+      where: (user, { eq }) => {
+        return eq(user.id, id);
+      },
+      columns: columns
+        ? (columns as { [key in keyof UserEntitySelect]: boolean })
+        : undefined,
+    });
+    return user;
+  };
+
   createUser = async (user: RepoCreateUserDto) => {
     await this.db.insert(schema.users).values(user);
   };
