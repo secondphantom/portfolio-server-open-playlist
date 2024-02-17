@@ -8,7 +8,7 @@ export type JwtConfig = {
 export type JwtAuthSignPayload = {
   userId: number;
   uuid: string;
-  role: number;
+  roleId: number;
 };
 
 export type JwtEmailVerifyPayload = {

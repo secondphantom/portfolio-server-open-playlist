@@ -74,7 +74,7 @@ export class WranglerSever {
   }
 
   private initAuthRouter = () => {
-    this.app.post("/api/auth/sign-up", async (req: Request) => {
+    this.app.post("/api/auth/sign-up", async (req) => {
       const body = await req.json();
 
       const result = await this.authController.signUp(body as any);

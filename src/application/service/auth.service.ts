@@ -80,7 +80,7 @@ export class AuthService {
     // verify email is existed
     const findUser = await this.userRepo.getUserByEmail(email, {
       email: true,
-      emailVerified: true,
+      isEmailVerified: true,
     });
 
     if (findUser) {
@@ -149,7 +149,7 @@ export class AuthService {
     const user = await this.userRepo.getUserByEmail(payload.email, {
       email: true,
       uuid: true,
-      emailVerified: true,
+      isEmailVerified: true,
     });
 
     if (!user) {
@@ -159,14 +159,16 @@ export class AuthService {
       });
     }
 
-    if (user.emailVerified) {
+    if (user.isEmailVerified) {
       throw new ServerError({
         code: 301,
         message: "Email is already verified",
       });
     }
 
-    await this.userRepo.updateUserByEmail(user.email, { emailVerified: true });
+    await this.userRepo.updateUserByEmail(user.email, {
+      isEmailVerified: true,
+    });
   };
 
   // [POST] /auth/resend-verification-email
@@ -175,7 +177,7 @@ export class AuthService {
   }: ServiceAuthResendVerificationEmailDto) => {
     const user = await this.userRepo.getUserByEmail(email, {
       email: true,
-      emailVerified: true,
+      isEmailVerified: true,
       uuid: true,
     });
 
@@ -186,7 +188,7 @@ export class AuthService {
       });
     }
 
-    if (user.emailVerified) {
+    if (user.isEmailVerified) {
       throw new ServerError({
         code: 400,
         message: "Email is already verified",
@@ -223,9 +225,9 @@ export class AuthService {
   // [POST] /auth/sign-in
   signIn = async ({ email, password }: ServiceAuthSingInDto) => {
     const user = await this.userRepo.getUserByEmail(email, {
-      emailVerified: true,
+      isEmailVerified: true,
       hashKey: true,
-      role: true,
+      roleId: true,
       uuid: true,
       id: true,
     });
@@ -237,7 +239,7 @@ export class AuthService {
       });
     }
 
-    if (!user.emailVerified) {
+    if (!user.isEmailVerified) {
       throw new ServerError({
         code: 401,
         message: "Email is not verified",
@@ -258,7 +260,7 @@ export class AuthService {
 
     const token = this.getSignAuthToken({
       userId: user.id,
-      role: user.role,
+      roleId: user.roleId,
       uuid: user.uuid,
     });
 
@@ -286,15 +288,10 @@ export class AuthService {
       });
     }
 
-    const { payload } = this.jwtUtil.decode<{
-      userId: number;
-      role: number;
-      uuid: string;
-      exp: number;
-    }>(accessToken);
+    const { payload } = this.jwtUtil.decode<JwtAuthSignPayload>(accessToken);
 
     return {
-      role: payload.role,
+      roleId: payload.roleId,
     };
   };
 
@@ -310,17 +307,12 @@ export class AuthService {
       });
     }
 
-    const { payload } = this.jwtUtil.decode<{
-      userId: number;
-      role: number;
-      uuid: string;
-      exp: number;
-    }>(refreshToken);
+    const { payload } = this.jwtUtil.decode<JwtAuthSignPayload>(refreshToken);
 
     const user = await this.userRepo.getUserById(payload.userId, {
       uuid: true,
       id: true,
-      role: true,
+      roleId: true,
     });
 
     if (!user) {
@@ -339,7 +331,7 @@ export class AuthService {
 
     const token = this.getSignAuthToken({
       userId: user.id,
-      role: user.role,
+      roleId: user.roleId,
       uuid: user.uuid,
     });
 

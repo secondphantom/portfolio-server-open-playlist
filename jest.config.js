@@ -2,7 +2,7 @@
 module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
-  testMatch: ["<rootDir>/src/tests/**/jwt.util.test.ts"],
+  testMatch: ["<rootDir>/src/tests/**/user.repo.test.ts"],
   verbose: true,
   forceExit: true,
   clearMocks: true,

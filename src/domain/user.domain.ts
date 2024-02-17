@@ -12,10 +12,10 @@ export type RepoCreateUserDto = Pick<
 export class UserDomain {
   private id: number | undefined;
   private uuid: string;
-  private role: number;
+  private roleId: number;
   private email: string;
   private hashKey: string;
-  private emailVerified: boolean;
+  private isEmailVerified: boolean;
   private profileName: string;
   private profileImage: string | null;
   private extra: any;
@@ -30,10 +30,10 @@ export class UserDomain {
   constructor({
     id,
     uuid,
-    role,
+    roleId,
     email,
     hashKey,
-    emailVerified,
+    isEmailVerified,
     profileName,
     profileImage,
     extra,
@@ -43,10 +43,11 @@ export class UserDomain {
     Partial<Pick<UserEntityInsert, "uuid" | "extra">>) {
     this.id = id;
     this.uuid = uuid ? uuid : uuidv4();
-    this.role = role ? role : this.ROLE["user"];
+    this.roleId = roleId ? roleId : this.ROLE["user"];
     this.email = email;
     this.hashKey = hashKey;
-    this.emailVerified = emailVerified === undefined ? false : emailVerified;
+    this.isEmailVerified =
+      isEmailVerified === undefined ? false : isEmailVerified;
     this.profileName = profileName;
     this.profileImage = profileImage ? profileImage : null;
     this.extra = extra ? extra : {};

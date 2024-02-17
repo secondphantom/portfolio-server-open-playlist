@@ -19,7 +19,7 @@ describe("user repo", () => {
     userRepo = new UserRepo(dbClient);
   });
 
-  test.skip("create user", async () => {
+  test.only("create user", async () => {
     const createUserDto = {
       email: `${new Date().toISOString()}@gmail.com`,
       extra: {},
@@ -39,14 +39,16 @@ describe("user repo", () => {
     }
   });
 
-  test.only("update by email", async () => {
+  test.skip("update by email", async () => {
     const email = "test@email.com";
-    const values = { emailVerified: true } satisfies Partial<UserEntitySelect>;
+    const values = {
+      isEmailVerified: true,
+    } satisfies Partial<UserEntitySelect>;
 
     await userRepo.updateUserByEmail(email, values);
 
     const user = await userRepo.getUserByEmail(email);
 
-    expect(user!.emailVerified).toEqual(true);
+    expect(user!.isEmailVerified).toEqual(true);
   });
 });
