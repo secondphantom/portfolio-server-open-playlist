@@ -6,30 +6,30 @@ import { IJwtUtil, JwtAuthSignPayload } from "../interfaces/jwt.util";
 import { ENV } from "../../env";
 import { ServerError } from "../../dto/error";
 
-export type ServiceSignUpDto = {
+export type ServiceAuthSignUpDto = {
   email: string;
   password: string;
   userName: string;
 };
 
-export type ServiceVerifyEmailDto = {
+export type ServiceAuthVerifyEmailDto = {
   token: string;
 };
 
-export type ServiceResendVerificationEmailDto = {
+export type ServiceAuthResendVerificationEmailDto = {
   email: string;
 };
 
-export type ServiceSingInDto = {
+export type ServiceAuthSingInDto = {
   email: string;
   password: string;
 };
 
-export type ServiceVerifyAccessTokenDto = {
+export type ServiceAuthVerifyAccessTokenDto = {
   accessToken: string;
 };
 
-export type ServiceRefreshAccessTokenDto = {
+export type ServiceAuthRefreshAccessTokenDto = {
   refreshToken: string;
 };
 
@@ -76,7 +76,7 @@ export class AuthService {
   }
 
   // [POST] /auth/sign-up
-  signUp = async ({ email, password, userName }: ServiceSignUpDto) => {
+  signUp = async ({ email, password, userName }: ServiceAuthSignUpDto) => {
     // verify email is existed
     const findUser = await this.userRepo.getUserByEmail(email, {
       email: true,
@@ -132,7 +132,7 @@ export class AuthService {
   };
 
   // [GET] /auth/verify-email
-  verifyEmail = async ({ token }: ServiceVerifyEmailDto) => {
+  verifyEmail = async ({ token }: ServiceAuthVerifyEmailDto) => {
     const isValidToken = await this.jwtUtil.verifyEmailVerify(token);
 
     if (!isValidToken) {
@@ -172,7 +172,7 @@ export class AuthService {
   // [POST] /auth/resend-verification-email
   resendVerificationEmail = async ({
     email,
-  }: ServiceResendVerificationEmailDto) => {
+  }: ServiceAuthResendVerificationEmailDto) => {
     const user = await this.userRepo.getUserByEmail(email, {
       email: true,
       emailVerified: true,
@@ -221,7 +221,7 @@ export class AuthService {
   };
 
   // [POST] /auth/sign-in
-  signIn = async ({ email, password }: ServiceSingInDto) => {
+  signIn = async ({ email, password }: ServiceAuthSingInDto) => {
     const user = await this.userRepo.getUserByEmail(email, {
       emailVerified: true,
       hashKey: true,
@@ -275,7 +275,9 @@ export class AuthService {
   };
 
   // GET /auth/verify-access-token
-  verifyAccessToken = async ({ accessToken }: ServiceVerifyAccessTokenDto) => {
+  verifyAccessToken = async ({
+    accessToken,
+  }: ServiceAuthVerifyAccessTokenDto) => {
     const isValidToken = await this.jwtUtil.verifyAuthAccess(accessToken);
     if (!isValidToken) {
       throw new ServerError({
@@ -299,7 +301,7 @@ export class AuthService {
   // POST /auth/refresh-access-token
   refreshAccessToken = async ({
     refreshToken,
-  }: ServiceRefreshAccessTokenDto) => {
+  }: ServiceAuthRefreshAccessTokenDto) => {
     const isValidToken = await this.jwtUtil.verifyAuthRefresh(refreshToken);
     if (!isValidToken) {
       throw new ServerError({

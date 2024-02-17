@@ -1,6 +1,6 @@
 import {
   AuthService,
-  ServiceRefreshAccessTokenDto,
+  ServiceAuthRefreshAccessTokenDto,
 } from "../../application/service/auth.service";
 import { errorResolver } from "../../dto/error.resolver";
 import { ControllerResponse } from "../../dto/response";
@@ -164,7 +164,7 @@ export class AuthController {
     }
   };
 
-  refreshAccessToken = async (cookies: ServiceRefreshAccessTokenDto) => {
+  refreshAccessToken = async (cookies: ServiceAuthRefreshAccessTokenDto) => {
     try {
       const dto = this.authValidator.refreshAccessToken(cookies);
       const { accessToken, refreshToken } =
