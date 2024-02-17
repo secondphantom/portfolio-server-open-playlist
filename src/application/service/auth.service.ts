@@ -25,8 +25,8 @@ export type ServiceSingInDto = {
   password: string;
 };
 
-export type ServiceVerifyIsLoginDto = {
-  token: string;
+export type ServiceVerifyAccessTokenDto = {
+  accessToken: string;
 };
 
 type C_ENV = Pick<ENV, "DATABASE_HOST" | "DOMAIN_URL" | "SERVICE_NAME">;
@@ -266,6 +266,27 @@ export class AuthService {
     return { accessToken, refreshToken };
   };
 
-  // verify-is-login
+  // GET /auth/verify-access-token
+  verifyAccessToken = async ({ accessToken }: ServiceVerifyAccessTokenDto) => {
+    const isValidToken = await this.jwtUtil.verifyAuthAccess(accessToken);
+    if (!isValidToken) {
+      throw new ServerError({
+        code: 401,
+        message: "Unauthorized",
+      });
+    }
+
+    const { payload } = this.jwtUtil.decode<{
+      userId: number;
+      role: number;
+      uuid: string;
+      exp: number;
+    }>(accessToken);
+
+    return {
+      role: payload.role,
+    };
+  };
+
   // find-password
 }

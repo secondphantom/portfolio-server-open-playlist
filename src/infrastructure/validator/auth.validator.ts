@@ -6,12 +6,9 @@ import {
   RequestAuthSignInBody,
   RequestAuthSignUpBody,
   RequestAuthVerifyEmailQuery,
+  RequestVerifyAccessTokenCookies,
 } from "../../requests/auth/auth.requests";
 import { ServerError } from "../../dto/error";
-import {
-  ServiceResendVerificationEmailDto,
-  ServiceSingInDto,
-} from "../../application/service/auth.service";
 
 export class AuthValidator implements IAuthValidator {
   static instance: AuthValidator | undefined;
@@ -117,6 +114,24 @@ export class AuthValidator implements IAuthValidator {
   signIn = (body: RequestAuthSignInBody) => {
     try {
       const dto = this.requestAuthSignInBody.parse(body);
+      return dto;
+    } catch (error) {
+      throw new ServerError({
+        code: 400,
+        message: "Invalid Input",
+      });
+    }
+  };
+
+  private requestVerifyAccessTokenCookies = z
+    .object({
+      accessToken: z.string().min(10),
+    })
+    .strict();
+
+  verifyAccessToken = (cookies: RequestVerifyAccessTokenCookies) => {
+    try {
+      const dto = this.requestVerifyAccessTokenCookies.parse(cookies);
       return dto;
     } catch (error) {
       throw new ServerError({

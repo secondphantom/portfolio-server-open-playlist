@@ -1,4 +1,4 @@
-import { Router, createCors } from "itty-router";
+import { Router, createCors, withCookies } from "itty-router";
 import { ENV } from "../env";
 import { AuthController } from "../controller/auth/auth.controller";
 import { AuthService } from "../application/service/auth.service";
@@ -103,6 +103,18 @@ export class WranglerSever {
 
       return this.createJsonResponse(result);
     });
+
+    this.app.get(
+      "/api/auth/verify-access-token",
+      withCookies,
+      async ({ cookies }) => {
+        const result = await this.authController.verifyAccessToken({
+          accessToken: cookies["AccessToken"],
+        });
+
+        return this.createJsonResponse(result);
+      }
+    );
   };
 
   private createJsonResponse = async (

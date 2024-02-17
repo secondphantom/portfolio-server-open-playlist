@@ -6,6 +6,7 @@ import {
   RequestAuthSignInBody,
   RequestAuthSignUpBody,
   RequestAuthVerifyEmailQuery,
+  RequestVerifyAccessTokenCookies,
 } from "../../requests/auth/auth.requests";
 import { IAuthValidator } from "./auth.interface";
 
@@ -122,6 +123,30 @@ export class AuthController {
         payload: {
           success: true,
           message: "Success Sign In",
+        },
+      });
+    } catch (error) {
+      const { code, message } = errorResolver(error);
+      return new ControllerResponse({
+        code,
+        payload: {
+          success: false,
+          message,
+        },
+      });
+    }
+  };
+
+  verifyAccessToken = async (cookies: RequestVerifyAccessTokenCookies) => {
+    try {
+      const dto = this.authValidator.verifyAccessToken(cookies);
+      const data = await this.authService.verifyAccessToken(dto);
+
+      return new ControllerResponse({
+        code: 200,
+        payload: {
+          success: true,
+          data,
         },
       });
     } catch (error) {

@@ -16,3 +16,7 @@ export type RequestAuthSignInBody = {
   username: string;
   email: string;
 };
+
+export type RequestVerifyAccessTokenCookies = {
+  accessToken: string;
+};
