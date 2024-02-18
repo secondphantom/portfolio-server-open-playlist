@@ -76,11 +76,10 @@ export class CourseDomain {
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
     this.publishedAt = publishedAt;
-    this.updateChaptersByDescription();
   }
 
   updateChaptersByDescription = () => {
-    if (this.description) return;
+    if (!this.description) return;
 
     const matches = this.description.match(
       /.*?((?:([0-5]?[0-9]):)?([0-5]?[0-9]):([0-5][0-9])).*/g
