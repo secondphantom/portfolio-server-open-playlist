@@ -1,6 +1,6 @@
 import z from "zod";
 
-import { IAuthValidator } from "../../controller/auth/auth.interface";
+import { IAuthRequestValidator } from "../../controller/auth/auth.interface";
 import {
   RequestAuthResendVerificationEmailBody,
   RequestAuthSignInBody,
@@ -11,11 +11,11 @@ import {
 } from "../../requests/auth/auth.requests";
 import { ServerError } from "../../dto/error";
 
-export class AuthValidator implements IAuthValidator {
-  static instance: AuthValidator | undefined;
+export class AuthRequestValidator implements IAuthRequestValidator {
+  static instance: AuthRequestValidator | undefined;
   static getInstance = () => {
     if (this.instance) return this.instance;
-    this.instance = new AuthValidator();
+    this.instance = new AuthRequestValidator();
     return this.instance;
   };
 

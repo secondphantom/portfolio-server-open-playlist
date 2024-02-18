@@ -11,30 +11,30 @@ import {
   RequestAuthVerifyEmailQuery,
   RequestAuthVerifyAccessTokenCookies,
 } from "../../requests/auth/auth.requests";
-import { IAuthValidator } from "./auth.interface";
+import { IAuthRequestValidator } from "./auth.interface";
 
 export class AuthController {
   static instance: AuthController | undefined;
   static getInstance = ({
     authService,
-    authValidator,
+    authRequestValidator,
   }: {
     authService: AuthService;
-    authValidator: IAuthValidator;
+    authRequestValidator: IAuthRequestValidator;
   }) => {
     if (this.instance) return this.instance;
-    this.instance = new AuthController(authValidator, authService);
+    this.instance = new AuthController(authRequestValidator, authService);
     return this.instance;
   };
 
   constructor(
-    private authValidator: IAuthValidator,
+    private authRequestValidator: IAuthRequestValidator,
     private authService: AuthService
   ) {}
 
   signUp = async (body: RequestAuthSignUpBody) => {
     try {
-      const dto = this.authValidator.signUp(body);
+      const dto = this.authRequestValidator.signUp(body);
       await this.authService.signUp(dto);
 
       return new ControllerResponse({
@@ -58,7 +58,7 @@ export class AuthController {
 
   verifyEmail = async (query: RequestAuthVerifyEmailQuery) => {
     try {
-      const dto = this.authValidator.verifyEmail(query);
+      const dto = this.authRequestValidator.verifyEmail(query);
       await this.authService.verifyEmail(dto);
 
       return new ControllerResponse({
@@ -84,7 +84,7 @@ export class AuthController {
     body: RequestAuthResendVerificationEmailBody
   ) => {
     try {
-      const dto = this.authValidator.resendVerificationEmail(body);
+      const dto = this.authRequestValidator.resendVerificationEmail(body);
       await this.authService.resendVerificationEmail(dto);
 
       return new ControllerResponse({
@@ -108,7 +108,7 @@ export class AuthController {
 
   signIn = async (body: RequestAuthSignInBody) => {
     try {
-      const dto = this.authValidator.signIn(body);
+      const dto = this.authRequestValidator.signIn(body);
       const { accessToken, refreshToken } = await this.authService.signIn(dto);
 
       return new ControllerResponse({
@@ -142,7 +142,7 @@ export class AuthController {
 
   verifyAccessToken = async (cookies: RequestAuthVerifyAccessTokenCookies) => {
     try {
-      const dto = this.authValidator.verifyAccessToken(cookies);
+      const dto = this.authRequestValidator.verifyAccessToken(cookies);
       const data = await this.authService.verifyAccessToken(dto);
 
       return new ControllerResponse({
@@ -166,7 +166,7 @@ export class AuthController {
 
   refreshAccessToken = async (cookies: ServiceAuthRefreshAccessTokenDto) => {
     try {
-      const dto = this.authValidator.refreshAccessToken(cookies);
+      const dto = this.authRequestValidator.refreshAccessToken(cookies);
       const { accessToken, refreshToken } =
         await this.authService.refreshAccessToken(dto);
 

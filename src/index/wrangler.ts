@@ -8,7 +8,7 @@ import { CryptoUtil } from "../infrastructure/crypto/crypto.util";
 import { JwtUtil } from "../infrastructure/jwt/jwt.util";
 import { EmailUtil } from "../infrastructure/email/email.util";
 import { ControllerResponse } from "../dto/response";
-import { AuthValidator } from "../infrastructure/validator/auth.validator";
+import { AuthRequestValidator } from "../infrastructure/validator/auth.request.validator";
 export class WranglerSever {
   static instance: WranglerSever;
 
@@ -40,11 +40,11 @@ export class WranglerSever {
       userRepo,
     });
 
-    const authValidator = AuthValidator.getInstance();
+    const authRequestValidator = AuthRequestValidator.getInstance();
 
     this.authController = AuthController.getInstance({
       authService,
-      authValidator,
+      authRequestValidator,
     });
 
     this.cors = createCors({

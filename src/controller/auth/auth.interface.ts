@@ -15,7 +15,7 @@ import {
   RequestAuthVerifyAccessTokenCookies,
 } from "../../requests/auth/auth.requests";
 
-export interface IAuthValidator {
+export interface IAuthRequestValidator {
   signUp: (body: RequestAuthSignUpBody) => ServiceAuthSignUpDto;
   verifyEmail: (
     query: RequestAuthVerifyEmailQuery
