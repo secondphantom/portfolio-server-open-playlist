@@ -11,6 +11,8 @@ import {
   uniqueIndex,
   int,
   primaryKey,
+  mediumint,
+  smallint,
 } from "drizzle-orm/mysql-core";
 
 export type UserExtra = {};
@@ -23,7 +25,7 @@ export const users = mysqlTable(
       .primaryKey()
       .autoincrement(),
     uuid: varchar("uuid", { length: 50 }).notNull(),
-    roleId: tinyint("role_id", { unsigned: true }).notNull().default(1),
+    roleId: smallint("role_id", { unsigned: true }).notNull().default(1),
     email: varchar("email", { length: 320 }).notNull(),
     hashKey: varchar("hash_key", { length: 200 }).notNull(),
     isEmailVerified: boolean("is_email_verified").notNull().default(false),
@@ -49,7 +51,7 @@ export const users = mysqlTable(
 export const channels = mysqlTable("channels", {
   channelId: varchar("channel_id", { length: 50 }).primaryKey().notNull(),
   name: varchar("name", { length: 60 }).notNull(),
-  handle: varchar("handle", { length: 50 }).notNull(),
+  handle: varchar("handle", { length: 50 }).notNull().default(""),
   enrollCount: int("enroll_count", { unsigned: true }).notNull().default(0),
   createdAt: datetime("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
@@ -59,7 +61,7 @@ export const channels = mysqlTable("channels", {
     .notNull(),
 });
 
-export type CourseChapters = {};
+export type CourseChapter = { title: string; time: number };
 export type CourseExtra = {};
 
 export const courses = mysqlTable(
@@ -75,9 +77,11 @@ export const courses = mysqlTable(
     language: varchar("language", { length: 10 }).notNull(),
     title: varchar("title", { length: 110 }).notNull(),
     description: varchar("description", { length: 5010 }).notNull(),
-    chapters: json("chapters").notNull().$type<CourseChapters>(),
+    summary: varchar("summary", { length: 10000 }),
+    chapters: json("chapters").notNull().$type<CourseChapter[]>(),
     enrollCount: int("enroll_count", { unsigned: true }).notNull().default(0),
     generatedAi: boolean("generated_ai").notNull().default(false),
+    duration: mediumint("duration", { unsigned: true }).notNull(),
     extra: json("extra").notNull().$type<CourseExtra>(),
     createdAt: datetime("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
@@ -101,7 +105,7 @@ export const courses = mysqlTable(
   }
 );
 
-export type EnrollProgress = {};
+export type EnrollProgress = [];
 
 export const enrolls = mysqlTable(
   "enrolls",
@@ -138,7 +142,7 @@ export const categories = mysqlTable("categories", {
 });
 
 export const roles = mysqlTable("roles", {
-  id: int("id", { unsigned: true }).notNull().primaryKey().autoincrement(),
+  id: smallint("id", { unsigned: true }).notNull().primaryKey().autoincrement(),
   name: varchar("name", { length: 100 }).notNull(),
 });
 
