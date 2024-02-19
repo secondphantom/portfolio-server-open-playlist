@@ -21,7 +21,7 @@ model Users {
   is_email_verified Boolean  @default(false) @db.UnsignedTinyInt()
   profile_name      String   @db.VarChar(100)
   profile_image     String?  @db.VarChar(300)
-  extra             Json
+  extra             Json     @db.Json()
   created_at        DateTime @default(now())
   updated_at        DateTime @default(now()) @updatedAt
 
@@ -35,6 +35,7 @@ model Channels {
   name         String   @db.VarChar(60)
   handle       String   @db.VarChar(50)
   enroll_count Int      @default(0) @db.UnsignedInt
+  extra        Json     @db.Json()
   created_at   DateTime @default(now())
   updated_at   DateTime @default(now()) @updatedAt
 
@@ -50,14 +51,14 @@ model Courses {
   title        String   @db.VarChar(110)
   description  String   @db.VarChar(5010)
   summary      String?  @db.VarChar(10000)
-  chapters     Json
+  chapters     Json     @db.Json()
   enroll_count Int      @db.UnsignedInt()
   generated_ai Boolean  @default(false) @db.UnsignedTinyInt()
   duration     Int      @db.UnsignedMediumInt()
-  extra        Json
+  extra        Json     @db.Json()
   created_at   DateTime @default(now())
   updated_at   DateTime @default(now()) @updatedAt
-  published_at DateTime @db.DateTime()
+  published_at DateTime
 
   @@unique([video_id])
   @@index([channel_id])
@@ -71,11 +72,12 @@ model Courses {
 }
 
 model Enrolls {
-  user_id    BigInt   @db.UnsignedBigInt()
-  course_id  BigInt   @db.UnsignedBigInt()
-  progress   Json
-  created_at DateTime @default(now())
-  updated_at DateTime @default(now()) @updatedAt
+  user_id          BigInt   @db.UnsignedBigInt()
+  course_id        BigInt   @db.UnsignedBigInt()
+  chapter_progress Json     @db.Json()
+  total_progress   Float    @db.Float()
+  created_at       DateTime @default(now())
+  updated_at       DateTime @default(now()) @updatedAt
 
   @@id([user_id, course_id])
   @@index([course_id])

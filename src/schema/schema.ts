@@ -13,6 +13,7 @@ import {
   primaryKey,
   mediumint,
   smallint,
+  float,
 } from "drizzle-orm/mysql-core";
 
 export type UserExtra = {};
@@ -48,11 +49,14 @@ export const users = mysqlTable(
   }
 );
 
+export type ChannelExtra = {};
+
 export const channels = mysqlTable("Channels", {
   channelId: varchar("channel_id", { length: 50 }).primaryKey().notNull(),
   name: varchar("name", { length: 60 }).notNull(), //FULL TEXT
   handle: varchar("handle", { length: 50 }).notNull().default(""),
   enrollCount: int("enroll_count", { unsigned: true }).notNull().default(0),
+  extra: json("extra").notNull().$type<ChannelExtra>(),
   createdAt: datetime("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
@@ -105,14 +109,20 @@ export const courses = mysqlTable(
   }
 );
 
-export type EnrollProgress = [];
+export type EnrollChapterProgress = {
+  time: number;
+  progress: number;
+};
 
 export const enrolls = mysqlTable(
   "Enrolls",
   {
     userId: bigint("user_id", { unsigned: true, mode: "number" }).notNull(),
     courseId: bigint("course_id", { unsigned: true, mode: "number" }).notNull(),
-    progress: json("progress").notNull().$type<EnrollProgress>(),
+    chapterProgress: json("chapter_progress")
+      .notNull()
+      .$type<EnrollChapterProgress[]>(),
+    totalProgress: float("total_progress").default(0).notNull(),
     createdAt: datetime("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
