@@ -23,7 +23,7 @@ model Users {
   profile_image     String?  @db.VarChar(300)
   extra             Json
   created_at        DateTime @default(now())
-  updated_at        DateTime @updatedAt
+  updated_at        DateTime @default(now()) @updatedAt
 
   @@unique([email])
   @@index([role_id])
@@ -36,7 +36,7 @@ model Channels {
   handle       String   @db.VarChar(50)
   enroll_count Int      @default(0) @db.UnsignedInt
   created_at   DateTime @default(now())
-  updated_at   DateTime @updatedAt
+  updated_at   DateTime @default(now()) @updatedAt
 
   @@fulltext([name])
 }
@@ -49,14 +49,14 @@ model Courses {
   language     String   @db.VarChar(10)
   title        String   @db.VarChar(110)
   description  String   @db.VarChar(5010)
-  summary      String   @db.VarChar(10000)
+  summary      String?  @db.VarChar(10000)
   chapters     Json
   enroll_count Int      @db.UnsignedInt()
   generated_ai Boolean  @default(false) @db.UnsignedTinyInt()
   duration     Int      @db.UnsignedMediumInt()
   extra        Json
   created_at   DateTime @default(now())
-  updated_at   DateTime @updatedAt
+  updated_at   DateTime @default(now()) @updatedAt
   published_at DateTime @db.DateTime()
 
   @@unique([video_id])
@@ -75,7 +75,7 @@ model Enrolls {
   course_id  BigInt   @db.UnsignedBigInt()
   progress   Json
   created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  updated_at DateTime @default(now()) @updatedAt
 
   @@id([user_id, course_id])
   @@index([course_id])
