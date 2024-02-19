@@ -18,7 +18,7 @@ import {
 export type UserExtra = {};
 
 export const users = mysqlTable(
-  "users",
+  "Users",
   {
     id: bigint("id", { unsigned: true, mode: "number" })
       .notNull()
@@ -35,7 +35,7 @@ export const users = mysqlTable(
     createdAt: datetime("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
-    updatedAt: datetime("updatedAt")
+    updatedAt: datetime("updated_at")
       .default(sql`CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`)
       .notNull(),
   },
@@ -43,20 +43,20 @@ export const users = mysqlTable(
     return {
       idxRole: index("idx_role").on(table.roleId),
       uqEmail: uniqueIndex("uq_email").on(table.email),
-      idxCreatedAt: index("idx_created_at").on(table.createdAt),
+      idxCreatedAt: index("idx_created_at").on(table.createdAt), // DESC
     };
   }
 );
 
-export const channels = mysqlTable("channels", {
+export const channels = mysqlTable("Channels", {
   channelId: varchar("channel_id", { length: 50 }).primaryKey().notNull(),
-  name: varchar("name", { length: 60 }).notNull(),
+  name: varchar("name", { length: 60 }).notNull(), //FULL TEXT
   handle: varchar("handle", { length: 50 }).notNull().default(""),
   enrollCount: int("enroll_count", { unsigned: true }).notNull().default(0),
   createdAt: datetime("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
-  updatedAt: datetime("updatedAt")
+  updatedAt: datetime("updated_at")
     .default(sql`CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`)
     .notNull(),
 });
@@ -65,7 +65,7 @@ export type CourseChapter = { title: string; time: number };
 export type CourseExtra = {};
 
 export const courses = mysqlTable(
-  "courses",
+  "Courses",
   {
     id: bigint("id", { unsigned: true, mode: "number" })
       .notNull()
@@ -75,7 +75,7 @@ export const courses = mysqlTable(
     channelId: varchar("channel_id", { length: 50 }).notNull(),
     categoryId: int("category_id", { unsigned: true }).notNull().default(0),
     language: varchar("language", { length: 10 }).notNull(),
-    title: varchar("title", { length: 110 }).notNull(),
+    title: varchar("title", { length: 110 }).notNull(), //FULL TEXT
     description: varchar("description", { length: 5010 }).notNull(),
     summary: varchar("summary", { length: 10000 }),
     chapters: json("chapters").notNull().$type<CourseChapter[]>(),
@@ -86,7 +86,7 @@ export const courses = mysqlTable(
     createdAt: datetime("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
-    updatedAt: datetime("updatedAt")
+    updatedAt: datetime("updated_at")
       .default(sql`CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`)
       .notNull(),
     publishedAt: datetime("published_at").notNull(),
@@ -97,10 +97,10 @@ export const courses = mysqlTable(
       idxChannelId: index("idx_channel_id").on(table.channelId),
       idxCategoryId: index("idx_category_id").on(table.categoryId),
       idxLanguage: index("idx_language").on(table.language),
-      idxEnrollCount: index("idx_enroll_count").on(table.enrollCount),
+      idxEnrollCount: index("idx_enroll_count").on(table.enrollCount), // DESC
       idxGeneratedAi: index("idx_generated_ai").on(table.generatedAi),
-      idxCreatedAt: index("idx_created_at").on(table.createdAt),
-      idxPublishedAt: index("idx_published_at").on(table.publishedAt),
+      idxCreatedAt: index("idx_created_at").on(table.createdAt), // DESC
+      idxPublishedAt: index("idx_published_at").on(table.publishedAt), // DESC
     };
   }
 );
@@ -108,15 +108,15 @@ export const courses = mysqlTable(
 export type EnrollProgress = [];
 
 export const enrolls = mysqlTable(
-  "enrolls",
+  "Enrolls",
   {
     userId: bigint("user_id", { unsigned: true, mode: "number" }).notNull(),
     courseId: bigint("course_id", { unsigned: true, mode: "number" }).notNull(),
-    progress: json("chapters").notNull().$type<EnrollProgress>(),
+    progress: json("progress").notNull().$type<EnrollProgress>(),
     createdAt: datetime("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
-    updatedAt: datetime("updatedAt")
+    updatedAt: datetime("updated_at")
       .default(sql`CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`)
       .notNull(),
   },
@@ -126,23 +126,32 @@ export const enrolls = mysqlTable(
       idxCourseId: index("idx_course_id").on(table.courseId),
       idxUserIdCreatedAt: index("idx_user_id_created_at").on(
         table.userId,
-        table.createdAt
+        table.createdAt // desc
       ),
       idxUserIdUpdatedAt: index("idx_user_id_updated_at").on(
         table.userId,
-        table.updatedAt
+        table.updatedAt // desc
       ),
     };
   }
 );
 
-export const categories = mysqlTable("categories", {
-  id: int("id", { unsigned: true }).notNull().primaryKey().autoincrement(),
-  name: varchar("name", { length: 100 }).notNull(),
-});
+export const categories = mysqlTable(
+  "Categories",
+  {
+    id: int("id", { unsigned: true }).notNull().primaryKey().autoincrement(),
+    name: varchar("name", { length: 100 }).notNull(),
+    parentId: int("parent_id", { unsigned: true }).notNull(),
+  },
+  (table) => {
+    return {
+      idxParentId: index("idx_parent_id").on(table.parentId),
+    };
+  }
+);
 
-export const roles = mysqlTable("roles", {
-  id: smallint("id", { unsigned: true }).notNull().primaryKey().autoincrement(),
+export const roles = mysqlTable("Roles", {
+  id: int("id", { unsigned: true }).notNull().primaryKey(),
   name: varchar("name", { length: 100 }).notNull(),
 });
 
