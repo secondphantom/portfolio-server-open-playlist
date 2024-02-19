@@ -1,4 +1,4 @@
-import { Router, createCors, withCookies } from "itty-router";
+import { IRequest, Router, createCors, withCookies } from "itty-router";
 import { ENV } from "../env";
 import { AuthController } from "../controller/auth/auth.controller";
 import { AuthService } from "../application/service/auth.service";
@@ -9,6 +9,12 @@ import { JwtUtil } from "../infrastructure/jwt/jwt.util";
 import { EmailUtil } from "../infrastructure/email/email.util";
 import { ControllerResponse } from "../dto/response";
 import { AuthRequestValidator } from "../infrastructure/validator/auth.request.validator";
+import { CourseRequestValidator } from "../infrastructure/validator/course.request.validator";
+import { CourseController } from "../controller/course/course.controller";
+import { CourseService } from "../application/service/course.service";
+import { CourseRepo } from "../infrastructure/repo/course.repo";
+import { ChannelRepo } from "../infrastructure/repo/channel.repo";
+import { YoutubeApi } from "../infrastructure/youtubue/youtube.api";
 export class WranglerSever {
   static instance: WranglerSever;
 
@@ -21,16 +27,26 @@ export class WranglerSever {
   private cors: ReturnType<typeof createCors>;
 
   private authController: AuthController;
+  private courseController: CourseController;
 
   private app = Router();
+  private verifyAuthMiddleware: ({
+    cookies,
+  }: IRequest) => Promise<Response | undefined>;
 
   constructor(private env: ENV) {
     const dbClient = DrizzleClient.getInstance(this.env);
     const cryptoUtil = CryptoUtil.getInstance();
     const jwtUtil = JwtUtil.getInstance(this.env);
     const emailUtil = EmailUtil.getInstance();
+    const youtubeApi = YoutubeApi.getInstance(this.env);
 
     const userRepo = UserRepo.getInstance(dbClient);
+    const courseRepo = CourseRepo.getInstance(dbClient);
+    const channelRepo = ChannelRepo.getInstance(dbClient);
+
+    const authRequestValidator = AuthRequestValidator.getInstance();
+    const courseRequestValidator = CourseRequestValidator.getInstance();
 
     const authService = AuthService.getInstance({
       cryptoUtil,
@@ -40,15 +56,34 @@ export class WranglerSever {
       userRepo,
     });
 
-    const authRequestValidator = AuthRequestValidator.getInstance();
+    const courseService = CourseService.getInstance({
+      channelRepo,
+      courseRepo,
+      youtubeApi,
+    });
 
     this.authController = AuthController.getInstance({
       authService,
       authRequestValidator,
     });
 
+    this.courseController = CourseController.getInstance({
+      courseRequestValidator,
+      courseService,
+    });
+
+    this.verifyAuthMiddleware = async ({ cookies }: IRequest) => {
+      const result = await this.authController.verifyAccessToken({
+        accessToken: cookies["AccessToken"],
+      });
+
+      if (result.getResponse().code >= 300) {
+        return this.createJsonResponse(result);
+      }
+    };
+
     this.cors = createCors({
-      methods: ["GET"],
+      methods: ["GET", "POST"],
       origins: [...this.env.CORS_ALLOW_ORIGIN.split(",")],
     });
 
@@ -57,6 +92,7 @@ export class WranglerSever {
     });
 
     this.initAuthRouter();
+    this.initCourseRouter();
 
     this.app.all(
       "*",
@@ -124,6 +160,19 @@ export class WranglerSever {
           refreshToken: cookies["RefreshToken"],
         });
 
+        return this.createJsonResponse(result);
+      }
+    );
+  };
+
+  private initCourseRouter = () => {
+    this.app.post(
+      "/api/courses",
+      withCookies,
+      this.verifyAuthMiddleware,
+      async (req) => {
+        const body = await req.json();
+        const result = await this.courseController.createCourse(body as any);
         return this.createJsonResponse(result);
       }
     );
