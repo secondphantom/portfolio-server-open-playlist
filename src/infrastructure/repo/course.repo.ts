@@ -1,10 +1,11 @@
 import * as schema from "../../schema/schema";
-import { ICourseRepo } from "../../application/interfaces/course.repo";
+
 import {
   CourseEntitySelect,
   RepoCreateCourseDto,
 } from "../../domain/course.domain";
 import { DrizzleClient } from "../db/drizzle.client";
+import { ICourseRepo } from "../../application/interfaces/course.repo";
 
 export class CourseRepo implements ICourseRepo {
   static instance: CourseRepo | undefined;
@@ -29,6 +30,26 @@ export class CourseRepo implements ICourseRepo {
     const course = await this.db.query.courses.findFirst({
       where: (course, { eq }) => {
         return eq(course.videoId, videoId);
+      },
+      columns: columns
+        ? (columns as { [key in keyof CourseEntitySelect]: boolean })
+        : undefined,
+    });
+
+    return course;
+  };
+
+  getCourseById = async <T extends keyof CourseEntitySelect>(
+    id: number,
+    columns?:
+      | {
+          [key in T]?: boolean;
+        }
+      | { [key in keyof CourseEntitySelect]?: boolean }
+  ) => {
+    const course = await this.db.query.courses.findFirst({
+      where: (course, { eq }) => {
+        return eq(course.id, id);
       },
       columns: columns
         ? (columns as { [key in keyof CourseEntitySelect]: boolean })

@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { ICourseRepo } from "../../../application/interfaces/course.repo";
+import { ICourseRepo } from "../../../application/interfaces/ICourseRepo";
 import { DrizzleClient } from "../../../infrastructure/db/drizzle.client";
 import { CourseRepo } from "../../../infrastructure/repo/course.repo";
 import { RepoCreateCourseDto } from "../../../domain/course.domain";
@@ -56,5 +56,11 @@ describe("course repo", () => {
     for (const [key, value] of Object.entries(course!)) {
       expect(value).toEqual(createCourseDto[key as any as keyof typeof course]);
     }
+  });
+
+  test.only("get course by id", async () => {
+    const course = await courseRepo.getCourseById(1, { id: true });
+
+    expect(course?.id).toEqual(1);
   });
 });
