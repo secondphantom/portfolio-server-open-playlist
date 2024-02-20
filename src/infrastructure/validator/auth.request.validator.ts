@@ -8,7 +8,7 @@ import {
   RequestAuthVerifyEmailQuery,
   RequestAuthRefreshAccessTokenCookies,
   RequestAuthVerifyAccessTokenCookies,
-} from "../../requests/auth/auth.requests";
+} from "../../spec/auth/auth.requests";
 import { ServerError } from "../../dto/error";
 
 export class AuthRequestValidator implements IAuthRequestValidator {

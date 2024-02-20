@@ -1,7 +1,7 @@
 import { MeService } from "../../application/service/me.service";
 import { errorResolver } from "../../dto/error.resolver";
 import { ControllerResponse } from "../../dto/response";
-import { RequestMeCreateEnrollBody } from "../../requests/me/me.request";
+import { RequestMeCreateEnrollBody } from "../../spec/me/me.request";
 import { IMeRequestValidator } from "./me.interfcae";
 
 export class MeController {

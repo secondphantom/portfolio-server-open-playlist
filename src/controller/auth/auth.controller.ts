@@ -10,7 +10,7 @@ import {
   RequestAuthSignUpBody,
   RequestAuthVerifyEmailQuery,
   RequestAuthVerifyAccessTokenCookies,
-} from "../../requests/auth/auth.requests";
+} from "../../spec/auth/auth.requests";
 import { IAuthRequestValidator } from "./auth.interface";
 
 export class AuthController {

@@ -12,7 +12,7 @@ import { AuthRequestValidator } from "../infrastructure/validator/auth.request.v
 import { CourseRequestValidator } from "../infrastructure/validator/course.request.validator";
 import { CourseController } from "../controller/course/course.controller";
 import { CourseService } from "../application/service/course.service";
-import { CourseRepo } from "../infrastructure/repo/course.repo";
+import CourseRepo from "../infrastructure/repo/course.repo";
 import { ChannelRepo } from "../infrastructure/repo/channel.repo";
 import { YoutubeApi } from "../infrastructure/youtubue/youtube.api";
 import { MeRequestValidator } from "../infrastructure/validator/me.request.validator";

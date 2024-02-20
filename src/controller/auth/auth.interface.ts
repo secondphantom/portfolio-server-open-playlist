@@ -13,7 +13,7 @@ import {
   RequestAuthVerifyEmailQuery,
   RequestAuthRefreshAccessTokenCookies,
   RequestAuthVerifyAccessTokenCookies,
-} from "../../requests/auth/auth.requests";
+} from "../../spec/auth/auth.requests";
 
 export interface IAuthRequestValidator {
   signUp: (body: RequestAuthSignUpBody) => ServiceAuthSignUpDto;

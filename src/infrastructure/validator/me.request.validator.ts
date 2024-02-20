@@ -2,7 +2,7 @@ import z from "zod";
 
 import { ServiceMeCreateEnrollDto } from "../../application/service/me.service";
 import { IMeRequestValidator } from "../../controller/me/me.interfcae";
-import { RequestMeCreateEnrollBody } from "../../requests/me/me.request";
+import { RequestMeCreateEnrollBody } from "../../spec/me/me.request";
 import { ServerError } from "../../dto/error";
 
 export class MeRequestValidator implements IMeRequestValidator {
