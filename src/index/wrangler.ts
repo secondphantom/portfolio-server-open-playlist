@@ -20,13 +20,18 @@ import { MeService } from "../application/service/me.service";
 import { EnrollRepo } from "../infrastructure/repo/enroll.repo";
 import { MeController } from "../controller/me/me.controller";
 
-type AuthRequest = {
+type AuthPayload = {
   userId: number;
   uuid: string;
   role: number;
 };
-type IRequestWithAuth = IRequest & {
-  auth: AuthRequest;
+
+type AuthRequest = {
+  auth: AuthPayload;
+};
+
+type ContentRequest<T = any> = {
+  content: T;
 };
 
 export class WranglerSever {
@@ -44,6 +49,9 @@ export class WranglerSever {
   private verifyAuthMiddleware: ({
     cookies,
   }: IRequest) => Promise<Response | undefined>;
+  private withContentMiddleware: (
+    req: IRequest
+  ) => Promise<Response | undefined>;
 
   private authController: AuthController;
   private courseController: CourseController;
@@ -108,9 +116,26 @@ export class WranglerSever {
         return this.createJsonResponse(result);
       }
 
-      const payload = result.getResponse().payload.data as AuthRequest;
+      const payload = result.getResponse().payload.data as AuthPayload;
 
       req.auth = payload;
+    };
+
+    this.withContentMiddleware = async (req: IRequest) => {
+      try {
+        const content = await req.json();
+        req.content = content;
+      } catch (error) {
+        return this.createJsonResponse(
+          new ControllerResponse({
+            code: 400,
+            payload: {
+              success: false,
+              message: "Invalid Input",
+            },
+          })
+        );
+      }
     };
 
     this.cors = createCors({
@@ -126,29 +151,31 @@ export class WranglerSever {
     this.initCourseRouter();
     this.initMeRouter();
 
-    this.app.all(
-      "*",
-      () =>
-        new Response(
-          JSON.stringify({
+    this.app.all("*", () =>
+      this.createJsonResponse(
+        new ControllerResponse({
+          code: 404,
+          payload: {
             success: false,
             message: "Not Found",
-          }),
-          {
-            status: 404,
-          }
-        )
+          },
+        })
+      )
     );
   }
 
   private initAuthRouter = () => {
-    this.app.post("/api/auth/sign-up", async (req) => {
-      const body = await req.json();
+    this.app.post(
+      "/api/auth/sign-up",
+      this.withContentMiddleware,
+      async (req) => {
+        const content = req.content;
 
-      const result = await this.authController.signUp(body as any);
+        const result = await this.authController.signUp(content);
 
-      return this.createJsonResponse(result);
-    });
+        return this.createJsonResponse(result);
+      }
+    );
 
     this.app.get("/api/auth/verify-email", async ({ query }) => {
       const result = await this.authController.verifyEmail(query as any);
@@ -156,21 +183,29 @@ export class WranglerSever {
       return this.createJsonResponse(result);
     });
 
-    this.app.post("/api/auth/resend-verification-email", async (req) => {
-      const body = await req.json();
-      const result = await this.authController.resendVerificationEmail(
-        body as any
-      );
+    this.app.post(
+      "/api/auth/resend-verification-email",
+      this.withContentMiddleware,
+      async (req) => {
+        const content = req.content;
+        const result = await this.authController.resendVerificationEmail(
+          content
+        );
 
-      return this.createJsonResponse(result);
-    });
+        return this.createJsonResponse(result);
+      }
+    );
 
-    this.app.post("/api/auth/sign-in", async (req) => {
-      const body = await req.json();
-      const result = await this.authController.signIn(body as any);
+    this.app.post(
+      "/api/auth/sign-in",
+      this.withContentMiddleware,
+      async (req: IRequest & ContentRequest) => {
+        const content = req.content;
+        const result = await this.authController.signIn(content);
 
-      return this.createJsonResponse(result);
-    });
+        return this.createJsonResponse(result);
+      }
+    );
 
     this.app.get(
       "/api/auth/verify-access-token",
@@ -202,9 +237,10 @@ export class WranglerSever {
       "/api/courses",
       withCookies,
       this.verifyAuthMiddleware,
-      async (req) => {
-        const body = await req.json();
-        const result = await this.courseController.createCourse(body as any);
+      this.withContentMiddleware,
+      async (req: IRequest & AuthRequest & ContentRequest) => {
+        const content = req.content;
+        const result = await this.courseController.createCourse(content);
         return this.createJsonResponse(result);
       }
     );
@@ -215,11 +251,12 @@ export class WranglerSever {
       "/api/me/enrolls",
       withCookies,
       this.verifyAuthMiddleware,
-      async (req: IRequestWithAuth) => {
+      this.withContentMiddleware,
+      async (req: IRequest & AuthRequest & ContentRequest) => {
         const auth = req.auth;
-        const body = (await req.json()) as any;
+        const content = req.content;
         const result = await this.meController.createEnroll({
-          courseId: body["courseId"],
+          courseId: content["courseId"],
           userId: auth["userId"],
         });
         return this.createJsonResponse(result);
