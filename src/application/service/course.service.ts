@@ -9,6 +9,11 @@ export type ServiceCourseCreateDto = {
   videoId: string;
 };
 
+export type ServiceCourseGetByIdDto = {
+  userId?: number;
+  courseId: number;
+};
+
 export class CourseService {
   static instance: CourseService | undefined;
   static getInstance = (inputs: {
@@ -88,5 +93,50 @@ export class CourseService {
     await this.courseRepo.createCourse(createCourseDto);
   };
   // [GET] /courses/:id
+  getCourseById = async (dto: ServiceCourseGetByIdDto) => {
+    const course = await this.courseRepo.getCourseByIdWith(
+      {
+        courseId: dto.courseId,
+        userId: dto.userId,
+      },
+      {
+        course: {
+          id: true,
+          videoId: true,
+          language: true,
+          title: true,
+          description: true,
+          summary: true,
+          chapters: true,
+          enrollCount: true,
+          duration: true,
+          createdAt: true,
+          publishedAt: true,
+        },
+        channel: {
+          channelId: true,
+          name: true,
+        },
+        enroll: {
+          userId: true,
+          totalProgress: true,
+          updatedAt: true,
+        },
+        category: {
+          id: true,
+          name: true,
+        },
+      }
+    );
+
+    if (!course) {
+      throw new ServerError({
+        code: 404,
+        message: "Not Found",
+      });
+    }
+
+    return course;
+  };
   // [GET] /courses?
 }
