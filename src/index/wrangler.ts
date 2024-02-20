@@ -15,6 +15,20 @@ import { CourseService } from "../application/service/course.service";
 import { CourseRepo } from "../infrastructure/repo/course.repo";
 import { ChannelRepo } from "../infrastructure/repo/channel.repo";
 import { YoutubeApi } from "../infrastructure/youtubue/youtube.api";
+import { MeRequestValidator } from "../infrastructure/validator/me.request.validator";
+import { MeService } from "../application/service/me.service";
+import { EnrollRepo } from "../infrastructure/repo/enroll.repo";
+import { MeController } from "../controller/me/me.controller";
+
+type AuthRequest = {
+  userId: number;
+  uuid: string;
+  role: number;
+};
+type IRequestWithAuth = IRequest & {
+  auth: AuthRequest;
+};
+
 export class WranglerSever {
   static instance: WranglerSever;
 
@@ -26,13 +40,14 @@ export class WranglerSever {
 
   private cors: ReturnType<typeof createCors>;
 
-  private authController: AuthController;
-  private courseController: CourseController;
-
   private app = Router();
   private verifyAuthMiddleware: ({
     cookies,
   }: IRequest) => Promise<Response | undefined>;
+
+  private authController: AuthController;
+  private courseController: CourseController;
+  private meController: MeController;
 
   constructor(private env: ENV) {
     const dbClient = DrizzleClient.getInstance(this.env);
@@ -44,9 +59,11 @@ export class WranglerSever {
     const userRepo = UserRepo.getInstance(dbClient);
     const courseRepo = CourseRepo.getInstance(dbClient);
     const channelRepo = ChannelRepo.getInstance(dbClient);
+    const enrollRepo = EnrollRepo.getInstance(dbClient);
 
     const authRequestValidator = AuthRequestValidator.getInstance();
     const courseRequestValidator = CourseRequestValidator.getInstance();
+    const meRequestValidator = MeRequestValidator.getInstance();
 
     const authService = AuthService.getInstance({
       cryptoUtil,
@@ -62,6 +79,11 @@ export class WranglerSever {
       youtubeApi,
     });
 
+    const meService = MeService.getInstance({
+      courseRepo,
+      enrollRepo,
+    });
+
     this.authController = AuthController.getInstance({
       authService,
       authRequestValidator,
@@ -72,14 +94,23 @@ export class WranglerSever {
       courseService,
     });
 
-    this.verifyAuthMiddleware = async ({ cookies }: IRequest) => {
+    this.meController = MeController.getInstance({
+      meRequestValidator,
+      meService,
+    });
+
+    this.verifyAuthMiddleware = async (req: IRequest) => {
       const result = await this.authController.verifyAccessToken({
-        accessToken: cookies["AccessToken"],
+        accessToken: req.cookies["AccessToken"],
       });
 
       if (result.getResponse().code >= 300) {
         return this.createJsonResponse(result);
       }
+
+      const payload = result.getResponse().payload.data as AuthRequest;
+
+      req.auth = payload;
     };
 
     this.cors = createCors({
@@ -93,6 +124,7 @@ export class WranglerSever {
 
     this.initAuthRouter();
     this.initCourseRouter();
+    this.initMeRouter();
 
     this.app.all(
       "*",
@@ -173,6 +205,23 @@ export class WranglerSever {
       async (req) => {
         const body = await req.json();
         const result = await this.courseController.createCourse(body as any);
+        return this.createJsonResponse(result);
+      }
+    );
+  };
+
+  private initMeRouter = () => {
+    this.app.post(
+      "/api/me/enrolls",
+      withCookies,
+      this.verifyAuthMiddleware,
+      async (req: IRequestWithAuth) => {
+        const auth = req.auth;
+        const body = (await req.json()) as any;
+        const result = await this.meController.createEnroll({
+          courseId: body["courseId"],
+          userId: auth["userId"],
+        });
         return this.createJsonResponse(result);
       }
     );

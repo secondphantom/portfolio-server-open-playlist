@@ -292,6 +292,8 @@ export class AuthService {
 
     return {
       roleId: payload.roleId,
+      userId: payload.userId,
+      uuid: payload.uuid,
     };
   };
 
