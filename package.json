@@ -10,7 +10,8 @@
     "temp": "cross-env NODE_ENV=test node dist/infrastructure/db/drizzle.client.js",
     "migrations:generate": "drizzle-kit generate:mysql --config=drizzle.config.ts",
     "migrations:drop": "drizzle-kit drop --config=drizzle.config.ts",
-    "db-dev:push": "drizzle-kit push:mysql --config=drizzle.config.ts",
+    "drizzle-dev:push": "drizzle-kit push:mysql --config=drizzle.config.ts",
+    "prisma-dev:push": "npx prisma db push",
     "studio": "drizzle-kit studio"
   },
   "keywords": [],

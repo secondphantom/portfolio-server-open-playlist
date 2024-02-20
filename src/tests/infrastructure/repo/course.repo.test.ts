@@ -1,8 +1,8 @@
 import dotenv from "dotenv";
-import { ICourseRepo } from "../../../application/interfaces/ICourseRepo";
 import { DrizzleClient } from "../../../infrastructure/db/drizzle.client";
 import { CourseRepo } from "../../../infrastructure/repo/course.repo";
 import { RepoCreateCourseDto } from "../../../domain/course.domain";
+import { ICourseRepo } from "../../../application/interfaces/course.repo";
 dotenv.config();
 
 describe("course repo", () => {

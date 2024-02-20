@@ -122,7 +122,7 @@ export const enrolls = mysqlTable(
     chapterProgress: json("chapter_progress")
       .notNull()
       .$type<EnrollChapterProgress[]>(),
-    totalProgress: float("total_progress").default(0).notNull(),
+    totalProgress: float("total_progress").notNull(),
     createdAt: datetime("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),

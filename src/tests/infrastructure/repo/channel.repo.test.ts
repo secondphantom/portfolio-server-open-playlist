@@ -22,6 +22,7 @@ describe("channel repo", () => {
       name: "channelTitle",
       handle: "",
       enrollCount: 0,
+      extra: {},
     } satisfies RepoCreateChannelDto;
 
     await channelRepo.createChannel(createChannelDto);
