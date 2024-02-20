@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import { DrizzleClient } from "../../../infrastructure/db/drizzle.client";
-import { CourseRepo } from "../../../infrastructure/repo/course.repo";
+import CourseRepo from "../../../infrastructure/repo/course.repo";
 import { RepoCreateCourseDto } from "../../../domain/course.domain";
 import { ICourseRepo } from "../../../application/interfaces/course.repo";
 dotenv.config();
@@ -58,9 +58,41 @@ describe("course repo", () => {
     }
   });
 
-  test.only("get course by id", async () => {
+  test("get course by id", async () => {
     const course = await courseRepo.getCourseById(1, { id: true });
 
     expect(course?.id).toEqual(1);
+  });
+
+  test.only("get course by id with", async () => {
+    const where = {
+      courseId: 1,
+      userId: 1,
+    };
+    const columns = {
+      channel: {
+        channelId: true,
+      },
+      category: {
+        id: true,
+        name: true,
+      },
+      enrolls: {
+        courseId: true,
+        userId: true,
+      },
+      course: {
+        id: true,
+      },
+    };
+
+    const course = await courseRepo.getCourseByIdWith(where, columns);
+
+    expect(course).toMatchObject({
+      id: 1,
+      enrolls: [{ courseId: 1, userId: 1 }],
+      channel: { channelId: "UC8butISFwT-Wl7EV0hUK0BQ" },
+      category: null,
+    });
   });
 });
