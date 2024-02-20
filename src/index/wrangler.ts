@@ -1,4 +1,10 @@
-import { IRequest, Router, createCors, withCookies } from "itty-router";
+import {
+  IRequest,
+  Router,
+  createCors,
+  withCookies,
+  withParams,
+} from "itty-router";
 import { ENV } from "../env";
 import { AuthController } from "../controller/auth/auth.controller";
 import { AuthService } from "../application/service/auth.service";
@@ -19,6 +25,7 @@ import { MeRequestValidator } from "../infrastructure/validator/me.request.valid
 import { MeService } from "../application/service/me.service";
 import { EnrollRepo } from "../infrastructure/repo/enroll.repo";
 import { MeController } from "../controller/me/me.controller";
+import { CourseResponseValidator } from "../infrastructure/validator/course.response.validator";
 
 type AuthPayload = {
   userId: number;
@@ -28,6 +35,10 @@ type AuthPayload = {
 
 type AuthRequest = {
   auth: AuthPayload;
+};
+
+type AuthRequestOptional = {
+  auth?: AuthPayload;
 };
 
 type ContentRequest<T = any> = {
@@ -52,6 +63,7 @@ export class WranglerSever {
   private withContentMiddleware: (
     req: IRequest
   ) => Promise<Response | undefined>;
+  private authMiddleware: (req: IRequest) => Promise<void>;
 
   private authController: AuthController;
   private courseController: CourseController;
@@ -71,6 +83,7 @@ export class WranglerSever {
 
     const authRequestValidator = AuthRequestValidator.getInstance();
     const courseRequestValidator = CourseRequestValidator.getInstance();
+    const courseResponseValidator = CourseResponseValidator.getInstance();
     const meRequestValidator = MeRequestValidator.getInstance();
 
     const authService = AuthService.getInstance({
@@ -99,6 +112,7 @@ export class WranglerSever {
 
     this.courseController = CourseController.getInstance({
       courseRequestValidator,
+      courseResponseValidator,
       courseService,
     });
 
@@ -114,6 +128,21 @@ export class WranglerSever {
 
       if (result.getResponse().code >= 300) {
         return this.createJsonResponse(result);
+      }
+
+      const payload = result.getResponse().payload.data as AuthPayload;
+
+      req.auth = payload;
+    };
+
+    this.authMiddleware = async (req: IRequest) => {
+      const result = await this.authController.verifyAccessToken({
+        accessToken: req.cookies["AccessToken"],
+      });
+
+      if (result.getResponse().code >= 300) {
+        req.auth = undefined;
+        return;
       }
 
       const payload = result.getResponse().payload.data as AuthPayload;
@@ -241,6 +270,21 @@ export class WranglerSever {
       async (req: IRequest & AuthRequest & ContentRequest) => {
         const content = req.content;
         const result = await this.courseController.createCourse(content);
+        return this.createJsonResponse(result);
+      }
+    );
+
+    this.app.get(
+      "/api/courses/:id",
+      withCookies,
+      this.authMiddleware,
+      async (req: IRequest & AuthRequestOptional) => {
+        const { params, auth } = req;
+
+        const result = await this.courseController.getCourseById({
+          courseId: params.id,
+          userId: auth ? auth.userId : undefined,
+        });
         return this.createJsonResponse(result);
       }
     );
