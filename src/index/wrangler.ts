@@ -241,7 +241,7 @@ export class WranglerSever {
       withCookies,
       async ({ cookies }) => {
         const result = await this.authController.verifyAccessToken({
-          accessToken: cookies["AccessToken"],
+          accessToken: cookies["accessToken"],
         });
 
         return this.createJsonResponse(result);
@@ -253,12 +253,18 @@ export class WranglerSever {
       withCookies,
       async ({ cookies }) => {
         const result = await this.authController.refreshAccessToken({
-          refreshToken: cookies["RefreshToken"],
+          refreshToken: cookies["refreshToken"],
         });
 
         return this.createJsonResponse(result);
       }
     );
+
+    this.app.post("/api/auth/sign-out", async () => {
+      const result = await this.authController.signOut();
+
+      return this.createJsonResponse(result);
+    });
   };
 
   private initCourseRouter = () => {
@@ -317,18 +323,19 @@ export class WranglerSever {
       headers: responseHeaders,
     } = controllerResponse.getResponse();
     const headers = new Headers();
-    headers.append("Content-type", "application/json");
     for (const { name, value } of responseHeaders) {
       headers.append(name, value);
     }
+    headers.append("Access-Control-Allow-Methods", ["GET", "POST"].join(", "));
+    headers.append("Access-Control-Allow-Origin", this.env.CORS_ALLOW_ORIGIN);
+    headers.append("Content-type", "application/json");
+
     const body = payload;
 
-    return this.cors.corsify(
-      new Response(JSON.stringify(body), {
-        status: code,
-        headers,
-      })
-    );
+    return new Response(JSON.stringify(body), {
+      status: code,
+      headers,
+    });
   };
 
   get handle() {

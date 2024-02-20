@@ -116,11 +116,11 @@ export class AuthController {
         headers: [
           {
             name: "Set-Cookie",
-            value: `AccessToken=${accessToken}; Path=/; HttpOnly; Secure; SameSite=Strict`,
+            value: `accessToken=${accessToken}; Path=/; HttpOnly; Secure; SameSite=Strict`,
           },
           {
             name: "Set-Cookie",
-            value: `RefreshToken=${refreshToken}; Path=/; HttpOnly; Secure; SameSite=Strict`,
+            value: `refreshToken=${refreshToken}; Path=/; HttpOnly; Secure; SameSite=Strict`,
           },
         ],
         payload: {
@@ -175,16 +175,47 @@ export class AuthController {
         headers: [
           {
             name: "Set-Cookie",
-            value: `RefreshToken=${refreshToken}; Path=/; HttpOnly; Secure; SameSite=Strict`,
+            value: `accessToken=${accessToken}; Path=/; HttpOnly; Secure; SameSite=Strict`,
           },
           {
             name: "Set-Cookie",
-            value: `AccessToken=${accessToken}; Path=/; HttpOnly; Secure; SameSite=Strict`,
+            value: `refreshToken=${refreshToken}; Path=/; HttpOnly; Secure; SameSite=Strict`,
           },
         ],
         payload: {
           success: true,
           message: "Success Refresh Token",
+        },
+      });
+    } catch (error) {
+      const { code, message } = errorResolver(error);
+      return new ControllerResponse({
+        code,
+        payload: {
+          success: false,
+          message,
+        },
+      });
+    }
+  };
+
+  signOut = async () => {
+    try {
+      return new ControllerResponse({
+        code: 200,
+        headers: [
+          {
+            name: "Set-Cookie",
+            value: `accessToken=del; Path=/; HttpOnly; Secure; SameSite=Strict`,
+          },
+          {
+            name: "Set-Cookie",
+            value: `refreshToken=del; Path=/; HttpOnly; Secure; SameSite=Strict`,
+          },
+        ],
+        payload: {
+          success: true,
+          message: "Success Sign Out",
         },
       });
     } catch (error) {
