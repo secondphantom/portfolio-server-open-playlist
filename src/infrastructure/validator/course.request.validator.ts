@@ -1,6 +1,9 @@
 import z from "zod";
 import { ICourseRequestValidator } from "../../controller/course/course.interface";
-import { RequestCourseCreateBody } from "../../requests/course/course.request";
+import {
+  RequestCourseCreateBody,
+  RequestCourseGetById,
+} from "../../spec/course/course.request";
 import { ServerError } from "../../dto/error";
 
 export class CourseRequestValidator implements ICourseRequestValidator {
@@ -46,5 +49,34 @@ export class CourseRequestValidator implements ICourseRequestValidator {
     }
 
     throw new Error("Invalid Youtube Url");
+  };
+
+  private requestCourseGetById = z
+    .object({
+      courseId: z.string().transform((val, ctx) => {
+        const result = parseInt(val);
+        if (isNaN(result)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Not a number",
+          });
+          return z.NEVER;
+        }
+        return result;
+      }),
+      userId: z.number().optional(),
+    })
+    .strict();
+
+  getCourseById = (req: RequestCourseGetById) => {
+    try {
+      const dto = this.requestCourseGetById.parse(req);
+      return dto;
+    } catch (error) {
+      throw new ServerError({
+        code: 400,
+        message: "Invalid Input",
+      });
+    }
   };
 }

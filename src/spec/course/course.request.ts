@@ -4,5 +4,5 @@ export type RequestCourseCreateBody = {
 
 export type RequestCourseGetById = {
   courseId: string;
-  userId: number;
+  userId?: number;
 };
