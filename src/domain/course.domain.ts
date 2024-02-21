@@ -90,7 +90,7 @@ export class CourseDomain {
     const chapters = matches
       ?.map((match) => {
         const groups =
-          /(?<timeStr>.*?((?:([0-5]?[0-9]):)?([0-5]?[0-9]):([0-5][0-9])))(?<titleStr>.*)/.exec(
+          /((?<timeStr>(?:([0-5]?[0-9]):)?([0-5]?[0-9]):([0-5][0-9])))(?<titleStr>.*)/.exec(
             match
           )?.groups;
         if (!groups) return null as any as CourseChapter;
@@ -108,7 +108,18 @@ export class CourseDomain {
           .reduce((prev, cur, index) => {
             return prev + parseInt(cur) * INDEX_TIME_SEC[index];
           }, 0);
-        const title = titleStr.trim();
+        const title = titleStr
+          .trim()
+          .split(" ")
+          .map((str) => {
+            const regAry = /[\)\(\[\]\!\?{}]*/.exec(str);
+            if (regAry && regAry[0] === str) {
+              return null;
+            }
+            return str;
+          })
+          .filter((v) => !!v)
+          .join(" ");
 
         return { time, title };
       })
