@@ -5,6 +5,8 @@ import {
   RepoCreateEnrollDto,
 } from "../../domain/enroll.domain";
 import { DrizzleClient } from "../db/drizzle.client";
+import { CourseEntitySelect } from "../../domain/course.domain";
+import { UserEntitySelect } from "../../domain/user.domain";
 
 export class EnrollRepo implements IEnrollRepo {
   static instance: EnrollRepo | undefined;
@@ -18,7 +20,7 @@ export class EnrollRepo implements IEnrollRepo {
     this.db = drizzleClient.getDb();
   }
 
-  getByUserIdAndCourseId = async <T extends keyof EnrollEntitySelect>(
+  getEnrollByUserIdAndCourseId = async <T extends keyof EnrollEntitySelect>(
     { courseId, userId }: { userId: number; courseId: number },
     columns?:
       | {
@@ -40,5 +42,57 @@ export class EnrollRepo implements IEnrollRepo {
 
   createEnroll = async (enroll: RepoCreateEnrollDto) => {
     await this.db.insert(schema.enrolls).values(enroll);
+  };
+
+  getEnrollByUserIdAndCourseIdWith = async <
+    T extends keyof EnrollEntitySelect,
+    W1 extends keyof CourseEntitySelect,
+    W2 extends keyof UserEntitySelect
+  >(
+    where: {
+      userId: number;
+      courseId: number;
+    },
+    columns?: {
+      enroll?:
+        | {
+            [key in T]?: boolean;
+          }
+        | { [key in keyof EnrollEntitySelect]?: boolean };
+      course?:
+        | {
+            [key in W1]?: boolean;
+          }
+        | { [key in keyof CourseEntitySelect]?: boolean };
+      user?:
+        | {
+            [key in W2]?: boolean;
+          }
+        | { [key in keyof UserEntitySelect]?: boolean };
+    }
+  ) => {
+    const enroll = await this.db.query.enrolls.findFirst({
+      where: (enrolls, { eq, and }) => {
+        return and(
+          eq(enrolls.courseId, where.courseId),
+          eq(enrolls.userId, where.userId)
+        );
+      },
+      columns: columns?.enroll,
+      with: {
+        course: columns?.course
+          ? {
+              columns: columns?.course,
+            }
+          : undefined,
+        user: columns?.user
+          ? {
+              columns: columns?.user,
+            }
+          : undefined,
+      },
+    });
+
+    return enroll as any;
   };
 }
