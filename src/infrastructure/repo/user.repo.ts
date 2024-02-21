@@ -2,7 +2,10 @@ import { eq } from "drizzle-orm";
 
 import * as schema from "../../schema/schema";
 
-import { IUserRepo } from "../../application/interfaces/user.repo";
+import {
+  IUserRepo,
+  UpdateUserDto,
+} from "../../application/interfaces/user.repo";
 import { RepoCreateUserDto, UserEntitySelect } from "../../domain/user.domain";
 import { DrizzleClient } from "../db/drizzle.client";
 
@@ -69,5 +72,12 @@ export class UserRepo implements IUserRepo {
 
   createUser = async (user: RepoCreateUserDto) => {
     await this.db.insert(schema.users).values(user);
+  };
+
+  updateUserById = async (id: number, value: Partial<UserEntitySelect>) => {
+    await this.db
+      .update(schema.users)
+      .set(value)
+      .where(eq(schema.users.id, id));
   };
 }

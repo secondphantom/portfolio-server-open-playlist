@@ -1,5 +1,11 @@
-import { RepoCreateUserDto, UserEntitySelect } from "../../domain/user.domain";
+import {
+  RepoCreateUserDto,
+  UserEntityInsert,
+  UserEntitySelect,
+} from "../../domain/user.domain";
 
+export type UpdateUserDto = Partial<UserEntitySelect> &
+  Pick<UserEntitySelect, "id">;
 export interface IUserRepo {
   getUserByEmail: <T extends keyof UserEntitySelect>(
     email: string,
@@ -25,4 +31,9 @@ export interface IUserRepo {
   ) => Promise<Pick<UserEntitySelect, T> | undefined>;
 
   createUser: (user: RepoCreateUserDto) => Promise<void>;
+
+  updateUserById: (
+    id: number,
+    value: Partial<UserEntitySelect>
+  ) => Promise<void>;
 }

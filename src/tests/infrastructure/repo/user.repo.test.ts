@@ -8,6 +8,7 @@ import {
   UserEntitySelect,
 } from "../../../domain/user.domain";
 import { IUserRepo } from "../../../application/interfaces/user.repo";
+import { ServiceMeUpdateProfileDto } from "../../../application/service/me.service";
 
 describe("user repo", () => {
   let userRepo: IUserRepo;
@@ -19,7 +20,7 @@ describe("user repo", () => {
     userRepo = new UserRepo(dbClient);
   });
 
-  test.only("create user", async () => {
+  test.skip("create user", async () => {
     const createUserDto = {
       email: `${new Date().toISOString()}@gmail.com`,
       extra: {},
@@ -50,5 +51,16 @@ describe("user repo", () => {
     const user = await userRepo.getUserByEmail(email);
 
     expect(user!.isEmailVerified).toEqual(true);
+  });
+
+  test.only("update user", async () => {
+    const dto = {
+      userId: 1,
+      profileName: "zero",
+    } satisfies ServiceMeUpdateProfileDto;
+
+    await userRepo.updateUserById(dto.userId, {
+      profileName: dto.profileName,
+    });
   });
 });
