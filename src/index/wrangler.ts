@@ -1,10 +1,4 @@
-import {
-  IRequest,
-  Router,
-  createCors,
-  withCookies,
-  withParams,
-} from "itty-router";
+import { IRequest, Router, createCors, withCookies } from "itty-router";
 import { ENV } from "../env";
 import { AuthController } from "../controller/auth/auth.controller";
 import { AuthService } from "../application/service/auth.service";
@@ -26,6 +20,7 @@ import { MeService } from "../application/service/me.service";
 import { EnrollRepo } from "../infrastructure/repo/enroll.repo";
 import { MeController } from "../controller/me/me.controller";
 import { CourseResponseValidator } from "../infrastructure/validator/course.response.validator";
+import { MeResponseValidator } from "../infrastructure/validator/me.response.validator";
 
 type AuthPayload = {
   userId: number;
@@ -85,6 +80,7 @@ export class WranglerSever {
     const courseRequestValidator = CourseRequestValidator.getInstance();
     const courseResponseValidator = CourseResponseValidator.getInstance();
     const meRequestValidator = MeRequestValidator.getInstance();
+    const meResponseValidator = MeResponseValidator.getInstance();
 
     const authService = AuthService.getInstance({
       cryptoUtil,
@@ -118,8 +114,9 @@ export class WranglerSever {
     });
 
     this.meController = MeController.getInstance({
-      meRequestValidator,
       meService,
+      meRequestValidator,
+      meResponseValidator,
     });
 
     this.verifyAuthMiddleware = async (req: IRequest) => {
@@ -325,6 +322,20 @@ export class WranglerSever {
         const result = await this.meController.updateProfile({
           userId: auth["userId"],
           ...content,
+        });
+        return this.createJsonResponse(result);
+      }
+    );
+
+    this.app.get(
+      "/api/me/enrolls/courses/:id",
+      withCookies,
+      this.verifyAuthMiddleware,
+      async (req: IRequest & AuthRequest) => {
+        const { params, auth } = req;
+        const result = await this.meController.getEnrollsByCourseId({
+          userId: auth["userId"],
+          courseId: params.id,
         });
         return this.createJsonResponse(result);
       }

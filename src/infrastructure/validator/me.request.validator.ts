@@ -1,12 +1,9 @@
 import z from "zod";
 
-import {
-  ServiceMeCreateEnrollDto,
-  ServiceMeUpdateProfileDto,
-} from "../../application/service/me.service";
 import { IMeRequestValidator } from "../../controller/me/me.interfcae";
 import {
   RequestMeCreateEnrollReq,
+  RequestMeGetEnrollByCourseIdReq,
   RequestMeUpdateProfileReq,
 } from "../../spec/me/me.request";
 import { ServerError } from "../../dto/error";
@@ -21,7 +18,7 @@ export class MeRequestValidator implements IMeRequestValidator {
 
   constructor() {}
 
-  private requestMeCreateEnrollBody = z
+  private requestMeCreateEnrollReq = z
     .object({
       userId: z.number(),
       courseId: z.number(),
@@ -30,7 +27,7 @@ export class MeRequestValidator implements IMeRequestValidator {
 
   createEnroll = (req: RequestMeCreateEnrollReq) => {
     try {
-      const dto = this.requestMeCreateEnrollBody.parse(req);
+      const dto = this.requestMeCreateEnrollReq.parse(req);
       return dto;
     } catch (error) {
       throw new ServerError({
@@ -50,6 +47,35 @@ export class MeRequestValidator implements IMeRequestValidator {
   updateProfile = (req: RequestMeUpdateProfileReq) => {
     try {
       const dto = this.requestMeUpdateProfileReq.parse(req);
+      return dto;
+    } catch (error) {
+      throw new ServerError({
+        code: 400,
+        message: "Invalid Input",
+      });
+    }
+  };
+
+  private requestMeGetEnrollByCourseIdReq = z
+    .object({
+      userId: z.number(),
+      courseId: z.string().transform((val, ctx) => {
+        const result = parseInt(val);
+        if (isNaN(result)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Not a number",
+          });
+          return z.NEVER;
+        }
+        return result;
+      }),
+    })
+    .strict();
+
+  getEnrollsByCourseId = (req: RequestMeGetEnrollByCourseIdReq) => {
+    try {
+      const dto = this.requestMeGetEnrollByCourseIdReq.parse(req);
       return dto;
     } catch (error) {
       throw new ServerError({

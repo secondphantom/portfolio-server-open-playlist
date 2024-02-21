@@ -3,27 +3,35 @@ import { errorResolver } from "../../dto/error.resolver";
 import { ControllerResponse } from "../../dto/response";
 import {
   RequestMeCreateEnrollReq,
+  RequestMeGetEnrollByCourseIdReq,
   RequestMeUpdateProfileReq,
 } from "../../spec/me/me.request";
-import { IMeRequestValidator } from "./me.interfcae";
+import { IMeRequestValidator, IMeResponseValidator } from "./me.interfcae";
 
 export class MeController {
   static instance: MeController | undefined;
   static getInstance = ({
     meService,
     meRequestValidator,
+    meResponseValidator,
   }: {
     meService: MeService;
     meRequestValidator: IMeRequestValidator;
+    meResponseValidator: IMeResponseValidator;
   }) => {
     if (this.instance) return this.instance;
-    this.instance = new MeController(meRequestValidator, meService);
+    this.instance = new MeController(
+      meService,
+      meRequestValidator,
+      meResponseValidator
+    );
     return this.instance;
   };
 
   constructor(
+    private meService: MeService,
     private meRequestValidator: IMeRequestValidator,
-    private meService: MeService
+    private meResponseValidator: IMeResponseValidator
   ) {}
 
   createEnroll = async (req: RequestMeCreateEnrollReq) => {
@@ -60,6 +68,31 @@ export class MeController {
         payload: {
           success: true,
           message: "Success Updated",
+        },
+      });
+    } catch (error) {
+      const { code, message } = errorResolver(error);
+      return new ControllerResponse({
+        code,
+        payload: {
+          success: false,
+          message,
+        },
+      });
+    }
+  };
+
+  getEnrollsByCourseId = async (req: RequestMeGetEnrollByCourseIdReq) => {
+    try {
+      const dto = this.meRequestValidator.getEnrollsByCourseId(req);
+      const data = await this.meService.getEnrollsByCourseId(dto);
+      const validData = this.meResponseValidator.getEnrollsByCourseId(data);
+
+      return new ControllerResponse({
+        code: 200,
+        payload: {
+          success: true,
+          data: validData,
         },
       });
     } catch (error) {

@@ -1,18 +1,22 @@
 import { EnrollDomain } from "../../domain/enroll.domain";
 import { ServerError } from "../../dto/error";
-import { UserExtra } from "../../schema/schema";
 import { ICourseRepo } from "../interfaces/course.repo";
 import { IEnrollRepo } from "../interfaces/enroll.repo";
 import { IUserRepo } from "../interfaces/user.repo";
 
 export type ServiceMeCreateEnrollDto = {
-  courseId: number;
   userId: number;
+  courseId: number;
 };
 
 export type ServiceMeUpdateProfileDto = {
   userId: number;
   profileName: string;
+};
+
+export type ServiceMeGetEnrollByCourseIdDto = {
+  userId: number;
+  courseId: number;
 };
 
 type ConstructorInputs = {
@@ -40,7 +44,7 @@ export class MeService {
 
   // [POST] /me/enroll
   createEnroll = async ({ userId, courseId }: ServiceMeCreateEnrollDto) => {
-    const enroll = await this.enrollRepo.getByUserIdAndCourseId(
+    const enroll = await this.enrollRepo.getEnrollByUserIdAndCourseId(
       {
         userId,
         courseId,
@@ -86,6 +90,42 @@ export class MeService {
     await this.userRepo.updateUserById(dto.userId, {
       profileName: dto.profileName,
     });
+  };
+
+  // [GET] /me/enrolls/courses/:id
+  getEnrollsByCourseId = async ({
+    userId,
+    courseId,
+  }: ServiceMeGetEnrollByCourseIdDto) => {
+    const enroll = await this.enrollRepo.getEnrollByUserIdAndCourseIdWith(
+      {
+        userId,
+        courseId,
+      },
+      {
+        enroll: {
+          userId: true,
+          courseId: true,
+          chapterProgress: true,
+          totalProgress: true,
+          updatedAt: true,
+        },
+        course: {
+          title: true,
+          chapters: true,
+          videoId: true,
+        },
+      }
+    );
+
+    if (!enroll) {
+      throw new ServerError({
+        code: 400,
+        message: "Not Found",
+      });
+    }
+
+    return enroll;
   };
 
   // [GET] /me/enrolls?

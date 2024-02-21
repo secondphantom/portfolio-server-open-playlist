@@ -7,3 +7,8 @@ export type RequestMeUpdateProfileReq = {
   userId: number;
   profileName: string;
 };
+
+export type RequestMeGetEnrollByCourseIdReq = {
+  userId: number;
+  courseId: string;
+};
