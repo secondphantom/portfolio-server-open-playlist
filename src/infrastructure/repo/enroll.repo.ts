@@ -7,6 +7,7 @@ import {
 import { DrizzleClient } from "../db/drizzle.client";
 import { CourseEntitySelect } from "../../domain/course.domain";
 import { UserEntitySelect } from "../../domain/user.domain";
+import { and, eq } from "drizzle-orm";
 
 export class EnrollRepo implements IEnrollRepo {
   static instance: EnrollRepo | undefined;
@@ -94,5 +95,20 @@ export class EnrollRepo implements IEnrollRepo {
     });
 
     return enroll as any;
+  };
+
+  updateEnrollByCourseId = async (
+    where: { userId: number; courseId: number },
+    value: Partial<EnrollEntitySelect>
+  ) => {
+    await this.db
+      .update(schema.enrolls)
+      .set(value)
+      .where(
+        and(
+          eq(schema.enrolls.userId, where.userId),
+          eq(schema.enrolls.courseId, where.courseId)
+        )
+      );
   };
 }

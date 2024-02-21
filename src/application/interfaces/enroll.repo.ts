@@ -50,4 +50,12 @@ export interface IEnrollRepo {
       })
     | undefined
   >;
+
+  updateEnrollByCourseId: (
+    where: {
+      userId: number;
+      courseId: number;
+    },
+    value: Partial<EnrollEntitySelect>
+  ) => Promise<void>;
 }
