@@ -1,14 +1,22 @@
 import { EnrollDomain } from "../../domain/enroll.domain";
 import { ServerError } from "../../dto/error";
+import { UserExtra } from "../../schema/schema";
 import { ICourseRepo } from "../interfaces/course.repo";
 import { IEnrollRepo } from "../interfaces/enroll.repo";
+import { IUserRepo } from "../interfaces/user.repo";
 
 export type ServiceMeCreateEnrollDto = {
   courseId: number;
   userId: number;
 };
 
+export type ServiceMeUpdateProfileDto = {
+  userId: number;
+  profileName: string;
+};
+
 type ConstructorInputs = {
+  userRepo: IUserRepo;
   enrollRepo: IEnrollRepo;
   courseRepo: ICourseRepo;
 };
@@ -22,8 +30,10 @@ export class MeService {
   };
   private enrollRepo: IEnrollRepo;
   private courseRepo: ICourseRepo;
+  private userRepo: IUserRepo;
 
-  constructor({ enrollRepo, courseRepo }: ConstructorInputs) {
+  constructor({ enrollRepo, courseRepo, userRepo }: ConstructorInputs) {
+    this.userRepo = userRepo;
     this.enrollRepo = enrollRepo;
     this.courseRepo = courseRepo;
   }
@@ -71,6 +81,12 @@ export class MeService {
     await this.enrollRepo.createEnroll(createEnrollDto);
   };
 
-  // [GET] /me/enrolls?
   // [PATCH] /me/profile
+  updateProfile = async (dto: ServiceMeUpdateProfileDto) => {
+    await this.userRepo.updateUserById(dto.userId, {
+      profileName: dto.profileName,
+    });
+  };
+
+  // [GET] /me/enrolls?
 }

@@ -101,6 +101,7 @@ export class WranglerSever {
     });
 
     const meService = MeService.getInstance({
+      userRepo,
       courseRepo,
       enrollRepo,
     });
@@ -123,7 +124,7 @@ export class WranglerSever {
 
     this.verifyAuthMiddleware = async (req: IRequest) => {
       const result = await this.authController.verifyAccessToken({
-        accessToken: req.cookies["AccessToken"],
+        accessToken: req.cookies["accessToken"],
       });
 
       if (result.getResponse().code >= 300) {
@@ -137,7 +138,7 @@ export class WranglerSever {
 
     this.authMiddleware = async (req: IRequest) => {
       const result = await this.authController.verifyAccessToken({
-        accessToken: req.cookies["AccessToken"],
+        accessToken: req.cookies["accessToken"],
       });
 
       if (result.getResponse().code >= 300) {
@@ -306,8 +307,24 @@ export class WranglerSever {
         const auth = req.auth;
         const content = req.content;
         const result = await this.meController.createEnroll({
-          courseId: content["courseId"],
           userId: auth["userId"],
+          ...content,
+        });
+        return this.createJsonResponse(result);
+      }
+    );
+
+    this.app.patch(
+      "/api/me/profile",
+      withCookies,
+      this.verifyAuthMiddleware,
+      this.withContentMiddleware,
+      async (req: IRequest & AuthRequest & ContentRequest) => {
+        const auth = req.auth;
+        const content = req.content;
+        const result = await this.meController.updateProfile({
+          userId: auth["userId"],
+          ...content,
         });
         return this.createJsonResponse(result);
       }

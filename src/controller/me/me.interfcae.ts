@@ -1,6 +1,13 @@
-import { ServiceMeCreateEnrollDto } from "../../application/service/me.service";
-import { RequestMeCreateEnrollBody } from "../../spec/me/me.request";
+import {
+  ServiceMeCreateEnrollDto,
+  ServiceMeUpdateProfileDto,
+} from "../../application/service/me.service";
+import {
+  RequestMeCreateEnrollReq,
+  RequestMeUpdateProfileReq,
+} from "../../spec/me/me.request";
 
 export interface IMeRequestValidator {
-  createEnroll: (body: RequestMeCreateEnrollBody) => ServiceMeCreateEnrollDto;
+  createEnroll: (req: RequestMeCreateEnrollReq) => ServiceMeCreateEnrollDto;
+  updateProfile: (req: RequestMeUpdateProfileReq) => ServiceMeUpdateProfileDto;
 }
