@@ -22,15 +22,24 @@ export class MeRequestValidator implements IMeRequestValidator {
 
   private requestMeCreateEnrollReq = z
     .object({
-      userId: z.number(),
-      courseId: z.number(),
+      auth: z.object({
+        userId: z.number(),
+      }),
+      content: z
+        .object({
+          courseId: z.number(),
+        })
+        .strict(),
     })
     .strict();
 
   createEnroll = (req: RequestMeCreateEnrollReq) => {
     try {
       const dto = this.requestMeCreateEnrollReq.parse(req);
-      return dto;
+      return {
+        ...dto.content,
+        userId: dto.auth.userId,
+      };
     } catch (error) {
       throw new ServerError({
         code: 400,
@@ -41,15 +50,24 @@ export class MeRequestValidator implements IMeRequestValidator {
 
   private requestMeUpdateProfileReq = z
     .object({
-      userId: z.number(),
-      profileName: z.string().min(1),
+      auth: z.object({
+        userId: z.number(),
+      }),
+      content: z
+        .object({
+          profileName: z.string().min(1),
+        })
+        .strict(),
     })
     .strict();
 
   updateProfile = (req: RequestMeUpdateProfileReq) => {
     try {
       const dto = this.requestMeUpdateProfileReq.parse(req);
-      return dto;
+      return {
+        ...dto.content,
+        userId: dto.auth.userId,
+      };
     } catch (error) {
       throw new ServerError({
         code: 400,
@@ -60,25 +78,34 @@ export class MeRequestValidator implements IMeRequestValidator {
 
   private requestMeGetEnrollByCourseIdReq = z
     .object({
-      userId: z.number(),
-      courseId: z.string().transform((val, ctx) => {
-        const result = parseInt(val);
-        if (isNaN(result)) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Not a number",
-          });
-          return z.NEVER;
-        }
-        return result;
+      auth: z.object({
+        userId: z.number(),
       }),
+      params: z
+        .object({
+          courseId: z.string().transform((val, ctx) => {
+            const result = parseInt(val);
+            if (isNaN(result)) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "Not a number",
+              });
+              return z.NEVER;
+            }
+            return result;
+          }),
+        })
+        .strict(),
     })
     .strict();
 
   getEnrollsByCourseId = (req: RequestMeGetEnrollByCourseIdReq) => {
     try {
       const dto = this.requestMeGetEnrollByCourseIdReq.parse(req);
-      return dto;
+      return {
+        ...dto.params,
+        userId: dto.auth.userId,
+      };
     } catch (error) {
       throw new ServerError({
         code: 400,
@@ -111,7 +138,6 @@ export class MeRequestValidator implements IMeRequestValidator {
         ...dto.content,
       };
     } catch (error) {
-      console.log(error);
       throw new ServerError({
         code: 400,
         message: "Invalid Input",

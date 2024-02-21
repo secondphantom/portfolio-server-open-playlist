@@ -3,6 +3,10 @@ export type RequestCourseCreateBody = {
 };
 
 export type RequestCourseGetById = {
-  courseId: string;
-  userId?: number;
+  auth: {
+    userId?: number;
+  };
+  params: {
+    courseId: string;
+  };
 };

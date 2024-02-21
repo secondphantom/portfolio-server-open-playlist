@@ -286,8 +286,12 @@ export class WranglerSever {
         const { params, auth } = req;
 
         const result = await this.courseController.getCourseById({
-          courseId: params.id,
-          userId: auth ? auth.userId : undefined,
+          auth: {
+            userId: auth ? auth.userId : undefined,
+          },
+          params: {
+            courseId: params.id,
+          },
         });
         return this.createJsonResponse(result);
       }
@@ -301,11 +305,10 @@ export class WranglerSever {
       this.verifyAuthMiddleware,
       this.withContentMiddleware,
       async (req: IRequest & AuthRequest & ContentRequest) => {
-        const auth = req.auth;
-        const content = req.content;
+        const { auth, content } = req;
         const result = await this.meController.createEnroll({
-          ...content,
-          userId: auth["userId"],
+          auth,
+          content,
         });
         return this.createJsonResponse(result);
       }
@@ -317,11 +320,10 @@ export class WranglerSever {
       this.verifyAuthMiddleware,
       this.withContentMiddleware,
       async (req: IRequest & AuthRequest & ContentRequest) => {
-        const auth = req.auth;
-        const content = req.content;
+        const { auth, content } = req;
         const result = await this.meController.updateProfile({
-          ...content,
-          userId: auth["userId"],
+          auth,
+          content,
         });
         return this.createJsonResponse(result);
       }
@@ -334,8 +336,10 @@ export class WranglerSever {
       async (req: IRequest & AuthRequest) => {
         const { params, auth } = req;
         const result = await this.meController.getEnrollsByCourseId({
-          userId: auth["userId"],
-          courseId: params.id,
+          auth,
+          params: {
+            courseId: params.id,
+          },
         });
         return this.createJsonResponse(result);
       }

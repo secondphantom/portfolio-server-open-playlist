@@ -53,25 +53,34 @@ export class CourseRequestValidator implements ICourseRequestValidator {
 
   private requestCourseGetById = z
     .object({
-      courseId: z.string().transform((val, ctx) => {
-        const result = parseInt(val);
-        if (isNaN(result)) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Not a number",
-          });
-          return z.NEVER;
-        }
-        return result;
+      auth: z.object({
+        userId: z.number().optional(),
       }),
-      userId: z.number().optional(),
+      params: z
+        .object({
+          courseId: z.string().transform((val, ctx) => {
+            const result = parseInt(val);
+            if (isNaN(result)) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "Not a number",
+              });
+              return z.NEVER;
+            }
+            return result;
+          }),
+        })
+        .strict(),
     })
     .strict();
 
   getCourseById = (req: RequestCourseGetById) => {
     try {
       const dto = this.requestCourseGetById.parse(req);
-      return dto;
+      return {
+        ...dto.params,
+        userId: dto.auth.userId,
+      };
     } catch (error) {
       throw new ServerError({
         code: 400,

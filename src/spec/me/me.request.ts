@@ -1,16 +1,28 @@
 export type RequestMeCreateEnrollReq = {
-  userId: number;
-  courseId: number;
+  auth: {
+    userId: number;
+  };
+  content: {
+    courseId: number;
+  };
 };
 
 export type RequestMeUpdateProfileReq = {
-  userId: number;
-  profileName: string;
+  auth: {
+    userId: number;
+  };
+  content: {
+    profileName: string;
+  };
 };
 
 export type RequestMeGetEnrollByCourseIdReq = {
-  userId: number;
-  courseId: string;
+  auth: {
+    userId: number;
+  };
+  params: {
+    courseId: string;
+  };
 };
 
 export type RequestMeUpdateEnrollByCourseIdReq = {
