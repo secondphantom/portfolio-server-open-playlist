@@ -1,5 +1,6 @@
 import { EnrollDomain } from "../../domain/enroll.domain";
 import { ServerError } from "../../dto/error";
+import { EnrollChapterProgress } from "../../schema/schema";
 import { ICourseRepo } from "../interfaces/course.repo";
 import { IEnrollRepo } from "../interfaces/enroll.repo";
 import { IUserRepo } from "../interfaces/user.repo";
@@ -17,6 +18,12 @@ export type ServiceMeUpdateProfileDto = {
 export type ServiceMeGetEnrollByCourseIdDto = {
   userId: number;
   courseId: number;
+};
+
+export type ServiceMeUpdateByCourseIdDto = {
+  userId: number;
+  courseId: number;
+  chapterProgress: EnrollChapterProgress[];
 };
 
 type ConstructorInputs = {
@@ -126,6 +133,32 @@ export class MeService {
     }
 
     return enroll;
+  };
+
+  // [PATCH] /me/enrolls/courses
+  updateEnrollByCourseId = async ({
+    userId,
+    courseId,
+    chapterProgress,
+  }: ServiceMeUpdateByCourseIdDto) => {
+    const enrollDomain = new EnrollDomain({
+      courseId,
+      userId,
+      chapterProgress,
+    });
+
+    const entity = enrollDomain.getEntity();
+
+    await this.enrollRepo.updateEnrollByCourseId(
+      {
+        userId,
+        courseId,
+      },
+      {
+        chapterProgress: entity.chapterProgress,
+        totalProgress: entity.totalProgress,
+      }
+    );
   };
 
   // [GET] /me/enrolls?

@@ -304,8 +304,8 @@ export class WranglerSever {
         const auth = req.auth;
         const content = req.content;
         const result = await this.meController.createEnroll({
-          userId: auth["userId"],
           ...content,
+          userId: auth["userId"],
         });
         return this.createJsonResponse(result);
       }
@@ -320,8 +320,8 @@ export class WranglerSever {
         const auth = req.auth;
         const content = req.content;
         const result = await this.meController.updateProfile({
-          userId: auth["userId"],
           ...content,
+          userId: auth["userId"],
         });
         return this.createJsonResponse(result);
       }
@@ -336,6 +336,21 @@ export class WranglerSever {
         const result = await this.meController.getEnrollsByCourseId({
           userId: auth["userId"],
           courseId: params.id,
+        });
+        return this.createJsonResponse(result);
+      }
+    );
+
+    this.app.patch(
+      "/api/me/enrolls/courses",
+      withCookies,
+      this.verifyAuthMiddleware,
+      this.withContentMiddleware,
+      async (req: IRequest & AuthRequest & ContentRequest) => {
+        const { auth, content } = req;
+        const result = await this.meController.updateEnrollByCourseId({
+          auth,
+          content,
         });
         return this.createJsonResponse(result);
       }

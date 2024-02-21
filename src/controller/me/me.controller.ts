@@ -4,6 +4,7 @@ import { ControllerResponse } from "../../dto/response";
 import {
   RequestMeCreateEnrollReq,
   RequestMeGetEnrollByCourseIdReq,
+  RequestMeUpdateEnrollByCourseIdReq,
   RequestMeUpdateProfileReq,
 } from "../../spec/me/me.request";
 import { IMeRequestValidator, IMeResponseValidator } from "./me.interfcae";
@@ -93,6 +94,30 @@ export class MeController {
         payload: {
           success: true,
           data: validData,
+        },
+      });
+    } catch (error) {
+      const { code, message } = errorResolver(error);
+      return new ControllerResponse({
+        code,
+        payload: {
+          success: false,
+          message,
+        },
+      });
+    }
+  };
+
+  updateEnrollByCourseId = async (req: RequestMeUpdateEnrollByCourseIdReq) => {
+    try {
+      const dto = this.meRequestValidator.updateEnrollsByCourseId(req);
+      await this.meService.updateEnrollByCourseId(dto);
+
+      return new ControllerResponse({
+        code: 200,
+        payload: {
+          success: true,
+          message: "Success Updated",
         },
       });
     } catch (error) {

@@ -4,9 +4,11 @@ import { IMeRequestValidator } from "../../controller/me/me.interfcae";
 import {
   RequestMeCreateEnrollReq,
   RequestMeGetEnrollByCourseIdReq,
+  RequestMeUpdateEnrollByCourseIdReq,
   RequestMeUpdateProfileReq,
 } from "../../spec/me/me.request";
 import { ServerError } from "../../dto/error";
+import { ServiceMeUpdateByCourseIdDto } from "../../application/service/me.service";
 
 export class MeRequestValidator implements IMeRequestValidator {
   static instance: MeRequestValidator | undefined;
@@ -78,6 +80,38 @@ export class MeRequestValidator implements IMeRequestValidator {
       const dto = this.requestMeGetEnrollByCourseIdReq.parse(req);
       return dto;
     } catch (error) {
+      throw new ServerError({
+        code: 400,
+        message: "Invalid Input",
+      });
+    }
+  };
+
+  private requestMeUpdateEnrollByCourseIdReq = z
+    .object({
+      auth: z.object({
+        userId: z.number(),
+      }),
+      content: z
+        .object({
+          courseId: z.number(),
+          chapterProgress: z.array(
+            z.object({ time: z.number(), progress: z.number() })
+          ),
+        })
+        .strict(),
+    })
+    .strict();
+
+  updateEnrollsByCourseId = (req: RequestMeUpdateEnrollByCourseIdReq) => {
+    try {
+      const dto = this.requestMeUpdateEnrollByCourseIdReq.parse(req);
+      return {
+        userId: dto.auth.userId,
+        ...dto.content,
+      };
+    } catch (error) {
+      console.log(error);
       throw new ServerError({
         code: 400,
         message: "Invalid Input",

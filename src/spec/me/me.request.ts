@@ -12,3 +12,13 @@ export type RequestMeGetEnrollByCourseIdReq = {
   userId: number;
   courseId: string;
 };
+
+export type RequestMeUpdateEnrollByCourseIdReq = {
+  auth: {
+    userId: number;
+  };
+  content: {
+    courseId: number;
+    chapterProgress: { time: number; progress: number }[];
+  };
+};

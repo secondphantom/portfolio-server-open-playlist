@@ -62,4 +62,15 @@ export class EnrollDomain {
       totalProgress: this.totalProgress,
     };
   };
+
+  getEntity = () => {
+    return {
+      courseId: this.courseId,
+      userId: this.userId,
+      chapterProgress: this.chapterProgress,
+      totalProgress: this.totalProgress,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+    };
+  };
 }
