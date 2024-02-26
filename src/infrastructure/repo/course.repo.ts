@@ -7,8 +7,8 @@ import {
 import { DrizzleClient } from "../db/drizzle.client";
 import {
   ICourseRepo,
-  RepoCourseByQuery,
-  RepoQueryCourseDto,
+  QueryCourse,
+  QueryCourseListDto,
 } from "../../application/interfaces/course.repo";
 import { UserEntitySelect } from "../../domain/user.domain";
 import { ChannelEntitySelect } from "../../domain/channel.domain";
@@ -143,7 +143,7 @@ export default class CourseRepo implements ICourseRepo {
     await this.db.insert(schema.courses).values(course);
   };
 
-  getCourseListByQuery = async (query: RepoQueryCourseDto) => {
+  getCourseListByQuery = async (query: QueryCourseListDto) => {
     const {
       userId,
       page,
@@ -174,6 +174,7 @@ export default class CourseRepo implements ICourseRepo {
           title: schema.courses.title,
           videoId: schema.courses.videoId,
           channelId: schema.courses.channelId,
+          categoryId: schema.courses.categoryId,
           createdAt: schema.courses.createdAt,
           publishedAt: schema.courses.publishedAt,
           enrollCount: schema.courses.enrollCount,
@@ -196,7 +197,7 @@ export default class CourseRepo implements ICourseRepo {
         .limit(pageSize)
         .offset((page - 1) * pageSize)
         .orderBy(...orderBy);
-      return courses as RepoCourseByQuery[];
+      return courses as QueryCourse[];
     }
 
     const courses = await this.db.query.courses.findMany({
@@ -247,6 +248,6 @@ export default class CourseRepo implements ICourseRepo {
       },
     });
 
-    return courses as RepoCourseByQuery[];
+    return courses as QueryCourse[];
   };
 }

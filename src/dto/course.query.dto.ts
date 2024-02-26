@@ -1,7 +1,7 @@
-import { RepoQueryCourseDto } from "../application/interfaces/course.repo";
-import { ServiceCourseGetByQueryDto } from "../application/service/course.service";
+import { QueryCourseListDto } from "../application/interfaces/course.repo";
+import { ServiceCourseGetListByQueryDto as ServiceCourseGetListByQueryDto } from "../application/service/course.service";
 
-export class CourseQueryDto {
+export class CourseListQueryDto {
   private userId?: number;
   private page: number;
   private categoryId?: number;
@@ -21,7 +21,7 @@ export class CourseQueryDto {
     search,
     channelId,
     language,
-  }: ServiceCourseGetByQueryDto) {
+  }: ServiceCourseGetListByQueryDto) {
     this.userId = userId;
     this.page = page === undefined ? 1 : page;
     this.categoryId = categoryId;
@@ -32,7 +32,7 @@ export class CourseQueryDto {
     this.language = language;
   }
 
-  getRepoQueryDto = (): RepoQueryCourseDto => {
+  getRepoQueryDto = (): QueryCourseListDto => {
     return {
       userId: this.userId,
       page: this.page,

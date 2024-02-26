@@ -1,6 +1,6 @@
 import { ChannelDomain } from "../../domain/channel.domain";
 import { CourseDomain } from "../../domain/course.domain";
-import { CourseQueryDto } from "../../dto/course.query.dto";
+import { CourseListQueryDto } from "../../dto/course.query.dto";
 import { ServerError } from "../../dto/error";
 import { IChannelRepo } from "../interfaces/channel.repo";
 import { ICourseRepo } from "../interfaces/course.repo";
@@ -15,7 +15,7 @@ export type ServiceCourseGetByIdDto = {
   courseId: number;
 };
 
-export type ServiceCourseGetByQueryDto = {
+export type ServiceCourseGetListByQueryDto = {
   userId?: number;
   page?: number;
   categoryId?: number;
@@ -152,17 +152,15 @@ export class CourseService {
   };
 
   // [GET] /courses?
-  getCourseByQuery = async (dto: ServiceCourseGetByQueryDto) => {
-    const courseQueryDto = new CourseQueryDto({ ...dto });
+  getCourseListByQuery = async (dto: ServiceCourseGetListByQueryDto) => {
+    const courseListQueryDto = new CourseListQueryDto({ ...dto });
 
-    const courseRepoQueryDto = courseQueryDto.getRepoQueryDto();
-    const courses = await this.courseRepo.getCourseListByQuery(
-      courseRepoQueryDto
-    );
+    const queryDto = courseListQueryDto.getRepoQueryDto();
+    const courses = await this.courseRepo.getCourseListByQuery(queryDto);
 
     const pagination = {
-      currentPage: courseRepoQueryDto.page,
-      pageSize: courseRepoQueryDto.pageSize,
+      currentPage: queryDto.page,
+      pageSize: queryDto.pageSize,
     };
 
     if (courses.length === 0) {

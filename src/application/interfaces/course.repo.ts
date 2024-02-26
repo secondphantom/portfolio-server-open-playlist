@@ -6,7 +6,7 @@ import {
 } from "../../domain/course.domain";
 import { EnrollEntitySelect } from "../../domain/enroll.domain";
 
-export type RepoQueryCourseDto = {
+export type QueryCourseListDto = {
   userId?: number;
   page: number;
   categoryId?: number;
@@ -18,7 +18,7 @@ export type RepoQueryCourseDto = {
   pageSize: number;
 };
 
-export type RepoCourseByQuery = Pick<
+export type QueryCourse = Pick<
   CourseEntitySelect,
   | "id"
   | "title"
@@ -92,7 +92,5 @@ export interface ICourseRepo {
       | { [key in keyof CourseEntitySelect]?: boolean }
   ) => Promise<Pick<CourseEntitySelect, T> | undefined>;
   createCourse: (channel: RepoCreateCourseDto) => Promise<void>;
-  getCourseListByQuery: (
-    query: RepoQueryCourseDto
-  ) => Promise<RepoCourseByQuery[]>;
+  getCourseListByQuery: (query: QueryCourseListDto) => Promise<QueryCourse[]>;
 }
