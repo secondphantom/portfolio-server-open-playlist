@@ -1,5 +1,6 @@
 import { ChannelDomain } from "../../domain/channel.domain";
 import { CourseDomain } from "../../domain/course.domain";
+import { CourseQueryDto } from "../../dto/course.query.dto";
 import { ServerError } from "../../dto/error";
 import { IChannelRepo } from "../interfaces/channel.repo";
 import { ICourseRepo } from "../interfaces/course.repo";
@@ -12,6 +13,17 @@ export type ServiceCourseCreateDto = {
 export type ServiceCourseGetByIdDto = {
   userId?: number;
   courseId: number;
+};
+
+export type ServiceCourseGetByQueryDto = {
+  userId?: number;
+  page?: number;
+  categoryId?: number;
+  order?: "popular" | "recent";
+  videoId?: string;
+  search?: string;
+  channelId?: string;
+  language?: string;
 };
 
 export class CourseService {
@@ -138,5 +150,35 @@ export class CourseService {
 
     return course;
   };
+
   // [GET] /courses?
+  getCourseByQuery = async (dto: ServiceCourseGetByQueryDto) => {
+    const courseQueryDto = new CourseQueryDto({ ...dto });
+
+    const courseRepoQueryDto = courseQueryDto.getRepoQueryDto();
+    const courses = await this.courseRepo.getCourseListByQuery(
+      courseRepoQueryDto
+    );
+
+    const pagination = {
+      currentPage: courseRepoQueryDto.page,
+      pageSize: courseRepoQueryDto.pageSize,
+    };
+
+    if (courses.length === 0) {
+      throw new ServerError({
+        code: 200,
+        message: "Empty",
+        data: {
+          courses: [],
+          pagination,
+        },
+      });
+    }
+
+    return {
+      courses,
+      pagination,
+    };
+  };
 }
