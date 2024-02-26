@@ -10,7 +10,7 @@ import {
 import { DrizzleClient } from "../db/drizzle.client";
 import { CourseEntitySelect } from "../../domain/course.domain";
 import { UserEntitySelect } from "../../domain/user.domain";
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 
 export class EnrollRepo implements IEnrollRepo {
   static instance: EnrollRepo | undefined;
@@ -45,7 +45,12 @@ export class EnrollRepo implements IEnrollRepo {
   };
 
   createEnroll = async (enroll: RepoCreateEnrollDto) => {
-    await this.db.insert(schema.enrolls).values(enroll);
+    await Promise.all([
+      this.db.execute(
+        sql`UPDATE Courses SET enroll_count = enroll_count + 1 WHERE id = ${enroll.courseId}`
+      ),
+      this.db.insert(schema.enrolls).values(enroll),
+    ]);
   };
 
   getEnrollByUserIdAndCourseIdWith = async <

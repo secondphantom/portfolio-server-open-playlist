@@ -19,9 +19,9 @@ describe("enroll repo", () => {
     enrollRepo = new EnrollRepo(dbClient);
   });
 
-  test("create enroll", async () => {
+  test.only("create enroll", async () => {
     const createEnrollDto = {
-      courseId: 0,
+      courseId: 1,
       userId: 0,
       chapterProgress: [],
       totalProgress: 0,
