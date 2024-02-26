@@ -5,7 +5,32 @@ import {
   RepoCreateCourseDto,
 } from "../../domain/course.domain";
 import { EnrollEntitySelect } from "../../domain/enroll.domain";
-import { UserEntitySelect } from "../../domain/user.domain";
+
+export type RepoQueryCourseDto = {
+  userId?: number;
+  page: number;
+  categoryId?: number;
+  order: "popular" | "recent";
+  videoId: string | undefined;
+  search: string | undefined;
+  channelId: string | undefined;
+  language: string | undefined;
+  pageSize: number;
+};
+
+export type RepoCourseByQuery = Pick<
+  CourseEntitySelect,
+  | "id"
+  | "title"
+  | "videoId"
+  | "channelId"
+  | "categoryId"
+  | "createdAt"
+  | "publishedAt"
+  | "enrollCount"
+> & {
+  enrolls: Pick<EnrollEntitySelect, "userId">[] | undefined;
+};
 
 export interface ICourseRepo {
   getCourseByVideoId: <T extends keyof CourseEntitySelect>(
@@ -67,4 +92,7 @@ export interface ICourseRepo {
       | { [key in keyof CourseEntitySelect]?: boolean }
   ) => Promise<Pick<CourseEntitySelect, T> | undefined>;
   createCourse: (channel: RepoCreateCourseDto) => Promise<void>;
+  getCourseListByQuery: (
+    query: RepoQueryCourseDto
+  ) => Promise<RepoCourseByQuery[]>;
 }

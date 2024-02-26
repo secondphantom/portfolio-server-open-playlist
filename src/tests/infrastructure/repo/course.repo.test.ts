@@ -3,6 +3,7 @@ import { DrizzleClient } from "../../../infrastructure/db/drizzle.client";
 import CourseRepo from "../../../infrastructure/repo/course.repo";
 import { RepoCreateCourseDto } from "../../../domain/course.domain";
 import { ICourseRepo } from "../../../application/interfaces/course.repo";
+import { CourseQueryDto as CourseListQueryDto } from "../../../dto/course.query.dto";
 dotenv.config();
 
 describe("course repo", () => {
@@ -64,7 +65,7 @@ describe("course repo", () => {
     expect(course?.id).toEqual(1);
   });
 
-  test.only("get course by id with", async () => {
+  test("get course by id with", async () => {
     const where = {
       courseId: 1,
       userId: 1,
@@ -94,5 +95,25 @@ describe("course repo", () => {
       channel: { channelId: "UC8butISFwT-Wl7EV0hUK0BQ" },
       category: null,
     });
+  });
+
+  test.only("get courses by query", async () => {
+    const queryDto = new CourseListQueryDto({
+      userId: 1,
+      categoryId: 1,
+      // order: "recent",
+      // search: "cloud",
+      // videoId: "zA8guDqfv40",
+    });
+
+    const inputs = queryDto.getRepoQueryDto();
+    const courses = await courseRepo.getCourseListByQuery(inputs);
+
+    for (const course of courses) {
+      expect(course.categoryId).toEqual(inputs.categoryId!);
+      if (course.enrolls && course.enrolls?.length > 0) {
+        expect(course.enrolls[0].userId).toEqual(inputs.userId!);
+      }
+    }
   });
 });

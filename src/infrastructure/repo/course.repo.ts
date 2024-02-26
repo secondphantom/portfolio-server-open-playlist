@@ -5,11 +5,16 @@ import {
   RepoCreateCourseDto,
 } from "../../domain/course.domain";
 import { DrizzleClient } from "../db/drizzle.client";
-import { ICourseRepo } from "../../application/interfaces/course.repo";
+import {
+  ICourseRepo,
+  RepoCourseByQuery,
+  RepoQueryCourseDto,
+} from "../../application/interfaces/course.repo";
 import { UserEntitySelect } from "../../domain/user.domain";
 import { ChannelEntitySelect } from "../../domain/channel.domain";
 import { CategoryEntitySelect } from "../../domain/category.domain";
 import { EnrollEntitySelect } from "../../domain/enroll.domain";
+import { and, desc, eq, sql } from "drizzle-orm";
 
 export default class CourseRepo implements ICourseRepo {
   static instance: CourseRepo | undefined;
@@ -136,5 +141,112 @@ export default class CourseRepo implements ICourseRepo {
 
   createCourse = async (course: RepoCreateCourseDto) => {
     await this.db.insert(schema.courses).values(course);
+  };
+
+  getCourseListByQuery = async (query: RepoQueryCourseDto) => {
+    const {
+      userId,
+      page,
+      categoryId,
+      order,
+      videoId,
+      search,
+      channelId,
+      language,
+      pageSize,
+    } = query;
+
+    const orderBy = ((order: string) => {
+      switch (order) {
+        case "popular":
+          return [desc(schema.courses.enrollCount)];
+        case "recent":
+          return [desc(schema.courses.publishedAt)];
+        default:
+          return [];
+      }
+    })(order);
+
+    if (search) {
+      const courses = await this.db
+        .select({
+          id: schema.courses.id,
+          title: schema.courses.title,
+          videoId: schema.courses.videoId,
+          channelId: schema.courses.channelId,
+          createdAt: schema.courses.createdAt,
+          publishedAt: schema.courses.publishedAt,
+          enrollCount: schema.courses.enrollCount,
+          enrolls: sql`coalesce((select json_arrayagg(json_array(\`user_id\`)) from \`Enrolls\` \`courses_enrolls\` where (\`courses_enrolls\`.\`course_id\` = \`Courses\`.\`id\` and \`courses_enrolls\`.\`user_id\` = ${userId})), json_array()) as \`enrolls\``,
+        })
+        .from(schema.courses)
+        .where(
+          and(
+            ...[
+              search ? sql`MATCH(\`title\`) AGAINST(${search})` : undefined,
+              categoryId
+                ? eq(schema.courses.categoryId, categoryId)
+                : undefined,
+              videoId ? eq(schema.courses.videoId, videoId) : undefined,
+              channelId ? eq(schema.courses.channelId, channelId) : undefined,
+              language ? eq(schema.courses.language, language) : undefined,
+            ].filter((v) => !!v)
+          )
+        )
+        .limit(pageSize)
+        .offset((page - 1) * pageSize)
+        .orderBy(...orderBy);
+      return courses as RepoCourseByQuery[];
+    }
+
+    const courses = await this.db.query.courses.findMany({
+      where: (course, { eq, and }) => {
+        return and(
+          ...[
+            categoryId ? eq(course.categoryId, categoryId) : undefined,
+            videoId ? eq(course.videoId, videoId) : undefined,
+            channelId ? eq(course.channelId, channelId) : undefined,
+            language ? eq(course.language, language) : undefined,
+          ].filter((v) => !!v)
+        );
+      },
+      orderBy: (course, { asc, desc }) => {
+        switch (order) {
+          case "popular":
+            return [desc(course.enrollCount)];
+          case "recent":
+            return [desc(course.publishedAt)];
+          default:
+            return [];
+        }
+      },
+      offset: (page - 1) * pageSize,
+      limit: pageSize,
+      columns: {
+        id: true,
+        title: true,
+        videoId: true,
+        channelId: true,
+        categoryId: true,
+        createdAt: true,
+        publishedAt: true,
+        enrollCount: true,
+      },
+      with: {
+        enrolls:
+          userId !== undefined
+            ? {
+                where: (enroll, { eq, and }) => {
+                  return eq(enroll.userId, userId!);
+                },
+                columns: {
+                  userId: true,
+                },
+              }
+            : undefined,
+      },
+    });
+
+    return courses as RepoCourseByQuery[];
   };
 }
