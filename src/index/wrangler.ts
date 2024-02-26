@@ -21,6 +21,10 @@ import { EnrollRepo } from "../infrastructure/repo/enroll.repo";
 import { MeController } from "../controller/me/me.controller";
 import { CourseResponseValidator } from "../infrastructure/validator/course.response.validator";
 import { MeResponseValidator } from "../infrastructure/validator/me.response.validator";
+import { ChannelRequestValidator } from "../infrastructure/validator/channel.request.validator";
+import { ChannelResponseValidator } from "../infrastructure/validator/channel.response.validator";
+import { ChannelService } from "../application/service/channel.service";
+import { ChannelController } from "../controller/channel/channel.controller";
 
 type AuthPayload = {
   userId: number;
@@ -63,6 +67,7 @@ export class WranglerSever {
   private authController: AuthController;
   private courseController: CourseController;
   private meController: MeController;
+  private channelController: ChannelController;
 
   constructor(private env: ENV) {
     const dbClient = DrizzleClient.getInstance(this.env);
@@ -81,6 +86,8 @@ export class WranglerSever {
     const courseResponseValidator = CourseResponseValidator.getInstance();
     const meRequestValidator = MeRequestValidator.getInstance();
     const meResponseValidator = MeResponseValidator.getInstance();
+    const channelRequestValidator = ChannelRequestValidator.getInstance();
+    const channelResponseValidator = ChannelResponseValidator.getInstance();
 
     const authService = AuthService.getInstance({
       cryptoUtil,
@@ -102,6 +109,10 @@ export class WranglerSever {
       enrollRepo,
     });
 
+    const channelService = ChannelService.getInstance({
+      courseRepo,
+    });
+
     this.authController = AuthController.getInstance({
       authService,
       authRequestValidator,
@@ -117,6 +128,12 @@ export class WranglerSever {
       meService,
       meRequestValidator,
       meResponseValidator,
+    });
+
+    this.channelController = ChannelController.getInstance({
+      channelService,
+      channelRequestValidator,
+      channelResponseValidator,
     });
 
     this.verifyAuthMiddleware = async (req: IRequest) => {
@@ -177,6 +194,7 @@ export class WranglerSever {
     this.initAuthRouter();
     this.initCourseRouter();
     this.initMeRouter();
+    this.initChannelRouter();
 
     this.app.all("*", () =>
       this.createJsonResponse(
@@ -371,6 +389,27 @@ export class WranglerSever {
         const result = await this.meController.updateEnrollByCourseId({
           auth,
           content,
+        });
+        return this.createJsonResponse(result);
+      }
+    );
+  };
+
+  private initChannelRouter = () => {
+    this.app.get(
+      "/api/channels/:id/courses",
+      withCookies,
+      this.authMiddleware,
+      async (req: IRequest & AuthRequest) => {
+        const { query, auth, params } = req;
+        const result = await this.channelController.getCourseListByQuery({
+          auth: {
+            userId: auth ? auth.userId : undefined,
+          },
+          query: {
+            channelId: params["id"],
+            ...query,
+          },
         });
         return this.createJsonResponse(result);
       }
