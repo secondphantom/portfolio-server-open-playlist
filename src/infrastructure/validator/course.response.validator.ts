@@ -1,10 +1,6 @@
 import z from "zod";
 
 import { ICourseResponseValidator } from "../../controller/course/course.interface";
-import {
-  ResponseCourseGetById,
-  ResponseCourseListGetQuery,
-} from "../../spec/course/course.response";
 import { ServerError } from "../../dto/error";
 
 export class CourseResponseValidator implements ICourseResponseValidator {

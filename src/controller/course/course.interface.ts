@@ -10,7 +10,7 @@ import {
 } from "../../spec/course/course.request";
 import {
   ResponseCourseGetById,
-  ResponseCourseListGetQuery,
+  ResponseCourseGetListByQuery,
 } from "../../spec/course/course.response";
 
 export interface ICourseRequestValidator {
@@ -23,5 +23,5 @@ export interface ICourseRequestValidator {
 
 export interface ICourseResponseValidator {
   getCourseById: (data: any) => ResponseCourseGetById;
-  getCourseListByQuery: (data: any) => ResponseCourseListGetQuery;
+  getCourseListByQuery: (data: any) => ResponseCourseGetListByQuery;
 }

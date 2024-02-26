@@ -25,7 +25,7 @@ export type ResponseCourseGetById = {
   } | null;
 };
 
-export type ResponseCourseListGetQuery = {
+export type ResponseCourseGetListByQuery = {
   courses: {
     id: number;
     videoId: string;
