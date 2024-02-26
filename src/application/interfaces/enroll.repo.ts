@@ -5,6 +5,20 @@ import {
 } from "../../domain/enroll.domain";
 import { UserEntitySelect } from "../../domain/user.domain";
 
+export type QueryEnrollListDto = {
+  userId: number;
+  order: "update" | "create";
+  page: number;
+  pageSize: number;
+};
+
+export type QueryEnroll = Pick<
+  EnrollEntitySelect,
+  "courseId" | "totalProgress" | "createdAt" | "updatedAt"
+> & {
+  course: Pick<CourseEntitySelect, "id" | "videoId" | "title">;
+};
+
 export interface IEnrollRepo {
   getEnrollByUserIdAndCourseId: <T extends keyof EnrollEntitySelect>(
     where: { userId: number; courseId: number },
@@ -58,4 +72,6 @@ export interface IEnrollRepo {
     },
     value: Partial<EnrollEntitySelect>
   ) => Promise<void>;
+
+  getEnrollListByQuery: (query: QueryEnrollListDto) => Promise<QueryEnroll[]>;
 }

@@ -4,6 +4,7 @@ import { ControllerResponse } from "../../dto/response";
 import {
   RequestMeCreateEnroll,
   RequestMeGetEnrollByCourseId,
+  RequestMeGetEnrollListByQuery,
   RequestMeUpdateEnrollByCourseId,
   RequestMeUpdateProfile,
 } from "../../spec/me/me.request";
@@ -127,6 +128,32 @@ export class MeController {
         payload: {
           success: false,
           message,
+        },
+      });
+    }
+  };
+
+  getEnrollListByQuery = async (req: RequestMeGetEnrollListByQuery) => {
+    try {
+      const dto = this.meRequestValidator.getEnrollListByQuery(req);
+      const data = await this.meService.getEnrollListByQuery(dto);
+      const validData = this.meResponseValidator.getEnrollListByQuery(data);
+
+      return new ControllerResponse({
+        code: 200,
+        payload: {
+          success: true,
+          data: validData,
+        },
+      });
+    } catch (error) {
+      const { code, message, data } = errorResolver(error);
+      return new ControllerResponse({
+        code,
+        payload: {
+          success: false,
+          message,
+          data,
         },
       });
     }

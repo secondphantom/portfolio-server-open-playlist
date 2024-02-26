@@ -42,4 +42,36 @@ export class MeResponseValidator implements IMeResponseValidator {
       });
     }
   };
+
+  private responseMeGetEnrollListByQuery = z.object({
+    enrolls: z.array(
+      z.object({
+        createdAt: z.date(),
+        updatedAt: z.date(),
+        courseId: z.number(),
+        totalProgress: z.number(),
+        course: z.object({
+          id: z.number(),
+          videoId: z.string(),
+          title: z.string(),
+        }),
+      })
+    ),
+    pagination: z.object({
+      currentPage: z.number(),
+      pageSize: z.number(),
+    }),
+  });
+
+  getEnrollListByQuery = (data: any) => {
+    try {
+      const dto = this.responseMeGetEnrollListByQuery.parse(data);
+      return dto;
+    } catch (error) {
+      throw new ServerError({
+        code: 400,
+        message: "Invalid Response",
+      });
+    }
+  };
 }

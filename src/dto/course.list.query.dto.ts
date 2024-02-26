@@ -10,7 +10,7 @@ export class CourseListQueryDto {
   private search: string | undefined;
   private channelId: string | undefined;
   private language: string | undefined;
-  private pageSize = 10;
+  private pageSize: number;
 
   constructor({
     userId,
@@ -21,7 +21,8 @@ export class CourseListQueryDto {
     search,
     channelId,
     language,
-  }: ServiceCourseGetListByQueryDto) {
+    pageSize,
+  }: ServiceCourseGetListByQueryDto & { pageSize?: number }) {
     this.userId = userId;
     this.page = page === undefined ? 1 : page;
     this.categoryId = categoryId;
@@ -30,6 +31,7 @@ export class CourseListQueryDto {
     this.search = search;
     this.channelId = channelId;
     this.language = language;
+    this.pageSize = pageSize ? pageSize : 10;
   }
 
   getRepoQueryDto = (): QueryCourseListDto => {

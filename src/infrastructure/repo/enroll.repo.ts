@@ -1,5 +1,8 @@
 import * as schema from "../../schema/schema";
-import { IEnrollRepo } from "../../application/interfaces/enroll.repo";
+import {
+  IEnrollRepo,
+  QueryEnrollListDto,
+} from "../../application/interfaces/enroll.repo";
 import {
   EnrollEntitySelect,
   RepoCreateEnrollDto,
@@ -110,5 +113,44 @@ export class EnrollRepo implements IEnrollRepo {
           eq(schema.enrolls.courseId, where.courseId)
         )
       );
+  };
+
+  getEnrollListByQuery = async (query: QueryEnrollListDto) => {
+    const { userId, pageSize, order, page } = query;
+
+    const enrolls = await this.db.query.enrolls.findMany({
+      where: (enroll, { eq }) => {
+        return eq(enroll.userId, userId);
+      },
+      orderBy: (course, { asc, desc }) => {
+        switch (order) {
+          case "update":
+            return [desc(course.updatedAt)];
+          case "create":
+            return [desc(course.createdAt)];
+          default:
+            return [];
+        }
+      },
+      offset: (page - 1) * pageSize,
+      limit: pageSize,
+      columns: {
+        courseId: true,
+        totalProgress: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      with: {
+        course: {
+          columns: {
+            id: true,
+            videoId: true,
+            title: true,
+          },
+        },
+      },
+    });
+
+    return enrolls;
   };
 }

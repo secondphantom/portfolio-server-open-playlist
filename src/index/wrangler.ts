@@ -349,6 +349,20 @@ export class WranglerSever {
       }
     );
 
+    this.app.get(
+      "/api/me/enrolls",
+      withCookies,
+      this.verifyAuthMiddleware,
+      async (req: IRequest & AuthRequest) => {
+        const { auth, query } = req;
+        const result = await this.meController.getEnrollListByQuery({
+          auth,
+          query,
+        });
+        return this.createJsonResponse(result);
+      }
+    );
+
     this.app.patch(
       "/api/me/profile",
       withCookies,

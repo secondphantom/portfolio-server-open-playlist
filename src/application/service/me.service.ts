@@ -1,4 +1,5 @@
 import { EnrollDomain } from "../../domain/enroll.domain";
+import { EnrollListQueryDto } from "../../dto/enroll.list.query.dto";
 import { ServerError } from "../../dto/error";
 import { EnrollChapterProgress } from "../../schema/schema";
 import { ICourseRepo } from "../interfaces/course.repo";
@@ -24,6 +25,12 @@ export type ServiceMeUpdateByCourseIdDto = {
   userId: number;
   courseId: number;
   chapterProgress: EnrollChapterProgress[];
+};
+
+export type ServiceMeGetEnrollListByQueryDto = {
+  userId: number;
+  page?: number;
+  order?: "update" | "create";
 };
 
 type ConstructorInputs = {
@@ -162,4 +169,30 @@ export class MeService {
   };
 
   // [GET] /me/enrolls?
+  getEnrollListByQuery = async (dto: ServiceMeGetEnrollListByQueryDto) => {
+    const enrollListQueryDto = new EnrollListQueryDto({ ...dto });
+    const queryDto = enrollListQueryDto.getRepoQueryDto();
+    const enrolls = await this.enrollRepo.getEnrollListByQuery(queryDto);
+
+    const pagination = {
+      currentPage: queryDto.page,
+      pageSize: queryDto.pageSize,
+    };
+
+    if (enrolls.length === 0) {
+      throw new ServerError({
+        code: 200,
+        message: "Empty",
+        data: {
+          enrolls: [],
+          pagination,
+        },
+      });
+    }
+
+    return {
+      enrolls,
+      pagination,
+    };
+  };
 }

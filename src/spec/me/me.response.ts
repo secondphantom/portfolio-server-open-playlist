@@ -10,3 +10,21 @@ export type ResponseMeGetEnrollByCourseId = {
     videoId: string;
   };
 };
+
+export type ResponseMeGetEnrollListByQuery = {
+  enrolls: {
+    createdAt: Date;
+    updatedAt: Date;
+    courseId: number;
+    totalProgress: number;
+    course: {
+      id: number;
+      videoId: string;
+      title: string;
+    };
+  }[];
+  pagination: {
+    currentPage: number;
+    pageSize: number;
+  };
+};

@@ -34,3 +34,13 @@ export type RequestMeUpdateEnrollByCourseId = {
     chapterProgress: { time: number; progress: number }[];
   };
 };
+
+export type RequestMeGetEnrollListByQuery = {
+  auth: {
+    userId: number;
+  };
+  query: {
+    page?: number;
+    order?: "update" | "create";
+  };
+};

@@ -6,6 +6,7 @@ import { RepoCreateEnrollDto } from "../../../domain/enroll.domain";
 import { DrizzleClient } from "../../../infrastructure/db/drizzle.client";
 import { EnrollRepo } from "../../../infrastructure/repo/enroll.repo";
 import { ServiceMeGetEnrollByCourseIdDto } from "../../../application/service/me.service";
+import { EnrollListQueryDto } from "../../../dto/enroll.list.query.dto";
 
 describe("enroll repo", () => {
   let enrollRepo: IEnrollRepo;
@@ -13,11 +14,12 @@ describe("enroll repo", () => {
   beforeAll(() => {
     const dbClient = new DrizzleClient({
       DATABASE_URL: process.env["DATABASE_URL"]!,
+      LOG_LEVEL: "verbose",
     });
     enrollRepo = new EnrollRepo(dbClient);
   });
 
-  test.skip("create enroll", async () => {
+  test("create enroll", async () => {
     const createEnrollDto = {
       courseId: 0,
       userId: 0,
@@ -45,7 +47,7 @@ describe("enroll repo", () => {
     }
   });
 
-  test.only("get enroll with course", async () => {
+  test("get enroll with course", async () => {
     const dto = {
       courseId: 1,
       userId: 1,

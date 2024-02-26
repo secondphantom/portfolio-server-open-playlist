@@ -1,4 +1,4 @@
-import { CourseListQueryDto } from "../../dto/course.query.dto";
+import { CourseListQueryDto } from "../../dto/course.list.query.dto";
 import { ServerError } from "../../dto/error";
 import { IChannelRepo } from "../interfaces/channel.repo";
 import { ICourseRepo } from "../interfaces/course.repo";

@@ -16,6 +16,7 @@ describe("user repo", () => {
   beforeAll(() => {
     const dbClient = new DrizzleClient({
       DATABASE_URL: process.env["DATABASE_URL"]!,
+      LOG_LEVEL: "verbose",
     });
     userRepo = new UserRepo(dbClient);
   });

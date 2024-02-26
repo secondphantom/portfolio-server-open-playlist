@@ -4,11 +4,13 @@ import { IMeRequestValidator } from "../../controller/me/me.interfcae";
 import {
   RequestMeCreateEnroll,
   RequestMeGetEnrollByCourseId,
+  RequestMeGetEnrollListByQuery,
   RequestMeUpdateEnrollByCourseId,
   RequestMeUpdateProfile,
 } from "../../spec/me/me.request";
 import { ServerError } from "../../dto/error";
 import { ServiceMeUpdateByCourseIdDto } from "../../application/service/me.service";
+import { zodIntTransform } from "./lib/zod.util";
 
 export class MeRequestValidator implements IMeRequestValidator {
   static instance: MeRequestValidator | undefined;
@@ -136,6 +138,35 @@ export class MeRequestValidator implements IMeRequestValidator {
       return {
         userId: dto.auth.userId,
         ...dto.content,
+      };
+    } catch (error) {
+      throw new ServerError({
+        code: 400,
+        message: "Invalid Input",
+      });
+    }
+  };
+
+  private requestMeGetEnrollListByQuery = z
+    .object({
+      auth: z.object({
+        userId: z.number(),
+      }),
+      query: z
+        .object({
+          page: zodIntTransform.optional(),
+          order: z.union([z.literal("update"), z.literal("create")]).optional(),
+        })
+        .strict(),
+    })
+    .strict();
+
+  getEnrollListByQuery = (req: RequestMeGetEnrollListByQuery) => {
+    try {
+      const dto = this.requestMeGetEnrollListByQuery.parse(req);
+      return {
+        userId: dto.auth.userId,
+        ...dto.query,
       };
     } catch (error) {
       throw new ServerError({
