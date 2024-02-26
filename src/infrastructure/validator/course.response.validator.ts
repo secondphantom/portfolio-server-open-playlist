@@ -1,7 +1,10 @@
 import z from "zod";
 
 import { ICourseResponseValidator } from "../../controller/course/course.interface";
-import { ResponseCourseGetById } from "../../spec/course/course.response";
+import {
+  ResponseCourseGetById,
+  ResponseCourseListGetQuery,
+} from "../../spec/course/course.response";
 import { ServerError } from "../../dto/error";
 
 export class CourseResponseValidator implements ICourseResponseValidator {
@@ -52,6 +55,39 @@ export class CourseResponseValidator implements ICourseResponseValidator {
       const dto = this.responseCourseGetById.parse(data);
       return dto;
     } catch (error) {
+      throw new ServerError({
+        code: 400,
+        message: "Invalid Response",
+      });
+    }
+  };
+
+  private responseCourseListGetQuery = z.object({
+    courses: z.array(
+      z.object({
+        id: z.number(),
+        videoId: z.string(),
+        title: z.string(),
+        channelId: z.string(),
+        categoryId: z.number(),
+        enrollCount: z.number(),
+        createdAt: z.date(),
+        publishedAt: z.date(),
+        enrolls: z.array(z.object({ userId: z.number() })).optional(),
+      })
+    ),
+    pagination: z.object({
+      currentPage: z.number(),
+      pageSize: z.number(),
+    }),
+  });
+
+  getCourseListByQuery = (data: any) => {
+    try {
+      const dto = this.responseCourseListGetQuery.parse(data);
+      return dto;
+    } catch (error) {
+      console.log(error);
       throw new ServerError({
         code: 400,
         message: "Invalid Response",

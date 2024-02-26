@@ -4,6 +4,7 @@ import { ControllerResponse } from "../../dto/response";
 import {
   RequestCourseCreateBody,
   RequestCourseGetById,
+  RequestCourseListByQuery,
 } from "../../spec/course/course.request";
 import {
   ICourseRequestValidator,
@@ -80,6 +81,32 @@ export class CourseController {
         payload: {
           success: false,
           message,
+        },
+      });
+    }
+  };
+
+  getCourseListByQuery = async (req: RequestCourseListByQuery) => {
+    try {
+      const dto = this.courseRequestValidator.getCourseListByQuery(req);
+      const data = await this.courseService.getCourseListByQuery(dto);
+      const validData = this.courseResponseValidator.getCourseListByQuery(data);
+
+      return new ControllerResponse({
+        code: 200,
+        payload: {
+          success: true,
+          data: validData,
+        },
+      });
+    } catch (error) {
+      const { code, message, data } = errorResolver(error);
+      return new ControllerResponse({
+        code,
+        payload: {
+          success: false,
+          message,
+          data: data,
         },
       });
     }

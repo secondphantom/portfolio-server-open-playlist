@@ -3,8 +3,11 @@ import { ICourseRequestValidator } from "../../controller/course/course.interfac
 import {
   RequestCourseCreateBody,
   RequestCourseGetById,
+  RequestCourseListByQuery,
 } from "../../spec/course/course.request";
 import { ServerError } from "../../dto/error";
+import { ServiceCourseGetListByQueryDto } from "../../application/service/course.service";
+import { zodIntTransform } from "./lib/zod.util";
 
 export class CourseRequestValidator implements ICourseRequestValidator {
   static instance: CourseRequestValidator | undefined;
@@ -58,17 +61,7 @@ export class CourseRequestValidator implements ICourseRequestValidator {
       }),
       params: z
         .object({
-          courseId: z.string().transform((val, ctx) => {
-            const result = parseInt(val);
-            if (isNaN(result)) {
-              ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                message: "Not a number",
-              });
-              return z.NEVER;
-            }
-            return result;
-          }),
+          courseId: zodIntTransform,
         })
         .strict(),
     })
@@ -79,6 +72,42 @@ export class CourseRequestValidator implements ICourseRequestValidator {
       const dto = this.requestCourseGetById.parse(req);
       return {
         ...dto.params,
+        userId: dto.auth.userId,
+      };
+    } catch (error) {
+      throw new ServerError({
+        code: 400,
+        message: "Invalid Input",
+      });
+    }
+  };
+
+  private requestCourseListByQuery = z
+    .object({
+      auth: z.object({
+        userId: z.number().optional(),
+      }),
+      query: z
+        .object({
+          page: zodIntTransform.optional(),
+          categoryId: zodIntTransform.optional(),
+          order: z
+            .union([z.literal("popular"), z.literal("recent")])
+            .optional(),
+          videoId: z.string().min(2).optional(),
+          search: z.string().min(2).optional(),
+          channelId: z.string().min(2).optional(),
+          language: z.string().min(1).optional(),
+        })
+        .strict(),
+    })
+    .strict();
+
+  getCourseListByQuery = (req: RequestCourseListByQuery) => {
+    try {
+      const dto = this.requestCourseListByQuery.parse(req);
+      return {
+        ...dto.query,
         userId: dto.auth.userId,
       };
     } catch (error) {

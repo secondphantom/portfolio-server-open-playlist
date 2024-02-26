@@ -266,6 +266,22 @@ export class WranglerSever {
   };
 
   private initCourseRouter = () => {
+    this.app.get(
+      "/api/courses",
+      withCookies,
+      this.authMiddleware,
+      async (req: IRequest & AuthRequest) => {
+        const { query, auth } = req;
+        const result = await this.courseController.getCourseListByQuery({
+          auth: {
+            userId: auth ? auth.userId : undefined,
+          },
+          query,
+        });
+        return this.createJsonResponse(result);
+      }
+    );
+
     this.app.post(
       "/api/courses",
       withCookies,

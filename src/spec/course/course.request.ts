@@ -10,3 +10,18 @@ export type RequestCourseGetById = {
     courseId: string;
   };
 };
+
+export type RequestCourseListByQuery = {
+  auth: {
+    userId?: number;
+  };
+  query: {
+    page?: number;
+    categoryId?: number;
+    order?: "popular" | "recent";
+    videoId?: string;
+    search?: string;
+    channelId?: string;
+    language?: string;
+  };
+};

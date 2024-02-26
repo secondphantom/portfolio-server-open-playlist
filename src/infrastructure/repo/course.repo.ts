@@ -168,7 +168,6 @@ export default class CourseRepo implements ICourseRepo {
     })(order);
 
     if (search) {
-      console.log("start query");
       const courses = await this.db
         .select({
           id: schema.courses.id,
@@ -202,7 +201,6 @@ export default class CourseRepo implements ICourseRepo {
         .limit(pageSize)
         .offset((page - 1) * pageSize)
         .orderBy(...orderBy);
-      console.log("end query");
       return courses as QueryCourse[];
     }
 
