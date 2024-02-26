@@ -3,7 +3,7 @@ import { DrizzleClient } from "../../../infrastructure/db/drizzle.client";
 import CourseRepo from "../../../infrastructure/repo/course.repo";
 import { RepoCreateCourseDto } from "../../../domain/course.domain";
 import { ICourseRepo } from "../../../application/interfaces/course.repo";
-import { CourseListQueryDto as CourseListQueryDto } from "../../../dto/course.query.dto";
+import { CourseListQueryDto as CourseListQueryDto } from "../../../dto/course.list.query.dto";
 dotenv.config();
 
 describe("course repo", () => {
