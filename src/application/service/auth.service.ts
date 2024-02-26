@@ -2,7 +2,11 @@ import { UserDomain } from "../../domain/user.domain";
 import { ICryptoUtil } from "../interfaces/crypto.util";
 import { IEmailUtil } from "../interfaces/email.util";
 import { IUserRepo } from "../interfaces/user.repo";
-import { IJwtUtil, JwtAuthSignPayload } from "../interfaces/jwt.util";
+import {
+  IJwtUtil,
+  JwtAuthSignPayload,
+  JwtResetPasswordPayload,
+} from "../interfaces/jwt.util";
 import { ENV } from "../../env";
 import { ServerError } from "../../dto/error";
 
@@ -31,6 +35,19 @@ export type ServiceAuthVerifyAccessTokenDto = {
 
 export type ServiceAuthRefreshAccessTokenDto = {
   refreshToken: string;
+};
+
+export type ServiceAuthFindPasswordDto = {
+  email: string;
+};
+
+export type ServiceAuthVerifyResetPasswordTokenDto = {
+  token: string;
+};
+
+export type ServiceAuthResetPasswordTokenDto = {
+  token: string;
+  password: string;
 };
 
 type C_ENV = Pick<ENV, "DATABASE_HOST" | "DOMAIN_URL" | "SERVICE_NAME">;
@@ -103,7 +120,7 @@ export class AuthService {
 
     await this.userRepo.createUser(createUserDto);
 
-    const token = await this.jwtUtil.signEmailVerify({
+    const token = await this.jwtUtil.signEmailVerifyPayload({
       email: createUserDto.email,
       uuid: createUserDto.uuid,
     });
@@ -133,7 +150,7 @@ export class AuthService {
 
   // [GET] /auth/verify-email
   verifyEmail = async ({ token }: ServiceAuthVerifyEmailDto) => {
-    const isValidToken = await this.jwtUtil.verifyEmailVerify(token);
+    const isValidToken = await this.jwtUtil.verifyEmailVerifyToken(token);
 
     if (!isValidToken) {
       throw new ServerError({
@@ -142,9 +159,10 @@ export class AuthService {
       });
     }
 
-    const { payload } = this.jwtUtil.decode<{ email: string; uuid: string }>(
-      token
-    );
+    const { payload } = this.jwtUtil.decodePayload<{
+      email: string;
+      uuid: string;
+    }>(token);
 
     const user = await this.userRepo.getUserByEmail(payload.email, {
       email: true,
@@ -195,7 +213,7 @@ export class AuthService {
       });
     }
 
-    const token = await this.jwtUtil.signEmailVerify({
+    const token = await this.jwtUtil.signEmailVerifyPayload({
       email: user.email,
       uuid: user.uuid,
     });
@@ -268,8 +286,8 @@ export class AuthService {
   };
 
   private getSignAuthToken = async (payload: JwtAuthSignPayload) => {
-    const accessToken = await this.jwtUtil.signAuthAccess(payload);
-    const refreshToken = await this.jwtUtil.signAuthRefresh(payload);
+    const accessToken = await this.jwtUtil.signAuthAccessPayload(payload);
+    const refreshToken = await this.jwtUtil.signAuthRefreshPayload(payload);
     return {
       accessToken,
       refreshToken,
@@ -280,7 +298,7 @@ export class AuthService {
   verifyAccessToken = async ({
     accessToken,
   }: ServiceAuthVerifyAccessTokenDto) => {
-    const isValidToken = await this.jwtUtil.verifyAuthAccess(accessToken);
+    const isValidToken = await this.jwtUtil.verifyAuthAccessToken(accessToken);
     if (!isValidToken) {
       throw new ServerError({
         code: 401,
@@ -288,7 +306,8 @@ export class AuthService {
       });
     }
 
-    const { payload } = this.jwtUtil.decode<JwtAuthSignPayload>(accessToken);
+    const { payload } =
+      this.jwtUtil.decodePayload<JwtAuthSignPayload>(accessToken);
 
     return {
       roleId: payload.roleId,
@@ -301,7 +320,9 @@ export class AuthService {
   refreshAccessToken = async ({
     refreshToken,
   }: ServiceAuthRefreshAccessTokenDto) => {
-    const isValidToken = await this.jwtUtil.verifyAuthRefresh(refreshToken);
+    const isValidToken = await this.jwtUtil.verifyAuthRefreshToken(
+      refreshToken
+    );
     if (!isValidToken) {
       throw new ServerError({
         code: 401,
@@ -309,7 +330,8 @@ export class AuthService {
       });
     }
 
-    const { payload } = this.jwtUtil.decode<JwtAuthSignPayload>(refreshToken);
+    const { payload } =
+      this.jwtUtil.decodePayload<JwtAuthSignPayload>(refreshToken);
 
     const user = await this.userRepo.getUserById(payload.userId, {
       uuid: true,
@@ -340,5 +362,109 @@ export class AuthService {
     return token;
   };
 
-  // find-password
+  // find-password [POST] /auth/find-password
+  findPassword = async (dto: ServiceAuthFindPasswordDto) => {
+    const user = await this.userRepo.getUserByEmail(dto.email, {
+      id: true,
+      email: true,
+      uuid: true,
+      profileName: true,
+    });
+
+    if (!user) {
+      throw new ServerError({
+        code: 404,
+        message: "Not Found",
+      });
+    }
+
+    const token = await this.jwtUtil.signResetPasswordPayload({
+      email: user.email,
+      uuid: user.uuid,
+    });
+
+    const { success: successSendEmail } = await this.emailUtil.sendEmail({
+      from: {
+        email: `noreplay@${this.ENV.DOMAIN_URL}`,
+        name: this.ENV.SERVICE_NAME,
+      },
+      to: [
+        {
+          email: user.email,
+        },
+      ],
+      subject: "Password Reset Request",
+      message: `Dear ${user.profileName},\nWe received a request to reset the password for your account associated with ${user.email}. If you did not make this request, please ignore this email.\nTo reset your password, please click the link below:\n\nhttps://${this.ENV.DOMAIN_URL}/users/reset-password?token=${token}\n\nThis link will expire in 60 minutes. If you need a new link, please start the password reset process again on our website.\nIf you encounter any issues or did not request a password reset, please contact our support team for assistance.\nThank you for using our services.\n\nBest regards,\nThe ${this.ENV.SERVICE_NAME} Team`,
+    });
+
+    if (!successSendEmail) {
+      throw new ServerError({
+        message: "Fail to send email about reset",
+        code: 500,
+      });
+    }
+  };
+
+  // verify-reset-password-token [GET] /auth/reset-password?token=
+  verifyResetPasswordToken = async (
+    dto: ServiceAuthVerifyResetPasswordTokenDto
+  ) => {
+    const isValidToken = await this.jwtUtil.verifyResetPasswordToken(dto.token);
+
+    if (!isValidToken) {
+      throw new ServerError({
+        code: 401,
+        message: "Unauthorized",
+      });
+    }
+
+    const { payload } = this.jwtUtil.decodePayload<JwtResetPasswordPayload>(
+      dto.token
+    );
+
+    return {
+      email: payload.email,
+      uuid: payload.uuid,
+    };
+  };
+
+  // reset-password [POST] /auth/reset-password
+  resetPassword = async (dto: ServiceAuthResetPasswordTokenDto) => {
+    const isValidToken = await this.jwtUtil.verifyResetPasswordToken(dto.token);
+
+    if (!isValidToken) {
+      throw new ServerError({
+        code: 401,
+        message: "Unauthorized",
+      });
+    }
+
+    const { payload } = this.jwtUtil.decodePayload<JwtResetPasswordPayload>(
+      dto.token
+    );
+
+    const user = await this.userRepo.getUserByEmail(payload.email, {
+      email: true,
+      uuid: true,
+      id: true,
+    });
+
+    if (!user) {
+      throw new ServerError({
+        code: 401,
+        message: "Unauthorized",
+      });
+    }
+
+    if (user.uuid !== payload.uuid) {
+      throw new ServerError({
+        code: 401,
+        message: "Unauthorized",
+      });
+    }
+
+    const { key } = await this.cryptoUtil.encryptPassword(dto.password);
+
+    await this.userRepo.updateUserById(user.id, { hashKey: key });
+  };
 }

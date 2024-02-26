@@ -13,7 +13,7 @@ export default {
   async fetch(request: Request, env: any, ctx: any) {
     if (request.url.includes("sign")) {
       const body = await request.json<any>();
-      const token = await jwtUtil.signAuthAccess(body);
+      const token = await jwtUtil.signAuthAccessPayload(body);
 
       return new Response(
         JSON.stringify({
@@ -23,7 +23,7 @@ export default {
     } else if (request.url.includes("verify")) {
       const { token } = await request.json<any>();
 
-      const isVerified = await jwtUtil.verifyAuthAccess(token);
+      const isVerified = await jwtUtil.verifyAuthAccessToken(token);
 
       return new Response(
         JSON.stringify({
@@ -32,7 +32,7 @@ export default {
       );
     } else if (request.url.includes("decode")) {
       const { token } = await request.json<any>();
-      const { payload } = jwtUtil.decode(token);
+      const { payload } = jwtUtil.decodePayload(token);
 
       return new Response(JSON.stringify({ decode: payload }));
     }

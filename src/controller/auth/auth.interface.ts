@@ -1,10 +1,13 @@
 import {
+  ServiceAuthFindPasswordDto,
   ServiceAuthRefreshAccessTokenDto,
   ServiceAuthResendVerificationEmailDto,
+  ServiceAuthResetPasswordTokenDto,
   ServiceAuthSignUpDto,
   ServiceAuthSingInDto,
   ServiceAuthVerifyAccessTokenDto,
   ServiceAuthVerifyEmailDto,
+  ServiceAuthVerifyResetPasswordTokenDto,
 } from "../../application/service/auth.service";
 import {
   RequestAuthResendVerificationEmailBody,
@@ -13,6 +16,9 @@ import {
   RequestAuthVerifyEmailQuery,
   RequestAuthRefreshAccessTokenCookies,
   RequestAuthVerifyAccessTokenCookies,
+  RequestAuthVerifyResetPasswordToken,
+  RequestAuthResetPassword,
+  RequestAuthFindPassword,
 } from "../../spec/auth/auth.requests";
 
 export interface IAuthRequestValidator {
@@ -30,4 +36,11 @@ export interface IAuthRequestValidator {
   refreshAccessToken: (
     cookies: RequestAuthRefreshAccessTokenCookies
   ) => ServiceAuthRefreshAccessTokenDto;
+  findPassword: (body: RequestAuthFindPassword) => ServiceAuthFindPasswordDto;
+  verifyResetPasswordToken: (
+    query: RequestAuthVerifyResetPasswordToken
+  ) => ServiceAuthVerifyResetPasswordTokenDto;
+  resetPassword: (
+    body: RequestAuthResetPassword
+  ) => ServiceAuthResetPasswordTokenDto;
 }

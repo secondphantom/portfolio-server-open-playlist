@@ -16,14 +16,25 @@ export type JwtEmailVerifyPayload = {
   uuid: string;
 };
 
+export type JwtResetPasswordPayload = {
+  email: string;
+  uuid: string;
+};
+
 export interface IJwtUtil {
-  signAuthAccess: (payload: JwtAuthSignPayload) => Promise<string>;
-  signAuthRefresh: (payload: JwtAuthSignPayload) => Promise<string>;
-  signEmailVerify: (payload: JwtEmailVerifyPayload) => Promise<string>;
+  signAuthAccessPayload: (payload: JwtAuthSignPayload) => Promise<string>;
+  signAuthRefreshPayload: (payload: JwtAuthSignPayload) => Promise<string>;
+  signEmailVerifyPayload: (payload: JwtEmailVerifyPayload) => Promise<string>;
+  signResetPasswordPayload: (
+    payload: JwtResetPasswordPayload
+  ) => Promise<string>;
 
-  verifyAuthAccess: (token: string) => Promise<boolean>;
-  verifyAuthRefresh: (token: string) => Promise<boolean>;
-  verifyEmailVerify: (token: string) => Promise<boolean>;
+  verifyAuthAccessToken: (token: string) => Promise<boolean>;
+  verifyAuthRefreshToken: (token: string) => Promise<boolean>;
+  verifyEmailVerifyToken: (token: string) => Promise<boolean>;
+  verifyResetPasswordToken: (token: string) => Promise<boolean>;
 
-  decode: <T = { [key in string]: any }>(token: string) => { payload: T };
+  decodePayload: <T = { [key in string]: any }>(
+    token: string
+  ) => { payload: T };
 }

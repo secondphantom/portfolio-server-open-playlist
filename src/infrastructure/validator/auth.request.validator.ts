@@ -8,8 +8,12 @@ import {
   RequestAuthVerifyEmailQuery,
   RequestAuthRefreshAccessTokenCookies,
   RequestAuthVerifyAccessTokenCookies,
+  RequestAuthResetPassword,
+  RequestAuthVerifyResetPasswordToken,
+  RequestAuthFindPassword,
 } from "../../spec/auth/auth.requests";
 import { ServerError } from "../../dto/error";
+import { ServiceAuthFindPasswordDto } from "../../application/service/auth.service";
 
 export class AuthRequestValidator implements IAuthRequestValidator {
   static instance: AuthRequestValidator | undefined;
@@ -151,6 +155,70 @@ export class AuthRequestValidator implements IAuthRequestValidator {
   refreshAccessToken = (cookies: RequestAuthRefreshAccessTokenCookies) => {
     try {
       const dto = this.requestAuthRefreshAccessTokenCookies.parse(cookies);
+      return dto;
+    } catch (error) {
+      throw new ServerError({
+        code: 400,
+        message: "Invalid Input",
+      });
+    }
+  };
+
+  private requestAuthFindPassword = z
+    .object({
+      email: z
+        .string()
+        .min(1, { message: "Must have at least 1 character" })
+        .email("This is not a valid email."),
+    })
+    .strict();
+
+  findPassword = (body: RequestAuthFindPassword) => {
+    try {
+      const dto = this.requestAuthFindPassword.parse(body);
+      return dto;
+    } catch (error) {
+      throw new ServerError({
+        code: 400,
+        message: "Invalid Input",
+      });
+    }
+  };
+
+  private requestAuthVerifyResetPasswordToken = z
+    .object({
+      token: z.string().min(10),
+    })
+    .strict();
+
+  verifyResetPasswordToken = (query: RequestAuthVerifyResetPasswordToken) => {
+    try {
+      const dto = this.requestAuthVerifyResetPasswordToken.parse(query);
+      return dto;
+    } catch (error) {
+      throw new ServerError({
+        code: 400,
+        message: "Invalid Input",
+      });
+    }
+  };
+
+  private requestAuthResetPassword = z
+    .object({
+      token: z.string().min(10),
+      password: z
+        .string()
+        .min(1, { message: "Must have at least 1 character" })
+        .regex(this.passwordValidation, {
+          message:
+            "Minimum 8 characters, at least one uppercase letter, one lowercase letter, one number and one special character",
+        }),
+    })
+    .strict();
+
+  resetPassword = (body: RequestAuthResetPassword) => {
+    try {
+      const dto = this.requestAuthResetPassword.parse(body);
       return dto;
     } catch (error) {
       throw new ServerError({

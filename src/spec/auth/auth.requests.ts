@@ -24,3 +24,16 @@ export type RequestAuthVerifyAccessTokenCookies = {
 export type RequestAuthRefreshAccessTokenCookies = {
   refreshToken: string;
 };
+
+export type RequestAuthFindPassword = {
+  email: string;
+};
+
+export type RequestAuthVerifyResetPasswordToken = {
+  token: string;
+};
+
+export type RequestAuthResetPassword = {
+  token: string;
+  password: string;
+};

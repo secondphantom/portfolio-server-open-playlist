@@ -5,6 +5,7 @@ import {
   JwtAuthSignPayload,
   JwtConfig,
   JwtEmailVerifyPayload,
+  JwtResetPasswordPayload,
 } from "../../application/interfaces/jwt.util";
 import { ENV } from "../../env";
 
@@ -16,6 +17,8 @@ type C_ENV = Pick<
   | "AUTH_SIGN_IN_ACCESS_JWT_SECRET"
   | "AUTH_SIGN_IN_REFRESH_JWT_SECRET"
   | "AUTH_SIGN_IN_REFRESH_EXP_DURATION_SEC"
+  | "AUTH_RESET_PASSWORD_JWT_SECRET"
+  | "AUTH_RESET_PASSWORD_EXP_DURATION_SEC"
 >;
 
 export class JwtUtil implements IJwtUtil {
@@ -28,7 +31,7 @@ export class JwtUtil implements IJwtUtil {
 
   constructor(private ENV: C_ENV) {}
 
-  signAuthAccess = async (payload: JwtAuthSignPayload) => {
+  signAuthAccessPayload = async (payload: JwtAuthSignPayload) => {
     const nowSec = Math.floor(Date.now() / 1000);
     const token = await jwt.sign(
       {
@@ -41,7 +44,7 @@ export class JwtUtil implements IJwtUtil {
     return token;
   };
 
-  signAuthRefresh = async (payload: JwtAuthSignPayload) => {
+  signAuthRefreshPayload = async (payload: JwtAuthSignPayload) => {
     const nowSec = Math.floor(Date.now() / 1000);
     const token = await jwt.sign(
       {
@@ -54,7 +57,7 @@ export class JwtUtil implements IJwtUtil {
     return token;
   };
 
-  signEmailVerify = async (payload: JwtEmailVerifyPayload) => {
+  signEmailVerifyPayload = async (payload: JwtEmailVerifyPayload) => {
     const nowSec = Math.floor(Date.now() / 1000);
     const token = await jwt.sign(
       {
@@ -67,7 +70,20 @@ export class JwtUtil implements IJwtUtil {
     return token;
   };
 
-  verifyAuthAccess = async (token: string) => {
+  signResetPasswordPayload = async (payload: JwtResetPasswordPayload) => {
+    const nowSec = Math.floor(Date.now() / 1000);
+    const token = await jwt.sign(
+      {
+        ...payload,
+        iat: nowSec,
+        exp: nowSec + parseInt(this.ENV.AUTH_RESET_PASSWORD_EXP_DURATION_SEC),
+      },
+      this.ENV.AUTH_RESET_PASSWORD_JWT_SECRET
+    );
+    return token;
+  };
+
+  verifyAuthAccessToken = async (token: string) => {
     const isValid = await jwt.verify(
       token,
       this.ENV.AUTH_SIGN_IN_ACCESS_JWT_SECRET
@@ -75,7 +91,7 @@ export class JwtUtil implements IJwtUtil {
     return isValid;
   };
 
-  verifyAuthRefresh = async (token: string) => {
+  verifyAuthRefreshToken = async (token: string) => {
     const isValid = await jwt.verify(
       token,
       this.ENV.AUTH_SIGN_IN_REFRESH_JWT_SECRET
@@ -83,7 +99,7 @@ export class JwtUtil implements IJwtUtil {
     return isValid;
   };
 
-  verifyEmailVerify = async (token: string) => {
+  verifyEmailVerifyToken = async (token: string) => {
     const isValid = await jwt.verify(
       token,
       this.ENV.AUTH_EMAIL_VERIFY_JWT_SECRET
@@ -91,7 +107,15 @@ export class JwtUtil implements IJwtUtil {
     return isValid;
   };
 
-  decode = <T = { [x: string]: any }>(token: string) => {
+  verifyResetPasswordToken = async (token: string) => {
+    const isValid = await jwt.verify(
+      token,
+      this.ENV.AUTH_RESET_PASSWORD_JWT_SECRET
+    );
+    return isValid;
+  };
+
+  decodePayload = <T = { [x: string]: any }>(token: string) => {
     const { payload } = jwt.decode(token);
     return { payload: payload as T };
   };

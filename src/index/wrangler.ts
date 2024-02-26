@@ -282,6 +282,39 @@ export class WranglerSever {
 
       return this.createJsonResponse(result);
     });
+
+    this.app.post(
+      "/api/auth/find-password",
+      this.withContentMiddleware,
+      async (req) => {
+        const content = req.content;
+
+        const result = await this.authController.findPassword(content);
+
+        return this.createJsonResponse(result);
+      }
+    );
+
+    this.app.get("/api/auth/verify-reset-password-token", async (req) => {
+      const { query } = req;
+      const result = await this.authController.verifyResetPasswordToken(
+        query as any
+      );
+
+      return this.createJsonResponse(result);
+    });
+
+    this.app.post(
+      "/api/auth/reset-password",
+      this.withContentMiddleware,
+      async (req) => {
+        const content = req.content;
+
+        const result = await this.authController.resetPassword(content);
+
+        return this.createJsonResponse(result);
+      }
+    );
   };
 
   private initCourseRouter = () => {

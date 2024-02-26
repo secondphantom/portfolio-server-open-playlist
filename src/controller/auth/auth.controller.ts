@@ -10,6 +10,9 @@ import {
   RequestAuthSignUpBody,
   RequestAuthVerifyEmailQuery,
   RequestAuthVerifyAccessTokenCookies,
+  RequestAuthVerifyResetPasswordToken,
+  RequestAuthResetPassword,
+  RequestAuthFindPassword,
 } from "../../spec/auth/auth.requests";
 import { IAuthRequestValidator } from "./auth.interface";
 
@@ -216,6 +219,80 @@ export class AuthController {
         payload: {
           success: true,
           message: "Success Sign Out",
+        },
+      });
+    } catch (error) {
+      const { code, message } = errorResolver(error);
+      return new ControllerResponse({
+        code,
+        payload: {
+          success: false,
+          message,
+        },
+      });
+    }
+  };
+
+  findPassword = async (body: RequestAuthFindPassword) => {
+    try {
+      const dto = this.authRequestValidator.findPassword(body);
+      await this.authService.findPassword(dto);
+
+      return new ControllerResponse({
+        code: 301,
+        payload: {
+          success: true,
+          message: "Success Send Email",
+        },
+      });
+    } catch (error) {
+      const { code, message } = errorResolver(error);
+      return new ControllerResponse({
+        code,
+        payload: {
+          success: false,
+          message,
+        },
+      });
+    }
+  };
+
+  verifyResetPasswordToken = async (
+    query: RequestAuthVerifyResetPasswordToken
+  ) => {
+    try {
+      const dto = this.authRequestValidator.verifyResetPasswordToken(query);
+      const data = await this.authService.verifyResetPasswordToken(dto);
+
+      return new ControllerResponse({
+        code: 200,
+        payload: {
+          success: true,
+          data,
+        },
+      });
+    } catch (error) {
+      const { code, message } = errorResolver(error);
+      return new ControllerResponse({
+        code,
+        payload: {
+          success: false,
+          message,
+        },
+      });
+    }
+  };
+
+  resetPassword = async (body: RequestAuthResetPassword) => {
+    try {
+      const dto = this.authRequestValidator.resetPassword(body);
+      await this.authService.resetPassword(dto);
+
+      return new ControllerResponse({
+        code: 301,
+        payload: {
+          success: true,
+          message: "Success Reset Password",
         },
       });
     } catch (error) {
