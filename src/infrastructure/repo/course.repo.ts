@@ -168,6 +168,7 @@ export default class CourseRepo implements ICourseRepo {
     })(order);
 
     if (search) {
+      console.log("start query");
       const courses = await this.db
         .select({
           id: schema.courses.id,
@@ -178,7 +179,11 @@ export default class CourseRepo implements ICourseRepo {
           createdAt: schema.courses.createdAt,
           publishedAt: schema.courses.publishedAt,
           enrollCount: schema.courses.enrollCount,
-          enrolls: sql`coalesce((select json_arrayagg(json_array(\`user_id\`)) from \`Enrolls\` \`courses_enrolls\` where (\`courses_enrolls\`.\`course_id\` = \`Courses\`.\`id\` and \`courses_enrolls\`.\`user_id\` = ${userId})), json_array()) as \`enrolls\``,
+          ...(userId
+            ? {
+                enrolls: sql`coalesce((select json_arrayagg(json_object("userId",\`user_id\`)) from \`Enrolls\` \`courses_enrolls\` where (\`courses_enrolls\`.\`course_id\` = \`Courses\`.\`id\` and \`courses_enrolls\`.\`user_id\` = ${userId})), json_array()) as \`enrolls\``,
+              }
+            : {}),
         })
         .from(schema.courses)
         .where(
@@ -197,6 +202,7 @@ export default class CourseRepo implements ICourseRepo {
         .limit(pageSize)
         .offset((page - 1) * pageSize)
         .orderBy(...orderBy);
+      console.log("end query");
       return courses as QueryCourse[];
     }
 

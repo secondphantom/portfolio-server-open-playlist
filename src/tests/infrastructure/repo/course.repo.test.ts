@@ -12,6 +12,7 @@ describe("course repo", () => {
   beforeAll(() => {
     const dbClient = new DrizzleClient({
       DATABASE_URL: process.env["DATABASE_URL"]!,
+      LOG_LEVEL: "verbose",
     });
     courseRepo = new CourseRepo(dbClient);
   });
@@ -100,17 +101,21 @@ describe("course repo", () => {
   test.only("get courses by query", async () => {
     const queryDto = new CourseListQueryDto({
       userId: 1,
-      categoryId: 1,
+      // categoryId: 1,
       // order: "recent",
-      // search: "cloud",
-      // videoId: "zA8guDqfv40",
+      search: "aws",
+      videoId: "zA8guDqfv40",
     });
 
     const inputs = queryDto.getRepoQueryDto();
     const courses = await courseRepo.getCourseListByQuery(inputs);
 
+    console.dir(courses, { depth: 10 });
+
     for (const course of courses) {
-      expect(course.categoryId).toEqual(inputs.categoryId!);
+      if (inputs.categoryId) {
+        expect(course.categoryId).toEqual(inputs.categoryId);
+      }
       if (course.enrolls && course.enrolls?.length > 0) {
         expect(course.enrolls[0].userId).toEqual(inputs.userId!);
       }

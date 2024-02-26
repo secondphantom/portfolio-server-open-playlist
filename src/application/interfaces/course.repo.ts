@@ -21,13 +21,13 @@ export type QueryCourseListDto = {
 export type QueryCourse = Pick<
   CourseEntitySelect,
   | "id"
-  | "title"
   | "videoId"
+  | "title"
   | "channelId"
   | "categoryId"
+  | "enrollCount"
   | "createdAt"
   | "publishedAt"
-  | "enrollCount"
 > & {
   enrolls: Pick<EnrollEntitySelect, "userId">[] | undefined;
 };

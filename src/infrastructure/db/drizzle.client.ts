@@ -7,7 +7,7 @@ import { Connection, connect } from "@planetscale/database";
 import * as schema from "../../schema/schema";
 import { ENV } from "../../env";
 
-type C_ENV = Pick<ENV, "DATABASE_URL">;
+type C_ENV = Pick<ENV, "DATABASE_URL" | "LOG_LEVEL">;
 export class DrizzleClient {
   static instance: DrizzleClient | undefined;
   static getInstance = (ENV: C_ENV) => {
@@ -30,6 +30,7 @@ export class DrizzleClient {
     });
     this.db = drizzle(this.connection, {
       schema,
+      logger: this.ENV.LOG_LEVEL === "verbose" ? true : false,
     });
   }
 
