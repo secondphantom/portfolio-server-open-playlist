@@ -2,10 +2,10 @@ import z from "zod";
 
 import { IMeRequestValidator } from "../../controller/me/me.interfcae";
 import {
-  RequestMeCreateEnrollReq,
-  RequestMeGetEnrollByCourseIdReq,
-  RequestMeUpdateEnrollByCourseIdReq,
-  RequestMeUpdateProfileReq,
+  RequestMeCreateEnroll,
+  RequestMeGetEnrollByCourseId,
+  RequestMeUpdateEnrollByCourseId,
+  RequestMeUpdateProfile,
 } from "../../spec/me/me.request";
 import { ServerError } from "../../dto/error";
 import { ServiceMeUpdateByCourseIdDto } from "../../application/service/me.service";
@@ -33,7 +33,7 @@ export class MeRequestValidator implements IMeRequestValidator {
     })
     .strict();
 
-  createEnroll = (req: RequestMeCreateEnrollReq) => {
+  createEnroll = (req: RequestMeCreateEnroll) => {
     try {
       const dto = this.requestMeCreateEnrollReq.parse(req);
       return {
@@ -61,7 +61,7 @@ export class MeRequestValidator implements IMeRequestValidator {
     })
     .strict();
 
-  updateProfile = (req: RequestMeUpdateProfileReq) => {
+  updateProfile = (req: RequestMeUpdateProfile) => {
     try {
       const dto = this.requestMeUpdateProfileReq.parse(req);
       return {
@@ -99,7 +99,7 @@ export class MeRequestValidator implements IMeRequestValidator {
     })
     .strict();
 
-  getEnrollsByCourseId = (req: RequestMeGetEnrollByCourseIdReq) => {
+  getEnrollsByCourseId = (req: RequestMeGetEnrollByCourseId) => {
     try {
       const dto = this.requestMeGetEnrollByCourseIdReq.parse(req);
       return {
@@ -130,7 +130,7 @@ export class MeRequestValidator implements IMeRequestValidator {
     })
     .strict();
 
-  updateEnrollsByCourseId = (req: RequestMeUpdateEnrollByCourseIdReq) => {
+  updateEnrollsByCourseId = (req: RequestMeUpdateEnrollByCourseId) => {
     try {
       const dto = this.requestMeUpdateEnrollByCourseIdReq.parse(req);
       return {

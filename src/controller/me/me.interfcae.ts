@@ -6,20 +6,20 @@ import {
 } from "../../application/service/me.service";
 import { ResponseMeGetEnrollByCourseId } from "../../spec/me/me.response";
 import {
-  RequestMeCreateEnrollReq,
-  RequestMeGetEnrollByCourseIdReq,
-  RequestMeUpdateEnrollByCourseIdReq,
-  RequestMeUpdateProfileReq,
+  RequestMeCreateEnroll,
+  RequestMeGetEnrollByCourseId,
+  RequestMeUpdateEnrollByCourseId,
+  RequestMeUpdateProfile,
 } from "../../spec/me/me.request";
 
 export interface IMeRequestValidator {
-  createEnroll: (req: RequestMeCreateEnrollReq) => ServiceMeCreateEnrollDto;
-  updateProfile: (req: RequestMeUpdateProfileReq) => ServiceMeUpdateProfileDto;
+  createEnroll: (req: RequestMeCreateEnroll) => ServiceMeCreateEnrollDto;
+  updateProfile: (req: RequestMeUpdateProfile) => ServiceMeUpdateProfileDto;
   getEnrollsByCourseId: (
-    req: RequestMeGetEnrollByCourseIdReq
+    req: RequestMeGetEnrollByCourseId
   ) => ServiceMeGetEnrollByCourseIdDto;
   updateEnrollsByCourseId: (
-    req: RequestMeUpdateEnrollByCourseIdReq
+    req: RequestMeUpdateEnrollByCourseId
   ) => ServiceMeUpdateByCourseIdDto;
 }
 

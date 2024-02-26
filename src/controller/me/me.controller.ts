@@ -2,10 +2,10 @@ import { MeService } from "../../application/service/me.service";
 import { errorResolver } from "../../dto/error.resolver";
 import { ControllerResponse } from "../../dto/response";
 import {
-  RequestMeCreateEnrollReq,
-  RequestMeGetEnrollByCourseIdReq,
-  RequestMeUpdateEnrollByCourseIdReq,
-  RequestMeUpdateProfileReq,
+  RequestMeCreateEnroll,
+  RequestMeGetEnrollByCourseId,
+  RequestMeUpdateEnrollByCourseId,
+  RequestMeUpdateProfile,
 } from "../../spec/me/me.request";
 import { IMeRequestValidator, IMeResponseValidator } from "./me.interfcae";
 
@@ -35,7 +35,7 @@ export class MeController {
     private meResponseValidator: IMeResponseValidator
   ) {}
 
-  createEnroll = async (req: RequestMeCreateEnrollReq) => {
+  createEnroll = async (req: RequestMeCreateEnroll) => {
     try {
       const dto = this.meRequestValidator.createEnroll(req);
       await this.meService.createEnroll(dto);
@@ -59,7 +59,7 @@ export class MeController {
     }
   };
 
-  updateProfile = async (req: RequestMeUpdateProfileReq) => {
+  updateProfile = async (req: RequestMeUpdateProfile) => {
     try {
       const dto = this.meRequestValidator.updateProfile(req);
       await this.meService.updateProfile(dto);
@@ -83,7 +83,7 @@ export class MeController {
     }
   };
 
-  getEnrollsByCourseId = async (req: RequestMeGetEnrollByCourseIdReq) => {
+  getEnrollsByCourseId = async (req: RequestMeGetEnrollByCourseId) => {
     try {
       const dto = this.meRequestValidator.getEnrollsByCourseId(req);
       const data = await this.meService.getEnrollsByCourseId(dto);
@@ -108,7 +108,7 @@ export class MeController {
     }
   };
 
-  updateEnrollByCourseId = async (req: RequestMeUpdateEnrollByCourseIdReq) => {
+  updateEnrollByCourseId = async (req: RequestMeUpdateEnrollByCourseId) => {
     try {
       const dto = this.meRequestValidator.updateEnrollsByCourseId(req);
       await this.meService.updateEnrollByCourseId(dto);

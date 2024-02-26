@@ -1,4 +1,4 @@
-export type RequestMeCreateEnrollReq = {
+export type RequestMeCreateEnroll = {
   auth: {
     userId: number;
   };
@@ -7,7 +7,7 @@ export type RequestMeCreateEnrollReq = {
   };
 };
 
-export type RequestMeUpdateProfileReq = {
+export type RequestMeUpdateProfile = {
   auth: {
     userId: number;
   };
@@ -16,7 +16,7 @@ export type RequestMeUpdateProfileReq = {
   };
 };
 
-export type RequestMeGetEnrollByCourseIdReq = {
+export type RequestMeGetEnrollByCourseId = {
   auth: {
     userId: number;
   };
@@ -25,7 +25,7 @@ export type RequestMeGetEnrollByCourseIdReq = {
   };
 };
 
-export type RequestMeUpdateEnrollByCourseIdReq = {
+export type RequestMeUpdateEnrollByCourseId = {
   auth: {
     userId: number;
   };
