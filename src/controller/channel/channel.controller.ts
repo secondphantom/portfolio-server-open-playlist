@@ -1,7 +1,10 @@
 import { ChannelService } from "../../application/service/channel.service";
 import { errorResolver } from "../../dto/error.resolver";
 import { ControllerResponse } from "../../dto/response";
-import { RequestChannelGetCourseListByQuery } from "../../spec/channel/channel.request";
+import {
+  RequestChannelGetChannelByChannelId,
+  RequestChannelGetCourseListByQuery,
+} from "../../spec/channel/channel.request";
 import {
   IChannelRequestValidator,
   IChannelResponseValidator,
@@ -32,6 +35,31 @@ export class ChannelController {
     private channelRequestValidator: IChannelRequestValidator,
     private channelResponseValidator: IChannelResponseValidator
   ) {}
+
+  getChannelByChannelId = async (req: RequestChannelGetChannelByChannelId) => {
+    try {
+      const dto = this.channelRequestValidator.getChannelByChannelId(req);
+      const data = await this.channelService.getChannelByChannelId(dto);
+
+      return new ControllerResponse({
+        code: 200,
+        payload: {
+          success: true,
+          data,
+        },
+      });
+    } catch (error) {
+      const { code, message, data } = errorResolver(error);
+      return new ControllerResponse({
+        code,
+        payload: {
+          success: false,
+          message,
+          data: data,
+        },
+      });
+    }
+  };
 
   getCourseListByQuery = async (req: RequestChannelGetCourseListByQuery) => {
     try {

@@ -1,6 +1,11 @@
 import { CourseListQueryDto } from "../../dto/course.query.dto";
 import { ServerError } from "../../dto/error";
+import { IChannelRepo } from "../interfaces/channel.repo";
 import { ICourseRepo } from "../interfaces/course.repo";
+
+export type ServiceChannelGetChannelByChannelId = {
+  channelId: string;
+};
 
 export type ServiceChannelGetCourseListByQueryDto = {
   channelId: string;
@@ -15,18 +20,45 @@ export type ServiceChannelGetCourseListByQueryDto = {
 
 export class ChannelService {
   static instance: ChannelService | undefined;
-  static getInstance = (inputs: { courseRepo: ICourseRepo }) => {
+  static getInstance = (inputs: {
+    channelRepo: IChannelRepo;
+    courseRepo: ICourseRepo;
+  }) => {
     if (this.instance) return this.instance;
     this.instance = new ChannelService(inputs);
     return this.instance;
   };
   private courseRepo: ICourseRepo;
+  private channelRepo: IChannelRepo;
 
-  constructor({ courseRepo }: { courseRepo: ICourseRepo }) {
+  constructor({
+    courseRepo,
+    channelRepo,
+  }: {
+    channelRepo: IChannelRepo;
+    courseRepo: ICourseRepo;
+  }) {
+    this.channelRepo = channelRepo;
     this.courseRepo = courseRepo;
   }
 
   // [GET] /channels/:id
+  getChannelByChannelId = async (dto: ServiceChannelGetChannelByChannelId) => {
+    const channel = this.channelRepo.getChannelByChannelId(dto.channelId, {
+      channelId: true,
+      name: true,
+      enrollCount: true,
+    });
+
+    if (!channel) {
+      throw new ServerError({
+        code: 404,
+        message: "Not Found",
+      });
+    }
+
+    return channel;
+  };
 
   // [GET] /channels/:id/courses?
   getCourseListByQuery = async (dto: ServiceChannelGetCourseListByQueryDto) => {

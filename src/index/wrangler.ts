@@ -110,6 +110,7 @@ export class WranglerSever {
     });
 
     const channelService = ChannelService.getInstance({
+      channelRepo,
       courseRepo,
     });
 
@@ -414,6 +415,16 @@ export class WranglerSever {
         return this.createJsonResponse(result);
       }
     );
+
+    this.app.get("/api/channels/:id", async (req: IRequest) => {
+      const { params } = req;
+      const result = await this.channelController.getChannelByChannelId({
+        params: {
+          channelId: params["id"],
+        },
+      });
+      return this.createJsonResponse(result);
+    });
   };
 
   private createJsonResponse = async (

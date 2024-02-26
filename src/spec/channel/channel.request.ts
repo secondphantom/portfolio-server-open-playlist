@@ -1,3 +1,9 @@
+export type RequestChannelGetChannelByChannelId = {
+  params: {
+    channelId: string;
+  };
+};
+
 export type RequestChannelGetCourseListByQuery = {
   auth: {
     userId?: number;
