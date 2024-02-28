@@ -156,24 +156,23 @@ export default class CourseRepo implements ICourseRepo {
       pageSize,
     } = query;
 
-    const orderBy = ((order: string) => {
-      switch (order) {
-        case "popular":
-          return [desc(schema.courses.enrollCount)];
-        case "recent":
-          return [desc(schema.courses.publishedAt)];
-        default:
-          return [];
-      }
-    })(order);
-
     if (search) {
+      const orderBy = ((order: string) => {
+        switch (order) {
+          case "popular":
+            return [desc(schema.courses.enrollCount)];
+          case "recent":
+            return [desc(schema.courses.publishedAt)];
+          default:
+            return [];
+        }
+      })(order);
+
       const courses = await this.db
         .select({
           id: schema.courses.id,
           title: schema.courses.title,
           videoId: schema.courses.videoId,
-          channelId: schema.courses.channelId,
           categoryId: schema.courses.categoryId,
           createdAt: schema.courses.createdAt,
           publishedAt: schema.courses.publishedAt,
@@ -183,6 +182,7 @@ export default class CourseRepo implements ICourseRepo {
                 enrolls: sql`coalesce((select json_arrayagg(json_object("userId",\`user_id\`)) from \`Enrolls\` \`courses_enrolls\` where (\`courses_enrolls\`.\`course_id\` = \`Courses\`.\`id\` and \`courses_enrolls\`.\`user_id\` = ${userId})), json_array()) as \`enrolls\``,
               }
             : {}),
+          channel: sql`(select json_object("name",\`name\`,"channelId", \`channel_id\`) from (select * from \`Channels\` \`courses_channel\` where \`courses_channel\`.\`channel_id\` = \`Courses\`.\`channel_id\` limit ${1}) \`courses_channel\`) as \`channel\``,
         })
         .from(schema.courses)
         .where(
@@ -201,6 +201,7 @@ export default class CourseRepo implements ICourseRepo {
         .limit(pageSize)
         .offset((page - 1) * pageSize)
         .orderBy(...orderBy);
+      console.log(JSON.stringify(courses[0]));
       return courses as QueryCourse[];
     }
 
@@ -231,7 +232,6 @@ export default class CourseRepo implements ICourseRepo {
         id: true,
         title: true,
         videoId: true,
-        channelId: true,
         categoryId: true,
         createdAt: true,
         publishedAt: true,
@@ -249,6 +249,12 @@ export default class CourseRepo implements ICourseRepo {
                 },
               }
             : undefined,
+        channel: {
+          columns: {
+            name: true,
+            channelId: true,
+          },
+        },
       },
     });
 

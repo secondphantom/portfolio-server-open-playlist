@@ -64,12 +64,15 @@ export class CourseResponseValidator implements ICourseResponseValidator {
         id: z.number(),
         videoId: z.string(),
         title: z.string(),
-        channelId: z.string(),
         categoryId: z.number(),
         enrollCount: z.number(),
         createdAt: z.date(),
         publishedAt: z.date(),
         enrolls: z.array(z.object({ userId: z.number() })).optional(),
+        channel: z.object({
+          name: z.string(),
+          channelId: z.string(),
+        }),
       })
     ),
     pagination: z.object({

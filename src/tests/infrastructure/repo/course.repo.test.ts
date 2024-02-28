@@ -104,13 +104,13 @@ describe("course repo", () => {
       // categoryId: 1,
       // order: "recent",
       search: "aws",
-      videoId: "zA8guDqfv40",
+      // videoId: "zA8guDqfv40",
     });
 
     const inputs = queryDto.getRepoQueryDto();
     const courses = await courseRepo.getCourseListByQuery(inputs);
 
-    console.dir(courses, { depth: 10 });
+    console.dir(courses[0], { depth: 10 });
 
     for (const course of courses) {
       if (inputs.categoryId) {

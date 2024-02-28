@@ -23,13 +23,13 @@ export type QueryCourse = Pick<
   | "id"
   | "videoId"
   | "title"
-  | "channelId"
   | "categoryId"
   | "enrollCount"
   | "createdAt"
   | "publishedAt"
 > & {
   enrolls: Pick<EnrollEntitySelect, "userId">[] | undefined;
+  channel: Pick<ChannelEntitySelect, "name" | "channelId">;
 };
 
 export interface ICourseRepo {
