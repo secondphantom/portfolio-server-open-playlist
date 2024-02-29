@@ -16,4 +16,5 @@ export type ENV = {
   DATABASE_URL: string;
   CORS_ALLOW_ORIGIN: string;
   YOUTUBE_DATA_API_KEY: string;
+  CORS_CREDENTIAL: string;
 };

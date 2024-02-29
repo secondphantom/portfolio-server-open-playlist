@@ -13,8 +13,8 @@ export type RequestAuthResendVerificationEmailBody = {
 };
 
 export type RequestAuthSignInBody = {
-  username: string;
   email: string;
+  password: string;
 };
 
 export type RequestAuthVerifyAccessTokenCookies = {

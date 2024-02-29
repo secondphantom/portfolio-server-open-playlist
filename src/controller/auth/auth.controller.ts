@@ -4,6 +4,7 @@ import {
 } from "../../application/service/auth.service";
 import { errorResolver } from "../../dto/error.resolver";
 import { ControllerResponse } from "../../dto/response";
+import { ENV } from "../../env";
 import {
   RequestAuthResendVerificationEmailBody,
   RequestAuthSignInBody,
@@ -16,24 +17,29 @@ import {
 } from "../../spec/auth/auth.requests";
 import { IAuthRequestValidator } from "./auth.interface";
 
+type C_ENV = Pick<ENV, "CORS_CREDENTIAL">;
+type ConstructorInputs = {
+  authService: AuthService;
+  authRequestValidator: IAuthRequestValidator;
+  ENV: C_ENV;
+};
+
 export class AuthController {
   static instance: AuthController | undefined;
-  static getInstance = ({
-    authService,
-    authRequestValidator,
-  }: {
-    authService: AuthService;
-    authRequestValidator: IAuthRequestValidator;
-  }) => {
+  static getInstance = (inputs: ConstructorInputs) => {
     if (this.instance) return this.instance;
-    this.instance = new AuthController(authRequestValidator, authService);
+    this.instance = new AuthController(inputs);
     return this.instance;
   };
 
-  constructor(
-    private authRequestValidator: IAuthRequestValidator,
-    private authService: AuthService
-  ) {}
+  private authRequestValidator: IAuthRequestValidator;
+  private authService: AuthService;
+  private ENV: C_ENV;
+  constructor({ ENV, authRequestValidator, authService }: ConstructorInputs) {
+    this.ENV = ENV;
+    this.authRequestValidator = authRequestValidator;
+    this.authService = authService;
+  }
 
   signUp = async (body: RequestAuthSignUpBody) => {
     try {
@@ -41,7 +47,7 @@ export class AuthController {
       await this.authService.signUp(dto);
 
       return new ControllerResponse({
-        code: 301,
+        code: 200,
         payload: {
           success: true,
           message: "Success Sign Up",
@@ -65,7 +71,7 @@ export class AuthController {
       await this.authService.verifyEmail(dto);
 
       return new ControllerResponse({
-        code: 301,
+        code: 200,
         payload: {
           success: true,
           message: "Success Verify Email",
@@ -91,7 +97,7 @@ export class AuthController {
       await this.authService.resendVerificationEmail(dto);
 
       return new ControllerResponse({
-        code: 301,
+        code: 200,
         payload: {
           success: true,
           message: "Success Resend Verification Email",
@@ -115,15 +121,19 @@ export class AuthController {
       const { accessToken, refreshToken } = await this.authService.signIn(dto);
 
       return new ControllerResponse({
-        code: 301,
+        code: 200,
         headers: [
           {
             name: "Set-Cookie",
-            value: `accessToken=${accessToken}; Path=/; HttpOnly; Secure; SameSite=Strict`,
+            value: `accessToken=${accessToken}; Path=/; HttpOnly; Secure; SameSite=${
+              this.ENV.CORS_CREDENTIAL === "true" ? "None" : "Strict"
+            }`,
           },
           {
             name: "Set-Cookie",
-            value: `refreshToken=${refreshToken}; Path=/; HttpOnly; Secure; SameSite=Strict`,
+            value: `refreshToken=${refreshToken}; Path=/; HttpOnly; Secure; SameSite=${
+              this.ENV.CORS_CREDENTIAL === "true" ? "None" : "Strict"
+            }`,
           },
         ],
         payload: {
@@ -178,11 +188,15 @@ export class AuthController {
         headers: [
           {
             name: "Set-Cookie",
-            value: `accessToken=${accessToken}; Path=/; HttpOnly; Secure; SameSite=Strict`,
+            value: `accessToken=${accessToken}; Path=/; HttpOnly; Secure; SameSite=${
+              this.ENV.CORS_CREDENTIAL === "true" ? "None" : "Strict"
+            }`,
           },
           {
             name: "Set-Cookie",
-            value: `refreshToken=${refreshToken}; Path=/; HttpOnly; Secure; SameSite=Strict`,
+            value: `refreshToken=${refreshToken}; Path=/; HttpOnly; Secure; SameSite=${
+              this.ENV.CORS_CREDENTIAL === "true" ? "None" : "Strict"
+            }`,
           },
         ],
         payload: {
@@ -209,11 +223,15 @@ export class AuthController {
         headers: [
           {
             name: "Set-Cookie",
-            value: `accessToken=del; Path=/; HttpOnly; Secure; SameSite=Strict`,
+            value: `accessToken=del; Path=/; HttpOnly; Secure; SameSite=${
+              this.ENV.CORS_CREDENTIAL === "true" ? "None" : "Strict"
+            }`,
           },
           {
             name: "Set-Cookie",
-            value: `refreshToken=del; Path=/; HttpOnly; Secure; SameSite=Strict`,
+            value: `refreshToken=del; Path=/; HttpOnly; Secure; SameSite=${
+              this.ENV.CORS_CREDENTIAL === "true" ? "None" : "Strict"
+            }`,
           },
         ],
         payload: {
@@ -239,7 +257,7 @@ export class AuthController {
       await this.authService.findPassword(dto);
 
       return new ControllerResponse({
-        code: 301,
+        code: 200,
         payload: {
           success: true,
           message: "Success Send Email",
@@ -289,7 +307,7 @@ export class AuthController {
       await this.authService.resetPassword(dto);
 
       return new ControllerResponse({
-        code: 301,
+        code: 200,
         payload: {
           success: true,
           message: "Success Reset Password",

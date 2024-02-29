@@ -179,7 +179,7 @@ export class AuthService {
 
     if (user.isEmailVerified) {
       throw new ServerError({
-        code: 301,
+        code: 200,
         message: "Email is already verified",
       });
     }

@@ -117,6 +117,7 @@ export class WranglerSever {
     this.authController = AuthController.getInstance({
       authService,
       authRequestValidator,
+      ENV: this.env,
     });
 
     this.courseController = CourseController.getInstance({
@@ -186,6 +187,11 @@ export class WranglerSever {
     this.cors = createCors({
       methods: ["GET", "POST"],
       origins: [...this.env.CORS_ALLOW_ORIGIN.split(",")],
+      headers: {
+        ...(this.env.CORS_CREDENTIAL === "true" && {
+          "Access-Control-Allow-Credentials": true,
+        }),
+      },
     });
 
     this.app.all("*", (request) => {
@@ -489,6 +495,9 @@ export class WranglerSever {
     headers.append("Access-Control-Allow-Methods", ["GET", "POST"].join(", "));
     headers.append("Access-Control-Allow-Origin", this.env.CORS_ALLOW_ORIGIN);
     headers.append("Content-type", "application/json");
+    if (this.env.CORS_CREDENTIAL === "true") {
+      headers.append("Access-Control-Allow-Credentials", "true");
+    }
 
     const body = payload;
 
