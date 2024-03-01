@@ -50,7 +50,10 @@ export type ServiceAuthResetPasswordTokenDto = {
   password: string;
 };
 
-type C_ENV = Pick<ENV, "DATABASE_HOST" | "DOMAIN_URL" | "SERVICE_NAME">;
+type C_ENV = Pick<
+  ENV,
+  "DATABASE_HOST" | "DOMAIN_URL" | "SERVICE_NAME" | "EMAIL_DOMAIN_URL"
+>;
 
 export class AuthService {
   static instance: AuthService | undefined;
@@ -128,7 +131,7 @@ export class AuthService {
     // send verification email
     const { success: successSendEmail } = await this.emailUtil.sendEmail({
       from: {
-        email: `noreplay@${this.ENV.DOMAIN_URL}`,
+        email: `noreplay@${this.ENV.EMAIL_DOMAIN_URL}`,
         name: this.ENV.SERVICE_NAME,
       },
       to: [
@@ -220,7 +223,7 @@ export class AuthService {
 
     const { success: successSendEmail } = await this.emailUtil.sendEmail({
       from: {
-        email: `noreplay@${this.ENV.DOMAIN_URL}`,
+        email: `noreplay@${this.ENV.EMAIL_DOMAIN_URL}`,
         name: this.ENV.SERVICE_NAME,
       },
       to: [
@@ -388,7 +391,7 @@ export class AuthService {
 
     const { success: successSendEmail } = await this.emailUtil.sendEmail({
       from: {
-        email: `noreplay@${this.ENV.DOMAIN_URL}`,
+        email: `noreplay@${this.ENV.EMAIL_DOMAIN_URL}`,
         name: this.ENV.SERVICE_NAME,
       },
       to: [

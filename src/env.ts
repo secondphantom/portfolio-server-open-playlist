@@ -1,5 +1,6 @@
 export type ENV = {
   LOG_LEVEL: string;
+  EMAIL_DOMAIN_URL: string;
   DOMAIN_URL: string;
   SERVICE_NAME: string;
   AUTH_SIGN_IN_ACCESS_JWT_SECRET: string;
