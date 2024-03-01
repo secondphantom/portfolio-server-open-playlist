@@ -49,12 +49,13 @@ export class MeController {
         },
       });
     } catch (error) {
-      const { code, message } = errorResolver(error);
+      const { code, message, data } = errorResolver(error);
       return new ControllerResponse({
         code,
         payload: {
           success: false,
           message,
+          data,
         },
       });
     }
@@ -73,12 +74,13 @@ export class MeController {
         },
       });
     } catch (error) {
-      const { code, message } = errorResolver(error);
+      const { code, message, data } = errorResolver(error);
       return new ControllerResponse({
         code,
         payload: {
           success: false,
           message,
+          data,
         },
       });
     }
@@ -98,12 +100,13 @@ export class MeController {
         },
       });
     } catch (error) {
-      const { code, message } = errorResolver(error);
+      const { code, message, data } = errorResolver(error);
       return new ControllerResponse({
         code,
         payload: {
           success: false,
           message,
+          data,
         },
       });
     }
@@ -122,12 +125,13 @@ export class MeController {
         },
       });
     } catch (error) {
-      const { code, message } = errorResolver(error);
+      const { code, message, data } = errorResolver(error);
       return new ControllerResponse({
         code,
         payload: {
           success: false,
           message,
+          data,
         },
       });
     }

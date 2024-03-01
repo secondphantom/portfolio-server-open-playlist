@@ -6,12 +6,12 @@ import { errorResolver } from "../../dto/error.resolver";
 import { ControllerResponse } from "../../dto/response";
 import { ENV } from "../../env";
 import {
-  RequestAuthResendVerificationEmailBody,
-  RequestAuthSignInBody,
+  RequestAuthResendVerificationEmail,
+  RequestAuthSignIn,
   RequestAuthSignUpBody,
-  RequestAuthVerifyEmailQuery,
-  RequestAuthVerifyAccessTokenCookies,
-  RequestAuthVerifyResetPasswordToken,
+  RequestAuthVerifyEmail,
+  RequestAuthVerifyAccessToken,
+  RequestAuthVerifyResetPassword,
   RequestAuthResetPassword,
   RequestAuthFindPassword,
 } from "../../spec/auth/auth.requests";
@@ -54,18 +54,19 @@ export class AuthController {
         },
       });
     } catch (error) {
-      const { code, message } = errorResolver(error);
+      const { code, message, data } = errorResolver(error);
       return new ControllerResponse({
         code,
         payload: {
           success: false,
           message,
+          data,
         },
       });
     }
   };
 
-  verifyEmail = async (query: RequestAuthVerifyEmailQuery) => {
+  verifyEmail = async (query: RequestAuthVerifyEmail) => {
     try {
       const dto = this.authRequestValidator.verifyEmail(query);
       await this.authService.verifyEmail(dto);
@@ -78,19 +79,20 @@ export class AuthController {
         },
       });
     } catch (error) {
-      const { code, message } = errorResolver(error);
+      const { code, message, data } = errorResolver(error);
       return new ControllerResponse({
         code,
         payload: {
           success: false,
           message,
+          data,
         },
       });
     }
   };
 
   resendVerificationEmail = async (
-    body: RequestAuthResendVerificationEmailBody
+    body: RequestAuthResendVerificationEmail
   ) => {
     try {
       const dto = this.authRequestValidator.resendVerificationEmail(body);
@@ -104,18 +106,19 @@ export class AuthController {
         },
       });
     } catch (error) {
-      const { code, message } = errorResolver(error);
+      const { code, message, data } = errorResolver(error);
       return new ControllerResponse({
         code,
         payload: {
           success: false,
           message,
+          data,
         },
       });
     }
   };
 
-  signIn = async (body: RequestAuthSignInBody) => {
+  signIn = async (body: RequestAuthSignIn) => {
     try {
       const dto = this.authRequestValidator.signIn(body);
       const { accessToken, refreshToken } = await this.authService.signIn(dto);
@@ -142,18 +145,19 @@ export class AuthController {
         },
       });
     } catch (error) {
-      const { code, message } = errorResolver(error);
+      const { code, message, data } = errorResolver(error);
       return new ControllerResponse({
         code,
         payload: {
           success: false,
           message,
+          data,
         },
       });
     }
   };
 
-  verifyAccessToken = async (cookies: RequestAuthVerifyAccessTokenCookies) => {
+  verifyAccessToken = async (cookies: RequestAuthVerifyAccessToken) => {
     try {
       const dto = this.authRequestValidator.verifyAccessToken(cookies);
       const data = await this.authService.verifyAccessToken(dto);
@@ -166,12 +170,13 @@ export class AuthController {
         },
       });
     } catch (error) {
-      const { code, message } = errorResolver(error);
+      const { code, message, data } = errorResolver(error);
       return new ControllerResponse({
         code,
         payload: {
           success: false,
           message,
+          data,
         },
       });
     }
@@ -205,12 +210,13 @@ export class AuthController {
         },
       });
     } catch (error) {
-      const { code, message } = errorResolver(error);
+      const { code, message, data } = errorResolver(error);
       return new ControllerResponse({
         code,
         payload: {
           success: false,
           message,
+          data,
         },
       });
     }
@@ -240,12 +246,13 @@ export class AuthController {
         },
       });
     } catch (error) {
-      const { code, message } = errorResolver(error);
+      const { code, message, data } = errorResolver(error);
       return new ControllerResponse({
         code,
         payload: {
           success: false,
           message,
+          data,
         },
       });
     }
@@ -264,20 +271,19 @@ export class AuthController {
         },
       });
     } catch (error) {
-      const { code, message } = errorResolver(error);
+      const { code, message, data } = errorResolver(error);
       return new ControllerResponse({
         code,
         payload: {
           success: false,
           message,
+          data,
         },
       });
     }
   };
 
-  verifyResetPasswordToken = async (
-    query: RequestAuthVerifyResetPasswordToken
-  ) => {
+  verifyResetPasswordToken = async (query: RequestAuthVerifyResetPassword) => {
     try {
       const dto = this.authRequestValidator.verifyResetPasswordToken(query);
       const data = await this.authService.verifyResetPasswordToken(dto);
@@ -290,12 +296,13 @@ export class AuthController {
         },
       });
     } catch (error) {
-      const { code, message } = errorResolver(error);
+      const { code, message, data } = errorResolver(error);
       return new ControllerResponse({
         code,
         payload: {
           success: false,
           message,
+          data,
         },
       });
     }
@@ -314,12 +321,13 @@ export class AuthController {
         },
       });
     } catch (error) {
-      const { code, message } = errorResolver(error);
+      const { code, message, data } = errorResolver(error);
       return new ControllerResponse({
         code,
         payload: {
           success: false,
           message,
+          data,
         },
       });
     }

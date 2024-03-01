@@ -2,14 +2,14 @@ import z from "zod";
 
 import { IAuthRequestValidator } from "../../controller/auth/auth.interface";
 import {
-  RequestAuthResendVerificationEmailBody,
-  RequestAuthSignInBody,
+  RequestAuthResendVerificationEmail,
+  RequestAuthSignIn,
   RequestAuthSignUpBody,
-  RequestAuthVerifyEmailQuery,
-  RequestAuthRefreshAccessTokenCookies,
-  RequestAuthVerifyAccessTokenCookies,
+  RequestAuthVerifyEmail,
+  RequestAuthRefreshAccessToken,
+  RequestAuthVerifyAccessToken,
   RequestAuthResetPassword,
-  RequestAuthVerifyResetPasswordToken,
+  RequestAuthVerifyResetPassword,
   RequestAuthFindPassword,
 } from "../../spec/auth/auth.requests";
 import { ServerError } from "../../dto/error";
@@ -67,7 +67,7 @@ export class AuthRequestValidator implements IAuthRequestValidator {
     })
     .strict();
 
-  verifyEmail = (query: RequestAuthVerifyEmailQuery) => {
+  verifyEmail = (query: RequestAuthVerifyEmail) => {
     try {
       const dto = this.requestAuthVerifyEmailQuery.parse(query);
       return dto;
@@ -88,7 +88,7 @@ export class AuthRequestValidator implements IAuthRequestValidator {
     })
     .strict();
 
-  resendVerificationEmail = (body: RequestAuthResendVerificationEmailBody) => {
+  resendVerificationEmail = (body: RequestAuthResendVerificationEmail) => {
     try {
       const dto = this.requestAuthResendVerificationEmailBody.parse(body);
       return dto;
@@ -116,7 +116,7 @@ export class AuthRequestValidator implements IAuthRequestValidator {
     })
     .strict();
 
-  signIn = (body: RequestAuthSignInBody) => {
+  signIn = (body: RequestAuthSignIn) => {
     try {
       const dto = this.requestAuthSignInBody.parse(body);
       return dto;
@@ -134,7 +134,7 @@ export class AuthRequestValidator implements IAuthRequestValidator {
     })
     .strict();
 
-  verifyAccessToken = (cookies: RequestAuthVerifyAccessTokenCookies) => {
+  verifyAccessToken = (cookies: RequestAuthVerifyAccessToken) => {
     try {
       const dto = this.requestVerifyAccessTokenCookies.parse(cookies);
       return dto;
@@ -152,7 +152,7 @@ export class AuthRequestValidator implements IAuthRequestValidator {
     })
     .strict();
 
-  refreshAccessToken = (cookies: RequestAuthRefreshAccessTokenCookies) => {
+  refreshAccessToken = (cookies: RequestAuthRefreshAccessToken) => {
     try {
       const dto = this.requestAuthRefreshAccessTokenCookies.parse(cookies);
       return dto;
@@ -191,7 +191,7 @@ export class AuthRequestValidator implements IAuthRequestValidator {
     })
     .strict();
 
-  verifyResetPasswordToken = (query: RequestAuthVerifyResetPasswordToken) => {
+  verifyResetPasswordToken = (query: RequestAuthVerifyResetPassword) => {
     try {
       const dto = this.requestAuthVerifyResetPasswordToken.parse(query);
       return dto;

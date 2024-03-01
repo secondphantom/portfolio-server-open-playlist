@@ -261,6 +261,9 @@ export class AuthService {
       throw new ServerError({
         code: 401,
         message: "Email is not verified",
+        data: {
+          isEmailVerified: user.isEmailVerified,
+        },
       });
     }
 

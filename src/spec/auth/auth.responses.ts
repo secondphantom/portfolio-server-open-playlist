@@ -1,13 +1,7 @@
-type Token = {
-  payload: {
-    id: string;
-    role: string;
-    uuid: string;
-    exp: number;
-  };
-};
+export type ErrorResponseAuthSignIn = { isEmailVerified: boolean } | undefined;
 
-export type ResponseAuthSignInHeader = {
-  token: Token;
-  cookies: Token;
+export type ResponseAuthVerifyAccessToken = {
+  roleId: number;
+  userId: number;
+  uuid: string;
 };

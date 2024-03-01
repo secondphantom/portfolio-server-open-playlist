@@ -55,7 +55,7 @@ export class ChannelController {
         payload: {
           success: false,
           message,
-          data: data,
+          data,
         },
       });
     }
@@ -82,7 +82,7 @@ export class ChannelController {
         payload: {
           success: false,
           message,
-          data: data,
+          data,
         },
       });
     }

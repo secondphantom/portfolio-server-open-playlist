@@ -147,7 +147,7 @@ export class WranglerSever {
         return this.createJsonResponse(result);
       }
 
-      const payload = result.getResponse().payload.data as AuthPayload;
+      const payload = result.getResponse().payload.data;
 
       req.auth = payload;
     };
@@ -162,7 +162,7 @@ export class WranglerSever {
         return;
       }
 
-      const payload = result.getResponse().payload.data as AuthPayload;
+      const payload = result.getResponse().payload.data;
 
       req.auth = payload;
     };

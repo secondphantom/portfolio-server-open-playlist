@@ -4,24 +4,24 @@ export type RequestAuthSignUpBody = {
   password: string;
 };
 
-export type RequestAuthVerifyEmailQuery = {
+export type RequestAuthVerifyEmail = {
   token: string;
 };
 
-export type RequestAuthResendVerificationEmailBody = {
+export type RequestAuthResendVerificationEmail = {
   email: string;
 };
 
-export type RequestAuthSignInBody = {
+export type RequestAuthSignIn = {
   email: string;
   password: string;
 };
 
-export type RequestAuthVerifyAccessTokenCookies = {
+export type RequestAuthVerifyAccessToken = {
   accessToken: string;
 };
 
-export type RequestAuthRefreshAccessTokenCookies = {
+export type RequestAuthRefreshAccessToken = {
   refreshToken: string;
 };
 
@@ -29,7 +29,7 @@ export type RequestAuthFindPassword = {
   email: string;
 };
 
-export type RequestAuthVerifyResetPasswordToken = {
+export type RequestAuthVerifyResetPassword = {
   token: string;
 };
 
