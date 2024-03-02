@@ -400,7 +400,7 @@ export class AuthService {
         },
       ],
       subject: "Password Reset Request",
-      message: `Dear ${user.profileName},\nWe received a request to reset the password for your account associated with ${user.email}. If you did not make this request, please ignore this email.\nTo reset your password, please click the link below:\n\n${this.ENV.DOMAIN_URL}/users/reset-password?token=${token}\n\nThis link will expire in 60 minutes. If you need a new link, please start the password reset process again on our website.\nIf you encounter any issues or did not request a password reset, please contact our support team for assistance.\nThank you for using our services.\n\nBest regards,\nThe ${this.ENV.SERVICE_NAME} Team`,
+      message: `Dear ${user.profileName},\nWe received a request to reset the password for your account associated with ${user.email}. If you did not make this request, please ignore this email.\nTo reset your password, please click the link below:\n\n${this.ENV.DOMAIN_URL}/auth/reset-password?token=${token}\n\nThis link will expire in 60 minutes. If you need a new link, please start the password reset process again on our website.\nIf you encounter any issues or did not request a password reset, please contact our support team for assistance.\nThank you for using our services.\n\nBest regards,\nThe ${this.ENV.SERVICE_NAME} Team`,
     });
 
     if (!successSendEmail) {
