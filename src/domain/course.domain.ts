@@ -38,7 +38,7 @@ export class CourseDomain {
   private updatedAt: Date | undefined;
   private publishedAt: Date;
 
-  private MIN_VALID_DURATION_MIN = 30;
+  private MIN_VALID_DURATION_MIN = 60;
   private MIN_VALID_CHAPTER_COUNT = 2;
 
   constructor({
@@ -112,8 +112,9 @@ export class CourseDomain {
           .trim()
           .split(" ")
           .map((str) => {
-            const regAry = /[\)\(\[\]\!\?{}]*/.exec(str);
-            if (regAry && regAry[0] === str) {
+            const isOnlySpecialChars =
+              /^[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+$/.test(str);
+            if (isOnlySpecialChars) {
               return null;
             }
             return str;
