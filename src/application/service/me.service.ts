@@ -1,7 +1,10 @@
 import { EnrollDomain } from "../../domain/enroll.domain";
 import { EnrollListQueryDto } from "../../dto/enroll.list.query.dto";
 import { ServerError } from "../../dto/error";
-import { EnrollChapterProgress } from "../../schema/schema";
+import {
+  EnrollChapterProgress,
+  EnrollRecentProgress,
+} from "../../schema/schema";
 import { ICourseRepo } from "../interfaces/course.repo";
 import { IEnrollRepo } from "../interfaces/enroll.repo";
 import { IUserRepo } from "../interfaces/user.repo";
@@ -21,10 +24,17 @@ export type ServiceMeGetEnrollByCourseIdDto = {
   courseId: number;
 };
 
-export type ServiceMeUpdateByCourseIdDto = {
+export type ServiceMeUpdateEnrollByCourseIdDto = {
   userId: number;
   courseId: number;
-  chapterProgress: EnrollChapterProgress[];
+  chapterProgress: EnrollChapterProgress;
+};
+
+export type ServiceMeUpdateEnrollProgressByCourseIdDto = {
+  userId: number;
+  courseId: number;
+  partialChapterProgress?: EnrollChapterProgress;
+  recentProgress?: EnrollRecentProgress;
 };
 
 export type ServiceMeGetEnrollListByQueryDto = {
@@ -147,7 +157,7 @@ export class MeService {
     userId,
     courseId,
     chapterProgress,
-  }: ServiceMeUpdateByCourseIdDto) => {
+  }: ServiceMeUpdateEnrollByCourseIdDto) => {
     const enrollDomain = new EnrollDomain({
       courseId,
       userId,
@@ -164,6 +174,26 @@ export class MeService {
       {
         chapterProgress: entity.chapterProgress,
         totalProgress: entity.totalProgress,
+        recentProgress: entity.recentProgress,
+      }
+    );
+  };
+
+  // [PATCH] /me/enrolls/courses/progress
+  updateEnrollProgressByCourseId = async ({
+    userId,
+    courseId,
+    partialChapterProgress,
+    recentProgress,
+  }: ServiceMeUpdateEnrollProgressByCourseIdDto) => {
+    await this.enrollRepo.updateEnrollProgressByCourseId(
+      {
+        userId,
+        courseId,
+      },
+      {
+        partialChapterProgress: partialChapterProgress,
+        recentProgress: recentProgress,
       }
     );
   };

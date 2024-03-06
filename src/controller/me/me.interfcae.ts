@@ -2,7 +2,8 @@ import {
   ServiceMeCreateEnrollDto,
   ServiceMeGetEnrollByCourseIdDto,
   ServiceMeGetEnrollListByQueryDto,
-  ServiceMeUpdateByCourseIdDto,
+  ServiceMeUpdateEnrollByCourseIdDto,
+  ServiceMeUpdateEnrollProgressByCourseIdDto,
   ServiceMeUpdateProfileDto,
 } from "../../application/service/me.service";
 import {
@@ -14,6 +15,7 @@ import {
   RequestMeGetEnrollByCourseId,
   RequestMeGetEnrollListByQuery,
   RequestMeUpdateEnrollByCourseId,
+  RequestMeUpdateEnrollProgressByCourseId,
   RequestMeUpdateProfile,
 } from "../../spec/me/me.request";
 
@@ -25,7 +27,10 @@ export interface IMeRequestValidator {
   ) => ServiceMeGetEnrollByCourseIdDto;
   updateEnrollsByCourseId: (
     req: RequestMeUpdateEnrollByCourseId
-  ) => ServiceMeUpdateByCourseIdDto;
+  ) => ServiceMeUpdateEnrollByCourseIdDto;
+  updateEnrollProgressByCourseId: (
+    req: RequestMeUpdateEnrollProgressByCourseId
+  ) => ServiceMeUpdateEnrollProgressByCourseIdDto;
   getEnrollListByQuery: (
     req: RequestMeGetEnrollListByQuery
   ) => ServiceMeGetEnrollListByQueryDto;

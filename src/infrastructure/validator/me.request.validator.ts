@@ -6,10 +6,11 @@ import {
   RequestMeGetEnrollByCourseId,
   RequestMeGetEnrollListByQuery,
   RequestMeUpdateEnrollByCourseId,
+  RequestMeUpdateEnrollProgressByCourseId,
   RequestMeUpdateProfile,
 } from "../../spec/me/me.request";
 import { ServerError } from "../../dto/error";
-import { ServiceMeUpdateByCourseIdDto } from "../../application/service/me.service";
+import { ServiceMeUpdateEnrollByCourseIdDto } from "../../application/service/me.service";
 import { zodIntTransform } from "./lib/zod.util";
 
 export class MeRequestValidator implements IMeRequestValidator {
@@ -133,6 +134,46 @@ export class MeRequestValidator implements IMeRequestValidator {
   updateEnrollsByCourseId = (req: RequestMeUpdateEnrollByCourseId) => {
     try {
       const dto = this.requestMeUpdateEnrollByCourseIdReq.parse(req);
+      return {
+        userId: dto.auth.userId,
+        ...dto.content,
+      };
+    } catch (error) {
+      throw new ServerError({
+        code: 400,
+        message: "Invalid Input",
+      });
+    }
+  };
+
+  private requestMeUpdateEnrollProgressByCourseId = z
+    .object({
+      auth: z.object({
+        userId: z.number(),
+      }),
+      content: z
+        .object({
+          courseId: z.number(),
+          partialChapterProgress: z.record(z.string(), z.number()).optional(),
+          recentProgress: z
+            .object({
+              chapterIndex: z.number(),
+            })
+            .strict()
+            .optional(),
+        })
+        .strict(),
+    })
+    .strict();
+
+  updateEnrollProgressByCourseId = (
+    req: RequestMeUpdateEnrollProgressByCourseId
+  ) => {
+    try {
+      const dto = this.requestMeUpdateEnrollProgressByCourseId.parse(req);
+      if (!dto.content.partialChapterProgress && !dto.content.recentProgress) {
+        throw new Error("Invalid Input");
+      }
       return {
         userId: dto.auth.userId,
         ...dto.content,

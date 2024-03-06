@@ -7,7 +7,7 @@ import { DrizzleClient } from "../../../infrastructure/db/drizzle.client";
 import { EnrollRepo } from "../../../infrastructure/repo/enroll.repo";
 import {
   ServiceMeGetEnrollByCourseIdDto,
-  ServiceMeUpdateProgressByCourseIdDto,
+  ServiceMeUpdateEnrollProgressByCourseIdDto,
 } from "../../../application/service/me.service";
 import { EnrollListQueryDto } from "../../../dto/enroll.list.query.dto";
 
@@ -85,7 +85,7 @@ describe("enroll repo", () => {
       userId: 1,
       partialChapterProgress: { "234": 1 },
       recentProgress: { chapterIndex: 1 },
-    } satisfies ServiceMeUpdateProgressByCourseIdDto;
+    } satisfies ServiceMeUpdateEnrollProgressByCourseIdDto;
 
     await enrollRepo.updateEnrollProgressByCourseId(
       {

@@ -31,7 +31,18 @@ export type RequestMeUpdateEnrollByCourseId = {
   };
   content: {
     courseId: number;
-    chapterProgress: { time: number; progress: number }[];
+    chapterProgress: { [key in string]: number };
+  };
+};
+
+export type RequestMeUpdateEnrollProgressByCourseId = {
+  auth: {
+    userId: number;
+  };
+  content: {
+    courseId: number;
+    partialChapterProgress?: { [key in string]: number };
+    recentProgress?: { chapterIndex: number };
   };
 };
 

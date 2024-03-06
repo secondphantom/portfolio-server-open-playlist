@@ -447,6 +447,21 @@ export class WranglerSever {
         return this.createJsonResponse(result);
       }
     );
+
+    this.app.patch(
+      "/api/me/enrolls/courses/progress",
+      withCookies,
+      this.verifyAuthMiddleware,
+      this.withContentMiddleware,
+      async (req: IRequest & AuthRequest & ContentRequest) => {
+        const { auth, content } = req;
+        const result = await this.meController.updateEnrollProgressByCourseId({
+          auth,
+          content,
+        });
+        return this.createJsonResponse(result);
+      }
+    );
   };
 
   private initChannelRouter = () => {

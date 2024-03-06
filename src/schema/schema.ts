@@ -114,7 +114,6 @@ export type EnrollChapterProgress = {
 };
 
 export type EnrollRecentProgress = {
-  courseIndex: number;
   chapterIndex: number;
 };
 
