@@ -76,6 +76,7 @@ model Enrolls {
   course_id        BigInt   @db.UnsignedBigInt()
   chapter_progress Json     @db.Json()
   total_progress   Float    @db.Float()
+  recent_progress  Json     @db.Json()
   created_at       DateTime @default(now())
   updated_at       DateTime @default(now()) @updatedAt
 

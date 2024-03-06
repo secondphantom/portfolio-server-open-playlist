@@ -1,6 +1,7 @@
 import {
   CourseChapter,
   EnrollChapterProgress,
+  EnrollRecentProgress,
   enrolls,
 } from "../schema/schema";
 
@@ -9,14 +10,15 @@ export type EnrollEntityInsert = typeof enrolls.$inferInsert;
 
 export type RepoCreateEnrollDto = Pick<
   Required<EnrollEntityInsert>,
-  "courseId" | "userId" | "chapterProgress" | "totalProgress"
+  "courseId" | "userId" | "chapterProgress" | "totalProgress" | "recentProgress"
 >;
 
 export class EnrollDomain {
   private courseId: number;
   private userId: number;
-  private chapterProgress: EnrollChapterProgress[];
+  private chapterProgress: EnrollChapterProgress;
   private totalProgress: number;
+  private recentProgress: EnrollRecentProgress;
   private createdAt: Date | undefined;
   private updatedAt: Date | undefined;
   constructor({
@@ -24,34 +26,44 @@ export class EnrollDomain {
     userId,
     chapterProgress,
     totalProgress,
+    recentProgress,
     createdAt,
     updatedAt,
-  }: Omit<EnrollEntityInsert, "chapterProgress" | "totalProgress"> &
-    Partial<Pick<EnrollEntityInsert, "chapterProgress" | "totalProgress">>) {
+  }: Omit<
+    EnrollEntityInsert,
+    "chapterProgress" | "totalProgress" | "recentProgress"
+  > &
+    Partial<
+      Pick<
+        EnrollEntityInsert,
+        "chapterProgress" | "totalProgress" | "recentProgress"
+      >
+    >) {
     this.courseId = courseId;
     this.userId = userId;
-    this.chapterProgress = chapterProgress === undefined ? [] : chapterProgress;
+    this.chapterProgress = chapterProgress === undefined ? {} : chapterProgress;
     this.totalProgress = this.updateProgress(this.chapterProgress);
+    this.recentProgress = recentProgress
+      ? recentProgress
+      : { courseIndex: 0, chapterIndex: 0 };
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
   }
 
-  private updateProgress = (chapterProgress: EnrollChapterProgress[]) => {
-    if (chapterProgress.length === 0) return 0;
+  private updateProgress = (chapterProgress: EnrollChapterProgress) => {
+    const chapterProgressList = Object.values(chapterProgress);
+    if (chapterProgressList.length === 0) return 0;
 
     const totalProgress =
-      chapterProgress.filter((v) => v.progress === 1).length /
-      chapterProgress.length;
+      chapterProgressList.filter((v) => v === 1).length /
+      chapterProgressList.length;
     return totalProgress;
   };
 
   createInitProgress = (chapters: CourseChapter[]) => {
-    this.chapterProgress = chapters.map(({ time }) => {
-      return {
-        time,
-        progress: 0,
-      };
-    }) satisfies EnrollChapterProgress[];
+    chapters.forEach(({ time }) => {
+      this.chapterProgress[time] = 0;
+    });
   };
 
   getCreateEnrollDto = (): RepoCreateEnrollDto => {
@@ -60,6 +72,7 @@ export class EnrollDomain {
       userId: this.userId,
       chapterProgress: this.chapterProgress,
       totalProgress: this.totalProgress,
+      recentProgress: this.recentProgress,
     };
   };
 
@@ -69,6 +82,7 @@ export class EnrollDomain {
       userId: this.userId,
       chapterProgress: this.chapterProgress,
       totalProgress: this.totalProgress,
+      recentProgress: this.recentProgress,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };

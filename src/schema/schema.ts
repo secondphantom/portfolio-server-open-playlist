@@ -110,8 +110,12 @@ export const courses = mysqlTable(
 );
 
 export type EnrollChapterProgress = {
-  time: number;
-  progress: number;
+  [key in string]: number;
+};
+
+export type EnrollRecentProgress = {
+  courseIndex: number;
+  chapterIndex: number;
 };
 
 export const enrolls = mysqlTable(
@@ -121,8 +125,11 @@ export const enrolls = mysqlTable(
     courseId: bigint("course_id", { unsigned: true, mode: "number" }).notNull(),
     chapterProgress: json("chapter_progress")
       .notNull()
-      .$type<EnrollChapterProgress[]>(),
+      .$type<EnrollChapterProgress>(),
     totalProgress: float("total_progress").notNull(),
+    recentProgress: json("recent_progress")
+      .notNull()
+      .$type<EnrollRecentProgress>(),
     createdAt: datetime("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
