@@ -10,7 +10,7 @@ import {
 import { DrizzleClient } from "../db/drizzle.client";
 import { CourseEntitySelect } from "../../domain/course.domain";
 import { UserEntitySelect } from "../../domain/user.domain";
-import { and, eq, sql } from "drizzle-orm";
+import { SQL, and, eq, sql } from "drizzle-orm";
 
 export class EnrollRepo implements IEnrollRepo {
   static instance: EnrollRepo | undefined;
@@ -157,5 +157,44 @@ export class EnrollRepo implements IEnrollRepo {
     });
 
     return enrolls;
+  };
+
+  updateEnrollProgressByCourseId = async (
+    { userId, courseId }: { userId: number; courseId: number },
+    {
+      partialChapterProgress,
+      recentProgress,
+    }: {
+      partialChapterProgress?: schema.EnrollChapterProgress;
+      recentProgress?: schema.EnrollRecentProgress;
+    }
+  ) => {
+    const sqlChunks: SQL[] = [];
+    sqlChunks.push(sql`UPDATE \`Enrolls\` SET`);
+
+    if (partialChapterProgress) {
+      const [key, value] = Object.entries(partialChapterProgress)[0];
+      sqlChunks.push(
+        sql.raw(
+          `\`chapter_progress\` = JSON_REPLACE(\`chapter_progress\`, '$."${key}"', ${value})`
+        )
+      );
+    }
+
+    if (partialChapterProgress && recentProgress) {
+      sqlChunks.push(sql`,`);
+    }
+
+    if (recentProgress) {
+      sqlChunks.push(
+        sql`\`recent_progress\` = ${JSON.stringify(recentProgress)}`
+      );
+    }
+
+    sqlChunks.push(
+      sql`WHERE \`user_id\` = ${userId} AND \`course_id\` = ${courseId}`
+    );
+
+    await this.db.execute(sql.join(sqlChunks, sql.raw(" ")));
   };
 }

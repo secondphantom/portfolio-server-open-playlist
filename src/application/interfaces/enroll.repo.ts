@@ -4,6 +4,10 @@ import {
   RepoCreateEnrollDto,
 } from "../../domain/enroll.domain";
 import { UserEntitySelect } from "../../domain/user.domain";
+import {
+  EnrollChapterProgress,
+  EnrollRecentProgress,
+} from "../../schema/schema";
 
 export type QueryEnrollListDto = {
   userId: number;
@@ -74,4 +78,15 @@ export interface IEnrollRepo {
   ) => Promise<void>;
 
   getEnrollListByQuery: (query: QueryEnrollListDto) => Promise<QueryEnroll[]>;
+
+  updateEnrollProgressByCourseId: (
+    where: {
+      userId: number;
+      courseId: number;
+    },
+    value: {
+      partialChapterProgress?: EnrollChapterProgress;
+      recentProgress?: EnrollRecentProgress;
+    }
+  ) => Promise<void>;
 }

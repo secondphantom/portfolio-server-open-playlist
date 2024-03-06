@@ -5,7 +5,10 @@ import { IEnrollRepo } from "../../../application/interfaces/enroll.repo";
 import { RepoCreateEnrollDto } from "../../../domain/enroll.domain";
 import { DrizzleClient } from "../../../infrastructure/db/drizzle.client";
 import { EnrollRepo } from "../../../infrastructure/repo/enroll.repo";
-import { ServiceMeGetEnrollByCourseIdDto } from "../../../application/service/me.service";
+import {
+  ServiceMeGetEnrollByCourseIdDto,
+  ServiceMeUpdateProgressByCourseIdDto,
+} from "../../../application/service/me.service";
 import { EnrollListQueryDto } from "../../../dto/enroll.list.query.dto";
 
 describe("enroll repo", () => {
@@ -19,12 +22,13 @@ describe("enroll repo", () => {
     enrollRepo = new EnrollRepo(dbClient);
   });
 
-  test.only("create enroll", async () => {
+  test("create enroll", async () => {
     const createEnrollDto = {
       courseId: 1,
       userId: 0,
-      chapterProgress: [],
+      chapterProgress: {},
       totalProgress: 0,
+      recentProgress: { chapterIndex: 0 },
     } satisfies RepoCreateEnrollDto;
 
     await enrollRepo.createEnroll(createEnrollDto);
@@ -73,5 +77,25 @@ describe("enroll repo", () => {
       course: { channelId: "UC8butISFwT-Wl7EV0hUK0BQ" },
       user: { id: 1 },
     });
+  });
+
+  test.only("update progress", async () => {
+    const dto = {
+      courseId: 1,
+      userId: 1,
+      partialChapterProgress: { "234": 1 },
+      recentProgress: { chapterIndex: 1 },
+    } satisfies ServiceMeUpdateProgressByCourseIdDto;
+
+    await enrollRepo.updateEnrollProgressByCourseId(
+      {
+        courseId: dto.courseId,
+        userId: dto.userId,
+      },
+      {
+        partialChapterProgress: dto.partialChapterProgress,
+        recentProgress: dto.recentProgress,
+      }
+    );
   });
 });

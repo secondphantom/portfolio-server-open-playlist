@@ -43,9 +43,7 @@ export class EnrollDomain {
     this.userId = userId;
     this.chapterProgress = chapterProgress === undefined ? {} : chapterProgress;
     this.totalProgress = this.updateProgress(this.chapterProgress);
-    this.recentProgress = recentProgress
-      ? recentProgress
-      : { courseIndex: 0, chapterIndex: 0 };
+    this.recentProgress = recentProgress ? recentProgress : { chapterIndex: 0 };
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
   }
