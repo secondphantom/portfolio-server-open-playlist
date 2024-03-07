@@ -10,7 +10,7 @@ export type QueryCourseListDto = {
   userId?: number;
   page: number;
   categoryId?: number;
-  order: "popular" | "recent";
+  order: "popular" | "recent" | "create";
   videoId: string | undefined;
   search: string | undefined;
   channelId: string | undefined;

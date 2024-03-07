@@ -18,7 +18,7 @@ export type RequestCourseListByQuery = {
   query: {
     page?: number;
     categoryId?: number;
-    order?: "popular" | "recent";
+    order?: "popular" | "recent" | "create";
     videoId?: string;
     search?: string;
     channelId?: string;

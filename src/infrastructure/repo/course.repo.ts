@@ -156,18 +156,19 @@ export default class CourseRepo implements ICourseRepo {
       pageSize,
     } = query;
 
+    const orderBy = ((order: string) => {
+      switch (order) {
+        case "popular":
+          return [desc(schema.courses.enrollCount)];
+        case "recent":
+          return [desc(schema.courses.publishedAt)];
+        case "create":
+          return [desc(schema.courses.createdAt)];
+        default:
+          return [];
+      }
+    })(order);
     if (search) {
-      const orderBy = ((order: string) => {
-        switch (order) {
-          case "popular":
-            return [desc(schema.courses.enrollCount)];
-          case "recent":
-            return [desc(schema.courses.publishedAt)];
-          default:
-            return [];
-        }
-      })(order);
-
       const courses = await this.db
         .select({
           id: schema.courses.id,
@@ -201,7 +202,6 @@ export default class CourseRepo implements ICourseRepo {
         .limit(pageSize)
         .offset((page - 1) * pageSize)
         .orderBy(...orderBy);
-      console.log(JSON.stringify(courses[0]));
       return courses as QueryCourse[];
     }
 
@@ -216,16 +216,7 @@ export default class CourseRepo implements ICourseRepo {
           ].filter((v) => !!v)
         );
       },
-      orderBy: (course, { asc, desc }) => {
-        switch (order) {
-          case "popular":
-            return [desc(course.enrollCount)];
-          case "recent":
-            return [desc(course.publishedAt)];
-          default:
-            return [];
-        }
-      },
+      orderBy: orderBy,
       offset: (page - 1) * pageSize,
       limit: pageSize,
       columns: {

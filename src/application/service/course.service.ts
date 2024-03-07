@@ -19,7 +19,7 @@ export type ServiceCourseGetListByQueryDto = {
   userId?: number;
   page?: number;
   categoryId?: number;
-  order?: "popular" | "recent";
+  order?: "popular" | "recent" | "create";
   videoId?: string;
   search?: string;
   channelId?: string;

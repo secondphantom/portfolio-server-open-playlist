@@ -5,7 +5,7 @@ export class CourseListQueryDto {
   private userId?: number;
   private page: number;
   private categoryId?: number;
-  private order: "popular" | "recent";
+  private order: "popular" | "recent" | "create";
   private videoId: string | undefined;
   private search: string | undefined;
   private channelId: string | undefined;
