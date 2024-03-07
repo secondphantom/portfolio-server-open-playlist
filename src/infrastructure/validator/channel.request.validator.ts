@@ -53,7 +53,11 @@ export class ChannelRequestValidator implements IChannelRequestValidator {
           page: zodIntTransform.optional(),
           categoryId: zodIntTransform.optional(),
           order: z
-            .union([z.literal("popular"), z.literal("recent")])
+            .union([
+              z.literal("popular"),
+              z.literal("recent"),
+              z.literal("create"),
+            ])
             .optional(),
           videoId: z.string().min(2).optional(),
           search: z.string().min(2).optional(),

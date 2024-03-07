@@ -12,7 +12,7 @@ export type ServiceChannelGetCourseListByQueryDto = {
   userId?: number;
   page?: number;
   categoryId?: number;
-  order?: "popular" | "recent";
+  order?: "popular" | "recent" | "create";
   videoId?: string;
   search?: string;
   language?: string;

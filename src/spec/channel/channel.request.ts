@@ -11,7 +11,7 @@ export type RequestChannelGetCourseListByQuery = {
   query: {
     channelId: string;
     page?: number;
-    order?: "popular" | "recent";
+    order?: "popular" | "recent" | "create";
     videoId?: string;
     search?: string;
     language?: string;
