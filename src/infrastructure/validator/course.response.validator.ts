@@ -35,6 +35,7 @@ export class CourseResponseValidator implements ICourseResponseValidator {
           userId: z.number(),
           totalProgress: z.number(),
           updatedAt: z.date(),
+          chapterProgress: z.record(z.string(), z.number()),
         })
       )
       .optional(),

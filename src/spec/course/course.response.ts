@@ -18,6 +18,7 @@ export type ResponseCourseGetById = {
     userId: number;
     totalProgress: number;
     updatedAt: Date;
+    chapterProgress: { [key in string]: number };
   }[];
   category: {
     id: number;

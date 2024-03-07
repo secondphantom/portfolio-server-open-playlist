@@ -133,6 +133,7 @@ export class CourseService {
           userId: true,
           totalProgress: true,
           updatedAt: true,
+          chapterProgress: true,
         },
         category: {
           id: true,
