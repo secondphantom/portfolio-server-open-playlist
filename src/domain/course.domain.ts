@@ -87,44 +87,48 @@ export class CourseDomain {
 
     if (!matches) return;
 
-    const chapters = matches
-      ?.map((match) => {
-        const groups =
-          /((?<timeStr>(?:([0-5]?[0-9]):)?([0-5]?[0-9]):([0-5][0-9])))(?<titleStr>.*)/.exec(
-            match
-          )?.groups;
-        if (!groups) return null as any as CourseChapter;
+    const chapterMap = new Map<number, { time: number; title: string }>();
 
-        const { timeStr, titleStr } = groups;
-        const INDEX_TIME_SEC: { [key in string]: number } = {
-          "0": 1,
-          "1": 60,
-          "2": 60 * 60,
-        };
+    matches?.forEach((match) => {
+      const groups =
+        /((?<timeStr>(?:([0-5]?[0-9]):)?([0-5]?[0-9]):([0-5][0-9])))(?<titleStr>.*)/.exec(
+          match
+        )?.groups;
+      if (!groups) return;
 
-        const time = timeStr
-          .split(":")
-          .reverse()
-          .reduce((prev, cur, index) => {
-            return prev + parseInt(cur) * INDEX_TIME_SEC[index];
-          }, 0);
-        const title = titleStr
-          .trim()
-          .split(" ")
-          .map((str) => {
-            const isOnlySpecialChars =
-              /^[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+$/.test(str);
-            if (isOnlySpecialChars) {
-              return null;
-            }
-            return str;
-          })
-          .filter((v) => !!v)
-          .join(" ");
+      const { timeStr, titleStr } = groups;
+      const INDEX_TIME_SEC: { [key in string]: number } = {
+        "0": 1,
+        "1": 60,
+        "2": 60 * 60,
+      };
 
-        return { time, title };
-      })
-      .filter((v) => !!v);
+      const time = timeStr
+        .split(":")
+        .reverse()
+        .reduce((prev, cur, index) => {
+          return prev + parseInt(cur) * INDEX_TIME_SEC[index];
+        }, 0);
+      const title = titleStr
+        .trim()
+        .split(" ")
+        .map((str) => {
+          const isOnlySpecialChars =
+            /^[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+$/.test(str);
+          if (isOnlySpecialChars) {
+            return null;
+          }
+          return str;
+        })
+        .filter((v) => !!v)
+        .join(" ");
+
+      if (chapterMap.has(time)) return;
+
+      chapterMap.set(time, { time, title });
+    });
+
+    const chapters = Array.from(chapterMap.values());
 
     if (!chapters) return;
 
