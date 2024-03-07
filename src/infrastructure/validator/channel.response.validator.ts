@@ -18,12 +18,15 @@ export class ChannelResponseValidator implements IChannelResponseValidator {
         id: z.number(),
         videoId: z.string(),
         title: z.string(),
-        channelId: z.string(),
         categoryId: z.number(),
         enrollCount: z.number(),
         createdAt: z.date(),
         publishedAt: z.date(),
         enrolls: z.array(z.object({ userId: z.number() })).optional(),
+        channel: z.object({
+          name: z.string(),
+          channelId: z.string(),
+        }),
       })
     ),
     pagination: z.object({
@@ -37,7 +40,6 @@ export class ChannelResponseValidator implements IChannelResponseValidator {
       const dto = this.responseChannelGetCourseListByQuery.parse(data);
       return dto;
     } catch (error) {
-      console.log(error);
       throw new ServerError({
         code: 400,
         message: "Invalid Response",

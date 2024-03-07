@@ -3,11 +3,14 @@ export type ResponseChannelGetCourseListByQuery = {
     id: number;
     videoId: string;
     title: string;
-    channelId: string;
     categoryId: number;
     enrollCount: number;
     createdAt: Date;
     publishedAt: Date;
+    channel: {
+      name: string;
+      channelId: string;
+    };
     enrolls?: { userId: number }[];
   }[];
   pagination: {

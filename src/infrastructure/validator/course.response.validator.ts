@@ -87,7 +87,6 @@ export class CourseResponseValidator implements ICourseResponseValidator {
       const dto = this.responseCourseListGetQuery.parse(data);
       return dto;
     } catch (error) {
-      console.log(error);
       throw new ServerError({
         code: 400,
         message: "Invalid Response",
