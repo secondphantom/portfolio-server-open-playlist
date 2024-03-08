@@ -5,6 +5,7 @@ import {
   RequestMeCreateEnroll,
   RequestMeGetEnrollByCourseId,
   RequestMeGetEnrollListByQuery,
+  RequestMeGetProfile,
   RequestMeUpdateEnrollByCourseId,
   RequestMeUpdateEnrollProgressByCourseId,
   RequestMeUpdateProfile,
@@ -41,6 +42,28 @@ export class MeRequestValidator implements IMeRequestValidator {
       const dto = this.requestMeCreateEnrollReq.parse(req);
       return {
         ...dto.content,
+        userId: dto.auth.userId,
+      };
+    } catch (error) {
+      throw new ServerError({
+        code: 400,
+        message: "Invalid Input",
+      });
+    }
+  };
+
+  private requestMeGetProfileReq = z
+    .object({
+      auth: z.object({
+        userId: z.number(),
+      }),
+    })
+    .strict();
+
+  getProfile = (req: RequestMeGetProfile) => {
+    try {
+      const dto = this.requestMeGetProfileReq.parse(req);
+      return {
         userId: dto.auth.userId,
       };
     } catch (error) {

@@ -402,6 +402,19 @@ export class WranglerSever {
       }
     );
 
+    this.app.get(
+      "/api/me/profile",
+      withCookies,
+      this.verifyAuthMiddleware,
+      async (req: IRequest & AuthRequest) => {
+        const { auth } = req;
+        const result = await this.meController.getProfile({
+          auth,
+        });
+        return this.createJsonResponse(result);
+      }
+    );
+
     this.app.patch(
       "/api/me/profile",
       withCookies,

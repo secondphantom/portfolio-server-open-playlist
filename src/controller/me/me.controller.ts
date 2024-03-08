@@ -5,6 +5,7 @@ import {
   RequestMeCreateEnroll,
   RequestMeGetEnrollByCourseId,
   RequestMeGetEnrollListByQuery,
+  RequestMeGetProfile,
   RequestMeUpdateEnrollByCourseId,
   RequestMeUpdateEnrollProgressByCourseId,
   RequestMeUpdateProfile,
@@ -47,6 +48,31 @@ export class MeController {
         payload: {
           success: true,
           message: "Success Created",
+        },
+      });
+    } catch (error) {
+      const { code, message, data } = errorResolver(error);
+      return new ControllerResponse({
+        code,
+        payload: {
+          success: false,
+          message,
+          data,
+        },
+      });
+    }
+  };
+
+  getProfile = async (req: RequestMeGetProfile) => {
+    try {
+      const dto = this.meRequestValidator.getProfile(req);
+      const data = await this.meService.getProfile(dto);
+
+      return new ControllerResponse({
+        code: 200,
+        payload: {
+          success: true,
+          data,
         },
       });
     } catch (error) {

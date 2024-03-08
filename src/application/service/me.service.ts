@@ -14,6 +14,10 @@ export type ServiceMeCreateEnrollDto = {
   courseId: number;
 };
 
+export type ServiceMeGetProfileDto = {
+  userId: number;
+};
+
 export type ServiceMeUpdateProfileDto = {
   userId: number;
   profileName: string;
@@ -107,6 +111,17 @@ export class MeService {
     const createEnrollDto = enrollDomain.getCreateEnrollDto();
 
     await this.enrollRepo.createEnroll(createEnrollDto);
+  };
+
+  // [GET] /me/profile
+  getProfile = async (dto: ServiceMeGetProfileDto) => {
+    const user = await this.userRepo.getUserById(dto.userId, {
+      profileName: true,
+      email: true,
+      updatedAt: true,
+    });
+
+    return user;
   };
 
   // [PATCH] /me/profile

@@ -7,6 +7,12 @@ export type RequestMeCreateEnroll = {
   };
 };
 
+export type RequestMeGetProfile = {
+  auth: {
+    userId: number;
+  };
+};
+
 export type RequestMeUpdateProfile = {
   auth: {
     userId: number;

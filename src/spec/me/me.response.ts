@@ -1,3 +1,9 @@
+export type ResponseMeGetProfile = {
+  profileName: string;
+  email: string;
+  updatedAt: Date;
+};
+
 export type ResponseMeGetEnrollByCourseId = {
   userId: number;
   courseId: number;
