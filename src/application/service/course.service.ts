@@ -58,7 +58,9 @@ export class CourseService {
 
   // [POST] /courses
   createCourse = async ({ videoId }: ServiceCourseCreateDto) => {
-    const course = await this.courseRepo.getCourseByVideoId(videoId);
+    const course = await this.courseRepo.getCourseByVideoId(videoId, {
+      id: true,
+    });
 
     if (course) {
       throw new ServerError({

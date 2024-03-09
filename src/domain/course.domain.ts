@@ -91,7 +91,7 @@ export class CourseDomain {
 
     matches?.forEach((match) => {
       const groups =
-        /((?<timeStr>(?:([0-5]?[0-9]):)?([0-5]?[0-9]):([0-5][0-9])))(?<titleStr>.*)/.exec(
+        /((?<timeStr>(?:([0-9]?[0-9]?[0-9]):)?([0-9]?[0-9]):([0-9]?[0-9])))(?<titleStr>.*)/.exec(
           match
         )?.groups;
       if (!groups) return;

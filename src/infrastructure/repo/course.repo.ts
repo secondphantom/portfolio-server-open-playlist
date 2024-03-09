@@ -43,9 +43,6 @@ export default class CourseRepo implements ICourseRepo {
       columns: columns
         ? (columns as { [key in keyof CourseEntitySelect]: boolean })
         : undefined,
-      with: {
-        enrolls: {},
-      },
     });
 
     return course;
