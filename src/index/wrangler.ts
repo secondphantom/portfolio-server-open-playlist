@@ -185,7 +185,7 @@ export class WranglerSever {
     };
 
     this.cors = createCors({
-      methods: ["GET", "POST"],
+      methods: ["GET", "POST", "PATCH"],
       origins: [...this.env.CORS_ALLOW_ORIGIN.split(",")],
       headers: {
         ...(this.env.CORS_CREDENTIAL === "true" && {
@@ -520,7 +520,10 @@ export class WranglerSever {
     for (const { name, value } of responseHeaders) {
       headers.append(name, value);
     }
-    headers.append("Access-Control-Allow-Methods", ["GET", "POST"].join(", "));
+    headers.append(
+      "Access-Control-Allow-Methods",
+      ["GET", "POST", "PATCH"].join(", ")
+    );
     headers.append("Access-Control-Allow-Origin", this.env.CORS_ALLOW_ORIGIN);
     headers.append("Content-type", "application/json");
     if (this.env.CORS_CREDENTIAL === "true") {
