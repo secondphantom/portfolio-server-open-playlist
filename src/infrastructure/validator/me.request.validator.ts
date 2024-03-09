@@ -184,6 +184,7 @@ export class MeRequestValidator implements IMeRequestValidator {
             })
             .strict()
             .optional(),
+          totalProgress: z.number().optional(),
         })
         .strict(),
     })
@@ -195,6 +196,12 @@ export class MeRequestValidator implements IMeRequestValidator {
     try {
       const dto = this.requestMeUpdateEnrollProgressByCourseId.parse(req);
       if (!dto.content.partialChapterProgress && !dto.content.recentProgress) {
+        throw new Error("Invalid Input");
+      }
+      if (
+        dto.content.partialChapterProgress &&
+        dto.content.totalProgress === undefined
+      ) {
         throw new Error("Invalid Input");
       }
       return {

@@ -87,6 +87,7 @@ export interface IEnrollRepo {
     value: {
       partialChapterProgress?: EnrollChapterProgress;
       recentProgress?: EnrollRecentProgress;
+      totalProgress?: number;
     }
   ) => Promise<void>;
 }

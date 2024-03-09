@@ -164,9 +164,11 @@ export class EnrollRepo implements IEnrollRepo {
     {
       partialChapterProgress,
       recentProgress,
+      totalProgress,
     }: {
       partialChapterProgress?: schema.EnrollChapterProgress;
       recentProgress?: schema.EnrollRecentProgress;
+      totalProgress?: number;
     }
   ) => {
     const sqlChunks: SQL[] = [];
@@ -179,10 +181,12 @@ export class EnrollRepo implements IEnrollRepo {
           `\`chapter_progress\` = JSON_REPLACE(\`chapter_progress\`, '$."${key}"', ${value})`
         )
       );
+      sqlChunks.push(sql`, `);
+      sqlChunks.push(sql`\`total_progress\` = ${totalProgress}`);
     }
 
     if (partialChapterProgress && recentProgress) {
-      sqlChunks.push(sql`,`);
+      sqlChunks.push(sql`, `);
     }
 
     if (recentProgress) {

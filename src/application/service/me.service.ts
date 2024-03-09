@@ -39,6 +39,7 @@ export type ServiceMeUpdateEnrollProgressByCourseIdDto = {
   courseId: number;
   partialChapterProgress?: EnrollChapterProgress;
   recentProgress?: EnrollRecentProgress;
+  totalProgress?: number;
 };
 
 export type ServiceMeGetEnrollListByQueryDto = {
@@ -200,6 +201,7 @@ export class MeService {
     courseId,
     partialChapterProgress,
     recentProgress,
+    totalProgress,
   }: ServiceMeUpdateEnrollProgressByCourseIdDto) => {
     await this.enrollRepo.updateEnrollProgressByCourseId(
       {
@@ -208,7 +210,8 @@ export class MeService {
       },
       {
         partialChapterProgress: partialChapterProgress,
-        recentProgress: recentProgress,
+        recentProgress,
+        totalProgress,
       }
     );
   };
