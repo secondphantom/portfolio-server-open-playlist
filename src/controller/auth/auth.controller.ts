@@ -229,13 +229,13 @@ export class AuthController {
         headers: [
           {
             name: "Set-Cookie",
-            value: `accessToken=del; Path=/; HttpOnly; Secure; SameSite=${
+            value: `accessToken=; Path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT; HttpOnly; Secure; SameSite=${
               this.ENV.CORS_CREDENTIAL === "true" ? "None" : "Strict"
             }`,
           },
           {
             name: "Set-Cookie",
-            value: `refreshToken=del; Path=/; HttpOnly; Secure; SameSite=${
+            value: `refreshToken=; Path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT; HttpOnly; Secure; SameSite=${
               this.ENV.CORS_CREDENTIAL === "true" ? "None" : "Strict"
             }`,
           },

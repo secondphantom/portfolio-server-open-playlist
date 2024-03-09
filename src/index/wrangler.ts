@@ -283,11 +283,16 @@ export class WranglerSever {
       }
     );
 
-    this.app.post("/api/auth/sign-out", async () => {
-      const result = await this.authController.signOut();
+    this.app.post(
+      "/api/auth/sign-out",
+      withCookies,
+      this.verifyAuthMiddleware,
+      async () => {
+        const result = await this.authController.signOut();
 
-      return this.createJsonResponse(result);
-    });
+        return this.createJsonResponse(result);
+      }
+    );
 
     this.app.post(
       "/api/auth/find-password",
