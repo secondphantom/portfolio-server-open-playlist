@@ -25,18 +25,25 @@ export class CourseResponseValidator implements ICourseResponseValidator {
     duration: z.number(),
     createdAt: z.date(),
     publishedAt: z.date(),
-    channel: z.object({
-      channelId: z.string(),
-      name: z.string(),
-    }),
+    channel: z
+      .object({
+        channelId: z.string(),
+        name: z.string(),
+      })
+      .strict(),
     enrolls: z
       .array(
-        z.object({
-          userId: z.number(),
-          totalProgress: z.number(),
-          updatedAt: z.date(),
-          chapterProgress: z.record(z.string(), z.number()),
-        })
+        z
+          .object({
+            userId: z.number(),
+            totalProgress: z.number(),
+            updatedAt: z.date(),
+            chapterProgress: z.record(z.string(), z.number()),
+            recentProgress: z.object({
+              chapterIndex: z.number(),
+            }),
+          })
+          .strict()
       )
       .optional(),
     category: z
@@ -44,6 +51,7 @@ export class CourseResponseValidator implements ICourseResponseValidator {
         id: z.number(),
         name: z.string(),
       })
+      .strict()
       .nullable(),
   });
 

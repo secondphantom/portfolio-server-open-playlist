@@ -134,6 +134,7 @@ export class CourseService {
           totalProgress: true,
           updatedAt: true,
           chapterProgress: true,
+          recentProgress: true,
         },
         category: {
           id: true,
