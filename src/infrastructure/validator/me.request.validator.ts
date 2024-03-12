@@ -81,7 +81,7 @@ export class MeRequestValidator implements IMeRequestValidator {
       }),
       content: z
         .object({
-          profileName: z.string().min(1),
+          profileName: z.string().min(1).max(80),
         })
         .strict(),
     })
