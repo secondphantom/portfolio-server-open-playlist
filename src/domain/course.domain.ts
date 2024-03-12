@@ -114,7 +114,7 @@ export class CourseDomain {
         .split(" ")
         .map((str) => {
           const isOnlySpecialChars =
-            /^[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+$/.test(str);
+            /^[—!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+$/.test(str);
           if (isOnlySpecialChars) {
             return null;
           }
