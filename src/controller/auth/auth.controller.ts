@@ -218,6 +218,20 @@ export class AuthController {
           message,
           data,
         },
+        headers: [
+          {
+            name: "Set-Cookie",
+            value: `accessToken=; Path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT; HttpOnly; Secure; SameSite=${
+              this.ENV.CORS_CREDENTIAL === "true" ? "None" : "Strict"
+            }`,
+          },
+          {
+            name: "Set-Cookie",
+            value: `refreshToken=; Path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT; HttpOnly; Secure; SameSite=${
+              this.ENV.CORS_CREDENTIAL === "true" ? "None" : "Strict"
+            }`,
+          },
+        ],
       });
     }
   };
