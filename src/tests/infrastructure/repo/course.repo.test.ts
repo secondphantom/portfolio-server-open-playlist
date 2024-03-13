@@ -6,7 +6,7 @@ import { ICourseRepo } from "../../../application/interfaces/course.repo";
 import { CourseListQueryDto as CourseListQueryDto } from "../../../dto/course.list.query.dto";
 dotenv.config();
 
-describe("course repo", () => {
+describe.skip("course repo", () => {
   let courseRepo: ICourseRepo;
 
   beforeAll(() => {
@@ -17,7 +17,7 @@ describe("course repo", () => {
     courseRepo = new CourseRepo(dbClient);
   });
 
-  test("create course", async () => {
+  test.skip("create course", async () => {
     const createCourseDto = {
       videoId: "videoId",
       channelId: "channelId",
@@ -98,7 +98,7 @@ describe("course repo", () => {
     });
   });
 
-  test.only("get courses by query", async () => {
+  test("get courses by query", async () => {
     const queryDto = new CourseListQueryDto({
       userId: 1,
       // categoryId: 1,
@@ -109,8 +109,6 @@ describe("course repo", () => {
 
     const inputs = queryDto.getRepoQueryDto();
     const courses = await courseRepo.getCourseListByQuery(inputs);
-
-    console.dir(courses[0], { depth: 10 });
 
     for (const course of courses) {
       if (inputs.categoryId) {

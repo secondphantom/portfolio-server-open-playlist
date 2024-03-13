@@ -27,7 +27,11 @@ describe("enroll domain", () => {
       const enrollDomain = new EnrollDomain({
         courseId: 0,
         userId: 0,
-        chapterProgress: {},
+        chapterProgress: {
+          "0": 1,
+          "1": 1,
+          "2": 0,
+        },
       });
 
       const totalProgress = enrollDomain["totalProgress"];
@@ -53,7 +57,7 @@ describe("enroll domain", () => {
     const chapterProgress = enrollDomain["chapterProgress"];
 
     Object.entries(chapterProgress).forEach(([time], index) => {
-      expect(time).toEqual(chapters[index].time);
+      expect(time).toEqual(chapters[index].time.toString());
     });
   });
 });

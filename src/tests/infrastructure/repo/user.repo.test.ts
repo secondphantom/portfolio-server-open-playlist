@@ -10,7 +10,7 @@ import {
 import { IUserRepo } from "../../../application/interfaces/user.repo";
 import { ServiceMeUpdateProfileDto } from "../../../application/service/me.service";
 
-describe("user repo", () => {
+describe.skip("user repo", () => {
   let userRepo: IUserRepo;
 
   beforeAll(() => {
@@ -21,7 +21,7 @@ describe("user repo", () => {
     userRepo = new UserRepo(dbClient);
   });
 
-  test.skip("create user", async () => {
+  test("create user", async () => {
     const createUserDto = {
       email: `${new Date().toISOString()}@gmail.com`,
       extra: {},
@@ -41,7 +41,7 @@ describe("user repo", () => {
     }
   });
 
-  test.skip("update by email", async () => {
+  test("update by email", async () => {
     const email = "test@email.com";
     const values = {
       isEmailVerified: true,
@@ -54,7 +54,7 @@ describe("user repo", () => {
     expect(user!.isEmailVerified).toEqual(true);
   });
 
-  test.only("update user", async () => {
+  test("update user", async () => {
     const dto = {
       userId: 1,
       profileName: "zero",

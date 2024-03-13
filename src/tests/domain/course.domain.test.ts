@@ -2,8 +2,8 @@ import { CourseDomain } from "../../domain/course.domain";
 import { CourseChapter } from "../../schema/schema";
 
 describe("course domain", () => {
-  describe.only("updateChaptersByDescription", () => {
-    test.only("valid chapter", async () => {
+  describe("updateChaptersByDescription", () => {
+    test("valid chapter", async () => {
       const courseDomain = new CourseDomain({
         description:
           "Data Structures and Algorithms is an important aspect of every coding interview. This Algorithms and Data Structures course will teach you everything you need to prepare for placements, coding interviews, and logic building. The course walks you through multiple Java algorithms, data structure problems, and their solutions with step-by-step visualizations, so that you are actually learning instead of blindly memorizing solutions.💻 Code: https://github.com/dinesh-varyani/ds-algos✏️ Course developed by @itsdineshvaryani ⭐️ Contents ⭐️00:00:00 Introduction\n00:03:46 Introduction to Data Structures\n00:03:46 Introduction to Data Structures\n00:08:49 Introduction to Algorithms\n00:19:43 Time Complexity of an Algorithm\n00:25:05 Space Complexity of an Algorithm",
@@ -11,7 +11,6 @@ describe("course domain", () => {
       courseDomain.updateChaptersByDescription();
       const chapters = courseDomain["chapters"];
 
-      console.log(chapters);
       chapters.forEach((v) => expect(v).toEqual(chapterSchemaExpect));
       expect(chapters.length).toEqual(5);
     });

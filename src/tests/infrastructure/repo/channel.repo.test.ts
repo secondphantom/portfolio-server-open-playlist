@@ -6,7 +6,7 @@ import { IChannelRepo } from "../../../application/interfaces/channel.repo";
 import { ChannelRepo } from "../../../infrastructure/repo/channel.repo";
 import { RepoCreateChannelDto } from "../../../domain/channel.domain";
 
-describe("channel repo", () => {
+describe.skip("channel repo", () => {
   let channelRepo: IChannelRepo;
 
   beforeAll(() => {
@@ -17,7 +17,7 @@ describe("channel repo", () => {
     channelRepo = new ChannelRepo(dbClient);
   });
 
-  test.skip("create channel", async () => {
+  test("create channel", async () => {
     const createChannelDto = {
       channelId: "channelId",
       name: "channelTitle",

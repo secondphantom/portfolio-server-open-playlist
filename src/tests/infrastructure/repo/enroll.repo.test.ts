@@ -11,7 +11,7 @@ import {
 } from "../../../application/service/me.service";
 import { EnrollListQueryDto } from "../../../dto/enroll.list.query.dto";
 
-describe("enroll repo", () => {
+describe.skip("enroll repo", () => {
   let enrollRepo: IEnrollRepo;
 
   beforeAll(() => {
@@ -79,7 +79,7 @@ describe("enroll repo", () => {
     });
   });
 
-  test.only("update progress", async () => {
+  test("update progress", async () => {
     const dto = {
       courseId: 1,
       userId: 1,

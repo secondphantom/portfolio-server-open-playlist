@@ -3,9 +3,12 @@ import { UnstableDevWorker, unstable_dev } from "wrangler";
 describe("crypto util", () => {
   let worker: UnstableDevWorker;
   beforeAll(async () => {
-    worker = await unstable_dev("src/tests/infrastructure/jwt/index.test.ts", {
-      experimental: { disableExperimentalWarning: true },
-    });
+    worker = await unstable_dev(
+      "src/tests/infrastructure/jwt/index.test.worker.ts",
+      {
+        experimental: { disableExperimentalWarning: true },
+      }
+    );
   });
 
   afterAll(async () => {
