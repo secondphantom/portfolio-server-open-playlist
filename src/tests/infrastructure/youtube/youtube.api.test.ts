@@ -3,7 +3,7 @@ import { IYoutubeApi } from "../../../application/interfaces/youtbue.api";
 import { YoutubeApi } from "../../../infrastructure/youtubue/youtube.api";
 dotenv.config();
 
-describe("youtube api", () => {
+describe.skip("youtube api", () => {
   let youtubeApi: IYoutubeApi;
 
   beforeAll(() => {

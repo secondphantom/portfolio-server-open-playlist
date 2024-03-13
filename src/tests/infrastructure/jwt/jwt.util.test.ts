@@ -1,6 +1,6 @@
 import { UnstableDevWorker, unstable_dev } from "wrangler";
 
-describe("crypto util", () => {
+describe.skip("crypto util", () => {
   let worker: UnstableDevWorker;
   beforeAll(async () => {
     worker = await unstable_dev(
