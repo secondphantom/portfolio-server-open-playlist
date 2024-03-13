@@ -10,6 +10,8 @@ export type RepoCreateUserDto = Pick<
 >;
 
 export class UserDomain {
+  static getUuid = () => uuidv4();
+
   private id: number | undefined;
   private uuid: string;
   private roleId: number;

@@ -23,7 +23,7 @@ model Users {
   profile_image     String?  @db.VarChar(300)
   extra             Json     @db.Json()
   created_at        DateTime @default(now())
-  updated_at        DateTime @default(now()) @updatedAt
+  updated_at        DateTime @updatedAt
 
   @@unique([email])
   @@index([role_id])
@@ -37,7 +37,7 @@ model Channels {
   enroll_count Int      @default(0) @db.UnsignedInt
   extra        Json     @db.Json()
   created_at   DateTime @default(now())
-  updated_at   DateTime @default(now()) @updatedAt
+  updated_at   DateTime @updatedAt
 
   @@fulltext([name])
 }
@@ -57,7 +57,7 @@ model Courses {
   duration     Int      @db.UnsignedMediumInt()
   extra        Json     @db.Json()
   created_at   DateTime @default(now())
-  updated_at   DateTime @default(now()) @updatedAt
+  updated_at   DateTime @updatedAt
   published_at DateTime
 
   @@unique([video_id])
@@ -78,7 +78,7 @@ model Enrolls {
   total_progress   Float    @db.Float()
   recent_progress  Json     @db.Json()
   created_at       DateTime @default(now())
-  updated_at       DateTime @default(now()) @updatedAt
+  updated_at       DateTime @updatedAt
 
   @@id([user_id, course_id])
   @@index([course_id])

@@ -462,15 +462,11 @@ export class AuthService {
       });
     }
 
-    if (user.uuid !== payload.uuid) {
-      throw new ServerError({
-        code: 401,
-        message: "Unauthorized",
-      });
-    }
-
     const { key } = await this.cryptoUtil.encryptPassword(dto.password);
 
-    await this.userRepo.updateUserById(user.id, { hashKey: key });
+    await this.userRepo.updateUserById(user.id, {
+      hashKey: key,
+      uuid: UserDomain.getUuid(),
+    });
   };
 }
