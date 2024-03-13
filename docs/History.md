@@ -1,0 +1,145 @@
+---
+title: "History"
+dateCreated: "2024-02-09"
+dateModified: "2024-03-13"
+---
+## Server
+
+- `20240209`
+  - feat: add crypto util with test
+  - feat: add user shcema and connect db
+  - feat: add use domain
+  - feat: add dbClint and user repo with test
+- `20240210`
+  - feat: add jwt util
+- `20240213`
+  - feat: add jwt util test
+  - feat :add email util
+  - refactor: icreate instance by singleton
+  - feat: add auth sign-up service
+  - refactor: env inputs
+- `20240214`
+  - fix: connect database
+  - refactor: create instance by singleton
+- `20240216`
+  - feat: add auth sign-in controller
+  - feat: add auth sign-in validator
+  - feat: add wrangler server index
+  - add resent-verification-email diagram
+  - add verify-is-login diagram
+  - feat: add email verification api
+  - feat: add resend email verfication api
+  - feat: add auth sign in api
+  - feat: add refresh token when sign in
+- `20240217`
+  - feat: add auth verify access token api
+  - feat: add auth refresh access token api
+  - feat: add schema
+- `20240218`
+  - feat: add channel domain
+  - feat: add course domain
+  - feat: add youtube data api and test
+  - feat: add channel repo
+  - feat: add course repo
+  - feat: add course domain test
+- `20240219`
+  - feat: add prisma schema
+  - feat: add create course api
+  - feat: enroll domain and test
+  - feat: add getCourseById method
+- `20240220`
+  - feat: add renroll repo and test
+  - feat: create enroll api
+  - refactor: get body by middleware
+  - feat: add getCourseByIdWith at repo
+  - feat: add service about get course by id
+  - feat: get courser by id controller and validator
+  - feat: add get course by id api
+  - feat: add sign-out
+- `20240221`
+  - feat: add updating user repo by id
+  - feat: add update profile api
+  - feat: add getting enrolls by course id api
+  - feat: add update enroll repo by course id
+  - feat: ad update enroll by course id api
+  - refactor: split auth input when required auth req
+  - fix: parsing chapters at course doamin
+- `20240223`
+  - feat: add creacte course scripts
+- `20240226`
+  - feat: add getting course list by query repo method
+  - feat: add course by query service
+  - refactor: change spec, etc name
+  - fix: get course list by serach query repo response
+  - feat: add getting course list by query api
+  - feat: add getting course list by query with channel api
+  - feat: getting channel by id api
+  - feat: add api about find-password
+  - feat: add method about count up enroll_count field when cerate enroll
+- `20240306`
+  - feat: add recent progress column at enrolls
+  - feat: add update enroll progress method at repo
+  - feat: add update enroll progress api
+- `20240307`
+  - feat: update chapter at domain when duplicated chapter
+  - feat: add enroll's chapterProgress property when get courseById api
+  - feat: add order by 'create' when get course list
+- `20240308`
+  - feat: get user profile api
+- `20240309`
+  - fix: cors about http methods
+  - fix: sign out
+  - feat: add recentProgress field when get course by id
+  - fix: create course about timestamp parser at domain
+- `20240312`
+  - fix: extracting chapter's title about em dash
+  - fix: update profile name validator about max
+- `20240313`
+  - chore: add npm run script about deploy
+  - fix: delete cookie when verify refresh token fail
+  - feat: reset uuid when reset password
+  - fix: test code
+  - feat: add workflow for beta
+
+## Client
+
+- `20240227`
+  - init: client project setting
+- `20240301`
+  - feat: add auth pages
+- `20240307`
+  - feat: add course pages
+  - feat: add channel course page
+  - feat: add home pages
+- `20240308`
+  - feat: add me profile, enrolls pages
+  - refactor: auth provider by zustand
+  - feat: add loading indicator
+  - refactor: layout about root
+- `20240309 - 20240311`
+  - refactor: auth routes about unauthorized redirecting
+  - refactor: show password input toggle
+  - refactor: layout about nav, footer
+  - feat: add and refactor ui components
+  - feat: add global default values
+  - feat: add loading modal
+  - refactor: common components
+  - feat: add some libs
+  - fix: get channel courses about query params
+  - refactor: courses route pages
+  - refactor: me route pages
+  - refactor: misc pages and file
+  - feat: add watch route pages
+- `20240312`
+  - fix: watch course page about revalidate
+  - fix: updating use name about max length
+  - feat: add meta auth, channels
+  - fix: router.push at same url
+- `20240313`
+  - refactor: env name
+  - refactor: password input at reset password page
+  - feat: add meta
+  - chore: delete console.log
+  - feat: get access cookies by refresh token
+  - feat: add access key route
+  - refactor: adding asChaild proprety at link button
