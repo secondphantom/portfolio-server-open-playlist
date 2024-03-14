@@ -42,7 +42,8 @@ export class AuthRequestValidator implements IAuthRequestValidator {
         .regex(this.passwordValidation, {
           message:
             "Minimum 8 characters, at least one uppercase letter, one lowercase letter, one number and one special character",
-        }),
+        })
+        .max(64),
       userName: z
         .string()
         .min(1, { message: "Must have at least 1 character" }),
