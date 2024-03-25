@@ -1,10 +1,10 @@
-import * as schema from "../../schema/schema";
-import { IChannelRepo } from "../../application/interfaces/channel.repo";
+import * as schema from "../../../schema/schema.mysql";
+import { IChannelRepo } from "../../../application/interfaces/channel.repo";
 import {
   ChannelEntitySelect,
   RepoCreateChannelDto,
-} from "../../domain/channel.domain";
-import { Db, DrizzleClient } from "../db/drizzle.client";
+} from "../../../domain/channel.domain";
+import { DrizzleClient } from "../../db/drizzle.client.planetscale";
 
 export class ChannelRepo implements IChannelRepo {
   static instance: ChannelRepo | undefined;
@@ -14,7 +14,10 @@ export class ChannelRepo implements IChannelRepo {
     return this.instance;
   };
 
-  constructor(private drizzleClient: DrizzleClient) {}
+  private db: ReturnType<typeof this.drizzleClient.getDb>;
+  constructor(private drizzleClient: DrizzleClient) {
+    this.db = drizzleClient.getDb();
+  }
 
   getChannelByChannelId = async <T extends keyof ChannelEntitySelect = any>(
     channelId: string,
@@ -24,8 +27,7 @@ export class ChannelRepo implements IChannelRepo {
         }
       | { [key in keyof ChannelEntitySelect]?: boolean }
   ) => {
-    const { db, client } = await this.drizzleClient.getDb();
-    const channel = await db.query.channels.findFirst({
+    const channel = await this.db.query.channels.findFirst({
       where: (channel, { eq }) => {
         return eq(channel.channelId, channelId);
       },
@@ -33,13 +35,10 @@ export class ChannelRepo implements IChannelRepo {
         ? (columns as { [key in keyof ChannelEntitySelect]: boolean })
         : undefined,
     });
-    await this.drizzleClient.endDb(client);
     return channel;
   };
 
   createChannel = async (channel: RepoCreateChannelDto) => {
-    const { db, client } = await this.drizzleClient.getDb();
-    await db.insert(schema.channels).values(channel);
-    await this.drizzleClient.endDb(client);
+    await this.db.insert(schema.channels).values(channel);
   };
 }

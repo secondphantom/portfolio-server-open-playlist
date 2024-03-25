@@ -16,12 +16,7 @@ export class MeResponseValidator implements IMeResponseValidator {
   private responseMeGetEnrollByCourseId = z.object({
     userId: z.number(),
     courseId: z.number(),
-    chapterProgress: z.array(
-      z.object({
-        time: z.number(),
-        progress: z.number(),
-      })
-    ),
+    chapterProgress: z.record(z.string(), z.number()),
     totalProgress: z.number(),
     updatedAt: z.date(),
     course: z.object({

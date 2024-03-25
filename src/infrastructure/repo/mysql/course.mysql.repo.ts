@@ -1,20 +1,20 @@
-import * as schema from "../../schema/schema";
+import * as schema from "../../../schema/schema.mysql";
 
 import {
   CourseEntitySelect,
   RepoCreateCourseDto,
-} from "../../domain/course.domain";
-import { Db, DrizzleClient } from "../db/drizzle.client";
+} from "../../../domain/course.domain";
+import { DrizzleClient } from "../../db/drizzle.client.planetscale";
 import {
   ICourseRepo,
   QueryCourse,
   QueryCourseListDto,
-} from "../../application/interfaces/course.repo";
-import { UserEntitySelect } from "../../domain/user.domain";
-import { ChannelEntitySelect } from "../../domain/channel.domain";
-import { CategoryEntitySelect } from "../../domain/category.domain";
-import { EnrollEntitySelect } from "../../domain/enroll.domain";
-import { SQL, and, desc, eq, sql } from "drizzle-orm";
+} from "../../../application/interfaces/course.repo";
+import { UserEntitySelect } from "../../../domain/user.domain";
+import { ChannelEntitySelect } from "../../../domain/channel.domain";
+import { CategoryEntitySelect } from "../../../domain/category.domain";
+import { EnrollEntitySelect } from "../../../domain/enroll.domain";
+import { and, desc, eq, sql } from "drizzle-orm";
 
 export default class CourseRepo implements ICourseRepo {
   static instance: CourseRepo | undefined;
@@ -23,8 +23,10 @@ export default class CourseRepo implements ICourseRepo {
     this.instance = new CourseRepo(drizzleClient);
     return this.instance;
   };
-
-  constructor(private drizzleClient: DrizzleClient) {}
+  private db: ReturnType<typeof this.drizzleClient.getDb>;
+  constructor(private drizzleClient: DrizzleClient) {
+    this.db = drizzleClient.getDb();
+  }
 
   getCourseByVideoId = async <T extends keyof CourseEntitySelect>(
     videoId: string,
@@ -34,8 +36,7 @@ export default class CourseRepo implements ICourseRepo {
         }
       | { [key in keyof CourseEntitySelect]?: boolean }
   ) => {
-    const { db, client } = await this.drizzleClient.getDb();
-    const course = await db.query.courses.findFirst({
+    const course = await this.db.query.courses.findFirst({
       where: (course, { eq }) => {
         return eq(course.videoId, videoId);
       },
@@ -43,7 +44,6 @@ export default class CourseRepo implements ICourseRepo {
         ? (columns as { [key in keyof CourseEntitySelect]: boolean })
         : undefined,
     });
-    await this.drizzleClient.endDb(client);
 
     return course;
   };
@@ -83,8 +83,7 @@ export default class CourseRepo implements ICourseRepo {
           };
     }
   ) => {
-    const { db, client } = await this.drizzleClient.getDb();
-    const course = await db.query.courses.findFirst({
+    const course = await this.db.query.courses.findFirst({
       where: (course, { eq }) => {
         return eq(course.id, where.courseId);
       },
@@ -113,7 +112,6 @@ export default class CourseRepo implements ICourseRepo {
           : undefined,
       },
     });
-    await this.drizzleClient.endDb(client);
 
     return course as any;
   };
@@ -126,8 +124,7 @@ export default class CourseRepo implements ICourseRepo {
         }
       | { [key in keyof CourseEntitySelect]?: boolean }
   ) => {
-    const { db, client } = await this.drizzleClient.getDb();
-    const course = await db.query.courses.findFirst({
+    const course = await this.db.query.courses.findFirst({
       where: (course, { eq }) => {
         return eq(course.id, id);
       },
@@ -135,20 +132,15 @@ export default class CourseRepo implements ICourseRepo {
         ? (columns as { [key in keyof CourseEntitySelect]: boolean })
         : undefined,
     });
-    await this.drizzleClient.endDb(client);
 
     return course;
   };
 
   createCourse = async (course: RepoCreateCourseDto) => {
-    const { db, client } = await this.drizzleClient.getDb();
-    await db.insert(schema.courses).values(course as any);
-    await this.drizzleClient.endDb(client);
+    await this.db.insert(schema.courses).values(course as any);
   };
 
   getCourseListByQuery = async (query: QueryCourseListDto) => {
-    const { db, client } = await this.drizzleClient.getDb();
-
     const {
       userId,
       page,
@@ -174,54 +166,43 @@ export default class CourseRepo implements ICourseRepo {
       }
     })(order);
     if (search) {
-      const sqlChunks: SQL[] = [];
-      sqlChunks.push(sql`select "courses"."id", "courses"."title", "courses"."video_id", "courses"."category_id", "courses"."created_at", "courses"."published_at", "courses"."enroll_count", "courses_enrolls"."data" as "enrolls", "courses_channel"."data" as "channel" from "Courses" 
-			"courses" left join lateral (select coalesce(json_agg(json_build_array("courses_enrolls"."user_id")), '[]'::json) as "data" from "Enrolls" "courses_enrolls" where ("courses_enrolls"."course_id" = "courses"."id" and "courses_enrolls"."user_id" = ${userId})) "courses_enrolls" on true left join lateral (select json_build_array("courses_channel"."name", "courses_channel"."channel_id") as "data" from (select * from "Channels" "courses_channel" where "courses_channel"."channel_id" = "courses"."channel_id" limit 1) "courses_channel") "courses_channel" on true order`);
-      const courses = await db
+      const courses = await this.db
         .select({
-          id: sql`"Courses"."id"`,
-          title: sql`"Courses"."title"`,
-          videoId: sql`"Courses"."video_id"`,
-          categoryId: sql`"Courses"."category_id"`,
-          createdAt: sql`"Courses"."created_at"`,
-          publishedAt: sql`"Courses"."published_at"`,
-          enrollCount: sql`"Courses"."enroll_count"`,
-          enrolls: sql`"courses_enrolls"."data" as "enrolls"`,
-          channel: sql`"courses_channel"."data" as "channel"`,
+          id: schema.courses.id,
+          title: schema.courses.title,
+          videoId: schema.courses.videoId,
+          categoryId: schema.courses.categoryId,
+          createdAt: schema.courses.createdAt,
+          publishedAt: schema.courses.publishedAt,
+          enrollCount: schema.courses.enrollCount,
+          ...(userId
+            ? {
+                enrolls: sql`coalesce((select json_arrayagg(json_object("userId",\`user_id\`)) from \`Enrolls\` \`courses_enrolls\` where (\`courses_enrolls\`.\`course_id\` = \`Courses\`.\`id\` and \`courses_enrolls\`.\`user_id\` = ${userId})), json_array()) as \`enrolls\``,
+              }
+            : {}),
+          channel: sql`(select json_object("name",\`name\`,"channelId", \`channel_id\`) from (select * from \`Channels\` \`courses_channel\` where \`courses_channel\`.\`channel_id\` = \`Courses\`.\`channel_id\` limit ${1}) \`courses_channel\`) as \`channel\``,
         })
-        .from(
-          sql`"Courses" left join lateral (select coalesce(json_agg(json_build_object('userId',"courses_enrolls"."user_id")), '[]'::json) as "data" from "Enrolls" "courses_enrolls" where ("courses_enrolls"."course_id" = "Courses"."id" and "courses_enrolls"."user_id" = ${userId})) "courses_enrolls" on true left join lateral (select json_build_object('name',"courses_channel"."name",'channelId', "courses_channel"."channel_id") as "data" from (select * from "Channels" "courses_channel" where "courses_channel"."channel_id" = "Courses"."channel_id" limit 1) "courses_channel") "courses_channel" on true` as any
-        )
+        .from(schema.courses)
         .where(
           and(
             ...[
+              search ? sql`MATCH(\`title\`) AGAINST(${search})` : undefined,
               categoryId
                 ? eq(schema.courses.categoryId, categoryId)
                 : undefined,
               videoId ? eq(schema.courses.videoId, videoId) : undefined,
               channelId ? eq(schema.courses.channelId, channelId) : undefined,
               language ? eq(schema.courses.language, language) : undefined,
-              search
-                ? sql`title_tsvector @@ plainto_tsquery('simple',lower(${search}))`
-                : undefined,
             ].filter((v) => !!v)
           )
         )
         .limit(pageSize)
         .offset((page - 1) * pageSize)
-        .orderBy(...orderBy)
-        .then((v) =>
-          v.map((v) => ({
-            ...v,
-            id: parseInt(v.id as any),
-            createdAt: new Date(v.createdAt as any),
-            publishedAt: new Date(v.publishedAt as any),
-          }))
-        );
+        .orderBy(...orderBy);
       return courses as QueryCourse[];
     }
 
-    const courses = await db.query.courses.findMany({
+    const courses = await this.db.query.courses.findMany({
       where: (course, { eq, and }) => {
         return and(
           ...[
@@ -264,7 +245,6 @@ export default class CourseRepo implements ICourseRepo {
         },
       },
     });
-    await this.drizzleClient.endDb(client);
 
     return courses as QueryCourse[];
   };

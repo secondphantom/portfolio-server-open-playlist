@@ -15,7 +15,10 @@ export type ENV = {
   DATABASE_USERNAME: string;
   DATABASE_PASSWORD: string;
   DATABASE_URL: string;
+  DATABASE_URL_NEON: string;
+  DATABASE_URL_RAILWAY_POSTGRES: string;
   CORS_ALLOW_ORIGIN: string;
   YOUTUBE_DATA_API_KEY: string;
   CORS_CREDENTIAL: string;
+  HYPERDRIVE: Hyperdrive;
 };

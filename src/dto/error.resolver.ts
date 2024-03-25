@@ -4,11 +4,13 @@ export const errorResolver = (error: any) => {
     message: "Internal Error",
     data: undefined,
   };
+  console.log(error);
   if (error instanceof Error) {
     try {
       //@ts-ignore
       message = error.getMessage();
     } catch (error) {}
+  } else {
   }
   return message;
 };

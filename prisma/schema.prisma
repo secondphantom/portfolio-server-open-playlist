@@ -3,27 +3,27 @@
 
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["fullTextSearch", "fullTextIndex"]
+  previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
-  provider     = "mysql"
-  url          = env("DATABASE_URL")
+  provider     = "postgresql"
+  url          = env("DATABASE_URL_RAILWAY_POSTGRES")
   relationMode = "prisma"
 }
 
 model Users {
-  id                BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  id                BigInt   @id @default(autoincrement()) @db.BigInt
   uuid              String   @db.VarChar(50)
-  role_id           Int      @default(1) @db.UnsignedSmallInt
+  role_id           Int      @default(1) @db.Integer
   email             String   @db.VarChar(320)
   hash_key          String   @db.VarChar(200)
-  is_email_verified Boolean  @default(false) @db.UnsignedTinyInt()
+  is_email_verified Boolean  @default(false) @db.Boolean
   profile_name      String   @db.VarChar(100)
   profile_image     String?  @db.VarChar(300)
-  extra             Json     @db.Json()
+  extra             Json     @db.JsonB()
   created_at        DateTime @default(now())
-  updated_at        DateTime @updatedAt
+  updated_at        DateTime @default(now()) @updatedAt
 
   @@unique([email])
   @@index([role_id])
@@ -31,34 +31,36 @@ model Users {
 }
 
 model Channels {
-  channel_id   String   @id @db.VarChar(50)
-  name         String   @db.VarChar(60)
-  handle       String   @db.VarChar(50)
-  enroll_count Int      @default(0) @db.UnsignedInt
-  extra        Json     @db.Json()
-  created_at   DateTime @default(now())
-  updated_at   DateTime @updatedAt
+  channel_id    String                   @id @db.VarChar(50)
+  name          String                   @db.VarChar(60)
+  name_tsvector Unsupported("TSVECTOR")?
+  handle        String                   @db.VarChar(50)
+  enroll_count  Int                      @default(0) @db.Integer
+  extra         Json                     @db.JsonB()
+  created_at    DateTime                 @default(now())
+  updated_at    DateTime                 @default(now()) @updatedAt
 
-  @@fulltext([name])
+  @@index([name_tsvector])
 }
 
 model Courses {
-  id           BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
-  video_id     String   @db.VarChar(50)
-  channel_id   String   @db.VarChar(50)
-  category_id  Int      @db.UnsignedInt
-  language     String   @db.VarChar(10)
-  title        String   @db.VarChar(110)
-  description  String   @db.VarChar(5010)
-  summary      String?  @db.VarChar(10000)
-  chapters     Json     @db.Json()
-  enroll_count Int      @db.UnsignedInt()
-  generated_ai Boolean  @default(false) @db.UnsignedTinyInt()
-  duration     Int      @db.UnsignedMediumInt()
-  extra        Json     @db.Json()
-  created_at   DateTime @default(now())
-  updated_at   DateTime @updatedAt
-  published_at DateTime
+  id             BigInt                   @id @default(autoincrement()) @db.BigInt
+  video_id       String                   @db.VarChar(50)
+  channel_id     String                   @db.VarChar(50)
+  category_id    Int                      @db.Integer
+  language       String                   @db.VarChar(10)
+  title          String                   @db.VarChar(110)
+  title_tsvector Unsupported("TSVECTOR")?
+  description    String                   @db.VarChar(5010)
+  summary        String?                  @db.VarChar(10000)
+  chapters       Json                     @db.JsonB()
+  enroll_count   Int                      @db.Integer
+  generated_ai   Boolean                  @default(false) @db.Boolean()
+  duration       Int                      @db.Integer()
+  extra          Json                     @db.JsonB()
+  created_at     DateTime                 @default(now())
+  updated_at     DateTime                 @default(now()) @updatedAt
+  published_at   DateTime
 
   @@unique([video_id])
   @@index([channel_id])
@@ -68,17 +70,17 @@ model Courses {
   @@index([generated_ai])
   @@index([created_at(sort: Desc)])
   @@index([published_at(sort: Desc)])
-  @@fulltext([title])
+  @@index([title_tsvector])
 }
 
 model Enrolls {
-  user_id          BigInt   @db.UnsignedBigInt()
-  course_id        BigInt   @db.UnsignedBigInt()
-  chapter_progress Json     @db.Json()
-  total_progress   Float    @db.Float()
-  recent_progress  Json     @db.Json()
+  user_id          BigInt   @db.BigInt()
+  course_id        BigInt   @db.BigInt()
+  chapter_progress Json     @db.JsonB()
+  total_progress   Float    @db.Real()
+  recent_progress  Json     @db.JsonB()
   created_at       DateTime @default(now())
-  updated_at       DateTime @updatedAt
+  updated_at       DateTime @default(now()) @updatedAt
 
   @@id([user_id, course_id])
   @@index([course_id])
@@ -87,14 +89,14 @@ model Enrolls {
 }
 
 model Categories {
-  id        Int    @id @default(autoincrement()) @db.UnsignedInt
+  id        Int    @id @default(autoincrement()) @db.Integer
   name      String @db.VarChar(100)
-  parent_id Int    @db.UnsignedInt
+  parent_id Int    @db.Integer
 
   @@index([parent_id])
 }
 
 model Roles {
-  id   Int    @id @db.UnsignedInt
+  id   Int    @id @db.Integer
   name String @db.VarChar(100)
 }

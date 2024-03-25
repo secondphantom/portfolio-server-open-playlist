@@ -1,13 +1,12 @@
-import {
-  drizzle,
-  PlanetScaleDatabase,
-} from "drizzle-orm/planetscale-serverless";
-import { Connection, connect } from "@planetscale/database";
+import { Client } from "pg";
+import { NodePgDatabase, drizzle } from "drizzle-orm/node-postgres";
 
 import * as schema from "../../schema/schema";
 import { ENV } from "../../env";
 
-type C_ENV = Pick<ENV, "DATABASE_URL" | "LOG_LEVEL">;
+type C_ENV = Pick<ENV, "DATABASE_URL_RAILWAY_POSTGRES" | "LOG_LEVEL">;
+
+export type Db = NodePgDatabase<typeof schema>;
 export class DrizzleClient {
   static instance: DrizzleClient | undefined;
   static getInstance = (ENV: C_ENV) => {
@@ -16,23 +15,22 @@ export class DrizzleClient {
     return this.instance;
   };
 
-  private connection: Connection;
+  constructor(private ENV: C_ENV) {}
 
-  db: PlanetScaleDatabase<typeof schema>;
+  endDb = async (client: Client) => {
+    await client.end();
+  };
 
-  constructor(private ENV: C_ENV) {
-    this.connection = connect({
-      fetch: (url, init: any) => {
-        delete init["cache"];
-        return fetch(url, init);
-      },
-      url: this.ENV.DATABASE_URL,
+  getDb = async () => {
+    const client = new Client({
+      connectionString: this.ENV.DATABASE_URL_RAILWAY_POSTGRES,
     });
-    this.db = drizzle(this.connection, {
+    await client.connect();
+    const db = drizzle(client, {
       schema,
       logger: this.ENV.LOG_LEVEL === "verbose" ? true : false,
     });
-  }
 
-  getDb = () => this.db;
+    return { db, client };
+  };
 }

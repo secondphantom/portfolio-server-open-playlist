@@ -16,7 +16,8 @@ describe.skip("enroll repo", () => {
 
   beforeAll(() => {
     const dbClient = new DrizzleClient({
-      DATABASE_URL: process.env["DATABASE_URL"]!,
+      DATABASE_URL_RAILWAY_POSTGRES:
+        process.env["DATABASE_URL_RAILWAY_POSTGRES"]!,
       LOG_LEVEL: "verbose",
     });
     enrollRepo = new EnrollRepo(dbClient);

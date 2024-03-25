@@ -1,13 +1,16 @@
 import { eq } from "drizzle-orm";
 
-import * as schema from "../../schema/schema";
+import * as schema from "../../../schema/schema.mysql";
 
 import {
   IUserRepo,
   UpdateUserDto,
-} from "../../application/interfaces/user.repo";
-import { RepoCreateUserDto, UserEntitySelect } from "../../domain/user.domain";
-import { Db, DrizzleClient } from "../db/drizzle.client";
+} from "../../../application/interfaces/user.repo";
+import {
+  RepoCreateUserDto,
+  UserEntitySelect,
+} from "../../../domain/user.domain";
+import { DrizzleClient } from "../../db/drizzle.client.planetscale";
 
 export class UserRepo implements IUserRepo {
   static instance: UserRepo | undefined;
@@ -17,7 +20,10 @@ export class UserRepo implements IUserRepo {
     return this.instance;
   };
 
-  constructor(private drizzleClient: DrizzleClient) {}
+  private db: ReturnType<typeof this.drizzleClient.getDb>;
+  constructor(private drizzleClient: DrizzleClient) {
+    this.db = drizzleClient.getDb();
+  }
 
   getUserByEmail = async <T extends keyof UserEntitySelect = any>(
     email: string,
@@ -27,8 +33,7 @@ export class UserRepo implements IUserRepo {
         }
       | { [key in keyof UserEntitySelect]?: boolean }
   ) => {
-    const { db, client } = await this.drizzleClient.getDb();
-    const user = await db.query.users.findFirst({
+    const user = await this.db.query.users.findFirst({
       where: (user, { eq }) => {
         return eq(user.email, email);
       },
@@ -36,7 +41,6 @@ export class UserRepo implements IUserRepo {
         ? (columns as { [key in keyof UserEntitySelect]: boolean })
         : undefined,
     });
-    await this.drizzleClient.endDb(client);
     return user;
   };
 
@@ -44,12 +48,10 @@ export class UserRepo implements IUserRepo {
     email: string,
     value: Partial<UserEntitySelect>
   ) => {
-    const { db, client } = await this.drizzleClient.getDb();
-    await db
+    await this.db
       .update(schema.users)
       .set(value)
       .where(eq(schema.users.email, email));
-    await this.drizzleClient.endDb(client);
   };
 
   getUserById = async <T extends keyof UserEntitySelect = any>(
@@ -60,8 +62,7 @@ export class UserRepo implements IUserRepo {
         }
       | { [key in keyof UserEntitySelect]?: boolean }
   ) => {
-    const { db, client } = await this.drizzleClient.getDb();
-    const user = await db.query.users.findFirst({
+    const user = await this.db.query.users.findFirst({
       where: (user, { eq }) => {
         return eq(user.id, id);
       },
@@ -69,19 +70,17 @@ export class UserRepo implements IUserRepo {
         ? (columns as { [key in keyof UserEntitySelect]: boolean })
         : undefined,
     });
-    await this.drizzleClient.endDb(client);
     return user;
   };
 
   createUser = async (user: RepoCreateUserDto) => {
-    const { db, client } = await this.drizzleClient.getDb();
-    await db.insert(schema.users).values(user as any);
-    await this.drizzleClient.endDb(client);
+    await this.db.insert(schema.users).values(user as any);
   };
 
   updateUserById = async (id: number, value: Partial<UserEntitySelect>) => {
-    const { db, client } = await this.drizzleClient.getDb();
-    await db.update(schema.users).set(value).where(eq(schema.users.id, id));
-    await this.drizzleClient.endDb(client);
+    await this.db
+      .update(schema.users)
+      .set(value)
+      .where(eq(schema.users.id, id));
   };
 }

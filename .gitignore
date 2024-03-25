@@ -181,3 +181,5 @@ build/
 .env*
 
 drizzle/
+
+pscale_dump*

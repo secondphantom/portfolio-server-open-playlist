@@ -7,7 +7,7 @@ export type ResponseMeGetProfile = {
 export type ResponseMeGetEnrollByCourseId = {
   userId: number;
   courseId: number;
-  chapterProgress: { time: number; progress: number }[];
+  chapterProgress: { [key in string]: number };
   totalProgress: number;
   updatedAt: Date;
   course: {

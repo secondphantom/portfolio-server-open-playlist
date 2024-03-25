@@ -47,9 +47,10 @@ type ContentRequest<T = any> = {
 export class WranglerSever {
   static instance: WranglerSever;
 
-  static getInstance = (env: ENV) => {
+  static getInstance = async (env: ENV, ctx: ExecutionContext) => {
     if (this.instance) return this.instance;
-    this.instance = new WranglerSever(env);
+    this.instance = new WranglerSever(env, ctx);
+    // await this.instance.dbClient.connectDb();
     return this.instance;
   };
 
@@ -69,17 +70,20 @@ export class WranglerSever {
   private meController: MeController;
   private channelController: ChannelController;
 
-  constructor(private env: ENV) {
-    const dbClient = DrizzleClient.getInstance(this.env);
+  private dbClient: DrizzleClient;
+
+  constructor(private env: ENV, private ctx: ExecutionContext) {
+    this.dbClient = DrizzleClient.getInstance(this.env);
+
     const cryptoUtil = CryptoUtil.getInstance();
     const jwtUtil = JwtUtil.getInstance(this.env);
     const emailUtil = EmailUtil.getInstance();
     const youtubeApi = YoutubeApi.getInstance(this.env);
 
-    const userRepo = UserRepo.getInstance(dbClient);
-    const courseRepo = CourseRepo.getInstance(dbClient);
-    const channelRepo = ChannelRepo.getInstance(dbClient);
-    const enrollRepo = EnrollRepo.getInstance(dbClient);
+    const userRepo = UserRepo.getInstance(this.dbClient);
+    const courseRepo = CourseRepo.getInstance(this.dbClient);
+    const channelRepo = ChannelRepo.getInstance(this.dbClient);
+    const enrollRepo = EnrollRepo.getInstance(this.dbClient);
 
     const authRequestValidator = AuthRequestValidator.getInstance();
     const courseRequestValidator = CourseRequestValidator.getInstance();
@@ -254,7 +258,6 @@ export class WranglerSever {
       async (req: IRequest & ContentRequest) => {
         const content = req.content;
         const result = await this.authController.signIn(content);
-
         return this.createJsonResponse(result);
       }
     );
@@ -549,8 +552,8 @@ export class WranglerSever {
 }
 
 export default {
-  fetch: (request: Request, env: ENV) => {
-    const controller = WranglerSever.getInstance(env);
+  fetch: async (request: Request, env: ENV, ctx: ExecutionContext) => {
+    const controller = await WranglerSever.getInstance(env, ctx);
     return controller.handle(request);
   },
 };
