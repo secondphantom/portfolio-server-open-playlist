@@ -27,9 +27,9 @@ describe.skip("channel repo", () => {
       extra: {},
     } satisfies RepoCreateChannelDto;
 
-    await channelRepo.createChannel(createChannelDto);
+    await channelRepo.create(createChannelDto);
 
-    const channel = await channelRepo.getChannelByChannelId(
+    const channel = await channelRepo.getByChannelId(
       createChannelDto.channelId,
       {
         channelId: true,

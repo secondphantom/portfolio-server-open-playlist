@@ -7,7 +7,7 @@ import {
 export type UpdateUserDto = Partial<UserEntitySelect> &
   Pick<UserEntitySelect, "id">;
 export interface IUserRepo {
-  getUserByEmail: <T extends keyof UserEntitySelect>(
+  getByEmail: <T extends keyof UserEntitySelect>(
     email: string,
     columns?:
       | {
@@ -16,12 +16,12 @@ export interface IUserRepo {
       | { [key in keyof UserEntitySelect]?: boolean }
   ) => Promise<Pick<UserEntitySelect, T> | undefined>;
 
-  updateUserByEmail: (
+  updateByEmail: (
     email: string,
     values: Partial<UserEntitySelect>
   ) => Promise<void>;
 
-  getUserById: <T extends keyof UserEntitySelect>(
+  getById: <T extends keyof UserEntitySelect>(
     id: number,
     columns?:
       | {
@@ -30,10 +30,7 @@ export interface IUserRepo {
       | { [key in keyof UserEntitySelect]?: boolean }
   ) => Promise<Pick<UserEntitySelect, T> | undefined>;
 
-  createUser: (user: RepoCreateUserDto) => Promise<void>;
+  create: (user: RepoCreateUserDto) => Promise<void>;
 
-  updateUserById: (
-    id: number,
-    value: Partial<UserEntitySelect>
-  ) => Promise<void>;
+  updateById: (id: number, value: Partial<UserEntitySelect>) => Promise<void>;
 }

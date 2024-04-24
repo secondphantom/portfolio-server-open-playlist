@@ -19,7 +19,7 @@ export class UserRepo implements IUserRepo {
 
   constructor(private drizzleClient: DrizzleClient) {}
 
-  getUserByEmail = async <T extends keyof UserEntitySelect = any>(
+  getByEmail = async <T extends keyof UserEntitySelect = any>(
     email: string,
     columns?:
       | {
@@ -40,10 +40,7 @@ export class UserRepo implements IUserRepo {
     return user;
   };
 
-  updateUserByEmail = async (
-    email: string,
-    value: Partial<UserEntitySelect>
-  ) => {
+  updateByEmail = async (email: string, value: Partial<UserEntitySelect>) => {
     const { db, client } = await this.drizzleClient.getDb();
     await db
       .update(schema.users)
@@ -52,7 +49,7 @@ export class UserRepo implements IUserRepo {
     await this.drizzleClient.endDb(client);
   };
 
-  getUserById = async <T extends keyof UserEntitySelect = any>(
+  getById = async <T extends keyof UserEntitySelect = any>(
     id: number,
     columns?:
       | {
@@ -73,13 +70,13 @@ export class UserRepo implements IUserRepo {
     return user;
   };
 
-  createUser = async (user: RepoCreateUserDto) => {
+  create = async (user: RepoCreateUserDto) => {
     const { db, client } = await this.drizzleClient.getDb();
     await db.insert(schema.users).values(user as any);
     await this.drizzleClient.endDb(client);
   };
 
-  updateUserById = async (id: number, value: Partial<UserEntitySelect>) => {
+  updateById = async (id: number, value: Partial<UserEntitySelect>) => {
     const { db, client } = await this.drizzleClient.getDb();
     await db.update(schema.users).set(value).where(eq(schema.users.id, id));
     await this.drizzleClient.endDb(client);

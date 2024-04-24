@@ -26,7 +26,7 @@ export default class CourseRepo implements ICourseRepo {
 
   constructor(private drizzleClient: DrizzleClient) {}
 
-  getCourseByVideoId = async <T extends keyof CourseEntitySelect>(
+  getByVideoId = async <T extends keyof CourseEntitySelect>(
     videoId: string,
     columns?:
       | {
@@ -48,7 +48,7 @@ export default class CourseRepo implements ICourseRepo {
     return course;
   };
 
-  getCourseByIdWith = async <
+  getByIdWith = async <
     T extends keyof CourseEntitySelect,
     W1 extends keyof EnrollEntitySelect,
     W2 extends keyof ChannelEntitySelect,
@@ -118,7 +118,7 @@ export default class CourseRepo implements ICourseRepo {
     return course as any;
   };
 
-  getCourseById = async <T extends keyof CourseEntitySelect>(
+  getById = async <T extends keyof CourseEntitySelect>(
     id: number,
     columns?:
       | {
@@ -140,13 +140,13 @@ export default class CourseRepo implements ICourseRepo {
     return course;
   };
 
-  createCourse = async (course: RepoCreateCourseDto) => {
+  create = async (course: RepoCreateCourseDto) => {
     const { db, client } = await this.drizzleClient.getDb();
     await db.insert(schema.courses).values(course as any);
     await this.drizzleClient.endDb(client);
   };
 
-  getCourseListByQuery = async (query: QueryCourseListDto) => {
+  getListByQuery = async (query: QueryCourseListDto) => {
     const { db, client } = await this.drizzleClient.getDb();
 
     const {

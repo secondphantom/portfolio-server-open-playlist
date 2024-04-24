@@ -16,7 +16,7 @@ export class ChannelRepo implements IChannelRepo {
 
   constructor(private drizzleClient: DrizzleClient) {}
 
-  getChannelByChannelId = async <T extends keyof ChannelEntitySelect = any>(
+  getByChannelId = async <T extends keyof ChannelEntitySelect = any>(
     channelId: string,
     columns?:
       | {
@@ -37,7 +37,7 @@ export class ChannelRepo implements IChannelRepo {
     return channel;
   };
 
-  createChannel = async (channel: RepoCreateChannelDto) => {
+  create = async (channel: RepoCreateChannelDto) => {
     const { db, client } = await this.drizzleClient.getDb();
     await db.insert(schema.channels).values(channel);
     await this.drizzleClient.endDb(client);

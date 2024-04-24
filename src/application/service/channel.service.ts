@@ -44,7 +44,7 @@ export class ChannelService {
 
   // [GET] /channels/:id
   getChannelByChannelId = async (dto: ServiceChannelGetChannelByChannelId) => {
-    const channel = this.channelRepo.getChannelByChannelId(dto.channelId, {
+    const channel = this.channelRepo.getByChannelId(dto.channelId, {
       channelId: true,
       name: true,
       enrollCount: true,
@@ -65,7 +65,7 @@ export class ChannelService {
     const courseListQueryDto = new CourseListQueryDto({ ...dto });
 
     const queryDto = courseListQueryDto.getRepoQueryDto();
-    const courses = await this.courseRepo.getCourseListByQuery(queryDto);
+    const courses = await this.courseRepo.getListByQuery(queryDto);
 
     const pagination = {
       currentPage: queryDto.page,

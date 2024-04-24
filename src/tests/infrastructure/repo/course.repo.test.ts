@@ -35,26 +35,23 @@ describe.skip("course repo", () => {
       publishedAt: new Date(),
     } satisfies RepoCreateCourseDto;
 
-    await courseRepo.createCourse(createCourseDto);
+    await courseRepo.create(createCourseDto);
 
-    const course = await courseRepo.getCourseByVideoId(
-      createCourseDto.videoId,
-      {
-        videoId: true,
-        channelId: true,
-        categoryId: true,
-        language: true,
-        title: true,
-        description: true,
-        summary: true,
-        chapters: true,
-        enrollCount: true,
-        generatedAi: true,
-        duration: true,
-        extra: true,
-        // publishedAt: true,
-      }
-    );
+    const course = await courseRepo.getByVideoId(createCourseDto.videoId, {
+      videoId: true,
+      channelId: true,
+      categoryId: true,
+      language: true,
+      title: true,
+      description: true,
+      summary: true,
+      chapters: true,
+      enrollCount: true,
+      generatedAi: true,
+      duration: true,
+      extra: true,
+      // publishedAt: true,
+    });
 
     for (const [key, value] of Object.entries(course!)) {
       expect(value).toEqual(createCourseDto[key as any as keyof typeof course]);
@@ -62,7 +59,7 @@ describe.skip("course repo", () => {
   });
 
   test("get course by id", async () => {
-    const course = await courseRepo.getCourseById(1, { id: true });
+    const course = await courseRepo.getById(1, { id: true });
 
     expect(course?.id).toEqual(1);
   });
@@ -89,7 +86,7 @@ describe.skip("course repo", () => {
       },
     };
 
-    const course = await courseRepo.getCourseByIdWith(where, columns);
+    const course = await courseRepo.getByIdWith(where, columns);
 
     expect(course).toMatchObject({
       id: 1,
@@ -109,7 +106,7 @@ describe.skip("course repo", () => {
     });
 
     const inputs = queryDto.getRepoQueryDto();
-    const courses = await courseRepo.getCourseListByQuery(inputs);
+    const courses = await courseRepo.getListByQuery(inputs);
 
     for (const course of courses) {
       if (inputs.categoryId) {

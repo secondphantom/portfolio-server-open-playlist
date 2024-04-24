@@ -91,7 +91,7 @@ export class MeService {
       });
     }
 
-    const course = await this.courseRepo.getCourseById(courseId, {
+    const course = await this.courseRepo.getById(courseId, {
       chapters: true,
     });
 
@@ -116,7 +116,7 @@ export class MeService {
 
   // [GET] /me/profile
   getProfile = async (dto: ServiceMeGetProfileDto) => {
-    const user = await this.userRepo.getUserById(dto.userId, {
+    const user = await this.userRepo.getById(dto.userId, {
       profileName: true,
       email: true,
       updatedAt: true,
@@ -127,7 +127,7 @@ export class MeService {
 
   // [PATCH] /me/profile
   updateProfile = async (dto: ServiceMeUpdateProfileDto) => {
-    await this.userRepo.updateUserById(dto.userId, {
+    await this.userRepo.updateById(dto.userId, {
       profileName: dto.profileName,
     });
   };

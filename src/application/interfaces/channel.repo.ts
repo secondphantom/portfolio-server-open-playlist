@@ -4,7 +4,7 @@ import {
 } from "../../domain/channel.domain";
 
 export interface IChannelRepo {
-  getChannelByChannelId: <T extends keyof ChannelEntitySelect>(
+  getByChannelId: <T extends keyof ChannelEntitySelect>(
     channelId: string,
     columns?:
       | {
@@ -13,5 +13,5 @@ export interface IChannelRepo {
       | { [key in keyof ChannelEntitySelect]?: boolean }
   ) => Promise<Pick<ChannelEntitySelect, T> | undefined>;
 
-  createChannel: (channel: RepoCreateChannelDto) => Promise<void>;
+  create: (channel: RepoCreateChannelDto) => Promise<void>;
 }

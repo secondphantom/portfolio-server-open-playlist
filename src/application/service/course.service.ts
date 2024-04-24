@@ -58,7 +58,7 @@ export class CourseService {
 
   // [POST] /courses
   createCourse = async ({ videoId }: ServiceCourseCreateDto) => {
-    const course = await this.courseRepo.getCourseByVideoId(videoId, {
+    const course = await this.courseRepo.getByVideoId(videoId, {
       id: true,
     });
 
@@ -91,24 +91,22 @@ export class CourseService {
       });
     }
 
-    const channel = await this.channelRepo.getChannelByChannelId(
-      videoInfo.channelId
-    );
+    const channel = await this.channelRepo.getByChannelId(videoInfo.channelId);
 
     if (!channel) {
       const channelDomain = new ChannelDomain({
         channelId: videoInfo.channelId,
         name: videoInfo.channelTitle,
       });
-      await this.channelRepo.createChannel(channelDomain.getCreateChannelDto());
+      await this.channelRepo.create(channelDomain.getCreateChannelDto());
     }
 
     const createCourseDto = courseDomain.getCreateCourseDto();
-    await this.courseRepo.createCourse(createCourseDto);
+    await this.courseRepo.create(createCourseDto);
   };
   // [GET] /courses/:id
   getCourseById = async (dto: ServiceCourseGetByIdDto) => {
-    const course = await this.courseRepo.getCourseByIdWith(
+    const course = await this.courseRepo.getByIdWith(
       {
         courseId: dto.courseId,
         userId: dto.userId,
@@ -160,7 +158,7 @@ export class CourseService {
     const courseListQueryDto = new CourseListQueryDto({ ...dto });
 
     const queryDto = courseListQueryDto.getRepoQueryDto();
-    const courses = await this.courseRepo.getCourseListByQuery(queryDto);
+    const courses = await this.courseRepo.getListByQuery(queryDto);
 
     const pagination = {
       currentPage: queryDto.page,

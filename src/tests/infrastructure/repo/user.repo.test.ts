@@ -31,9 +31,9 @@ describe.skip("user repo", () => {
       uuid: "test_uuid",
     } satisfies RepoCreateUserDto;
 
-    await userRepo.createUser(createUserDto);
+    await userRepo.create(createUserDto);
 
-    const user = await userRepo.getUserByEmail(createUserDto.email, {
+    const user = await userRepo.getByEmail(createUserDto.email, {
       email: true,
     });
 
@@ -48,9 +48,9 @@ describe.skip("user repo", () => {
       isEmailVerified: true,
     } satisfies Partial<UserEntitySelect>;
 
-    await userRepo.updateUserByEmail(email, values);
+    await userRepo.updateByEmail(email, values);
 
-    const user = await userRepo.getUserByEmail(email);
+    const user = await userRepo.getByEmail(email);
 
     expect(user!.isEmailVerified).toEqual(true);
   });
@@ -61,7 +61,7 @@ describe.skip("user repo", () => {
       profileName: "zero",
     } satisfies ServiceMeUpdateProfileDto;
 
-    await userRepo.updateUserById(dto.userId, {
+    await userRepo.updateById(dto.userId, {
       profileName: dto.profileName,
     });
   });

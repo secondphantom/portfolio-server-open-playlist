@@ -33,7 +33,7 @@ export type QueryCourse = Pick<
 };
 
 export interface ICourseRepo {
-  getCourseByVideoId: <T extends keyof CourseEntitySelect>(
+  getByVideoId: <T extends keyof CourseEntitySelect>(
     videoId: string,
     columns?:
       | {
@@ -41,7 +41,7 @@ export interface ICourseRepo {
         }
       | { [key in keyof CourseEntitySelect]?: boolean }
   ) => Promise<Pick<CourseEntitySelect, T> | undefined>;
-  getCourseByIdWith: <
+  getByIdWith: <
     T extends keyof CourseEntitySelect,
     W1 extends keyof EnrollEntitySelect,
     W2 extends keyof ChannelEntitySelect,
@@ -83,7 +83,7 @@ export interface ICourseRepo {
       })
     | undefined
   >;
-  getCourseById: <T extends keyof CourseEntitySelect>(
+  getById: <T extends keyof CourseEntitySelect>(
     id: number,
     columns?:
       | {
@@ -91,6 +91,6 @@ export interface ICourseRepo {
         }
       | { [key in keyof CourseEntitySelect]?: boolean }
   ) => Promise<Pick<CourseEntitySelect, T> | undefined>;
-  createCourse: (channel: RepoCreateCourseDto) => Promise<void>;
-  getCourseListByQuery: (query: QueryCourseListDto) => Promise<QueryCourse[]>;
+  create: (channel: RepoCreateCourseDto) => Promise<void>;
+  getListByQuery: (query: QueryCourseListDto) => Promise<QueryCourse[]>;
 }
