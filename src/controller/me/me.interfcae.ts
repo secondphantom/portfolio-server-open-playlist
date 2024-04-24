@@ -1,6 +1,7 @@
 import {
   ServiceMeCreateEnrollDto,
   ServiceMeCreateFreeCreditDto,
+  ServiceMeDeleteAccountDto,
   ServiceMeGetCreditDto,
   ServiceMeGetEnrollByCourseIdDto,
   ServiceMeGetEnrollListByQueryDto,
@@ -16,6 +17,7 @@ import {
 import {
   RequestMeCreateEnroll,
   RequestMeCreateFreeCredit,
+  RequestMeDeleteAccount,
   RequestMeGetCredit,
   RequestMeGetEnrollByCourseId,
   RequestMeGetEnrollListByQuery,
@@ -45,6 +47,7 @@ export interface IMeRequestValidator {
   createFreeCredit: (
     req: RequestMeCreateFreeCredit
   ) => ServiceMeCreateFreeCreditDto;
+  deleteAccount: (req: RequestMeDeleteAccount) => ServiceMeDeleteAccountDto;
 }
 
 export interface IMeResponseValidator {

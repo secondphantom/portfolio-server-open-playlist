@@ -81,4 +81,10 @@ export class UserRepo implements IUserRepo {
     await db.update(schema.users).set(value).where(eq(schema.users.id, id));
     await this.drizzleClient.endDb(client);
   };
+
+  deleteById = async (id: number) => {
+    const { db, client } = await this.drizzleClient.getDb();
+    await db.delete(schema.users).where(eq(schema.users.id, id));
+    await this.drizzleClient.endDb(client);
+  };
 }

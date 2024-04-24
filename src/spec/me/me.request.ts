@@ -75,3 +75,9 @@ export type RequestMeCreateFreeCredit = {
     userId: number;
   };
 };
+
+export type RequestMeDeleteAccount = {
+  auth: {
+    userId: number;
+  };
+};

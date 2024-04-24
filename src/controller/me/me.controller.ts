@@ -4,6 +4,7 @@ import { ControllerResponse } from "../../dto/response";
 import {
   RequestMeCreateEnroll,
   RequestMeCreateFreeCredit,
+  RequestMeDeleteAccount,
   RequestMeGetCredit,
   RequestMeGetEnrollByCourseId,
   RequestMeGetEnrollListByQuery,
@@ -254,6 +255,31 @@ export class MeController {
         payload: {
           success: true,
           message: "Success Created",
+        },
+      });
+    } catch (error) {
+      const { code, message, data } = errorResolver(error);
+      return new ControllerResponse({
+        code,
+        payload: {
+          success: false,
+          message,
+          data,
+        },
+      });
+    }
+  };
+
+  deleteAccount = async (req: RequestMeDeleteAccount) => {
+    try {
+      const dto = this.meRequestValidator.deleteAccount(req);
+      await this.meService.deleteAccount(dto);
+
+      return new ControllerResponse({
+        code: 200,
+        payload: {
+          success: true,
+          message: "Success Deleted",
         },
       });
     } catch (error) {

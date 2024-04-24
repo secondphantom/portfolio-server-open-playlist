@@ -513,6 +513,19 @@ export class WranglerSever {
         return this.createJsonResponse(result);
       }
     );
+
+    this.app.delete(
+      "/api/me/account",
+      withCookies,
+      this.verifyAuthMiddleware,
+      async (req: IRequest & AuthRequest) => {
+        const { auth } = req;
+        const result = await this.meController.deleteAccount({
+          auth,
+        });
+        return this.createJsonResponse(result);
+      }
+    );
   };
 
   private initChannelRouter = () => {

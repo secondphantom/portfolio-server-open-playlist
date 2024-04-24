@@ -33,4 +33,6 @@ export interface IUserRepo {
   create: (user: RepoCreateUserDto) => Promise<void>;
 
   updateById: (id: number, value: Partial<UserEntitySelect>) => Promise<void>;
+
+  deleteById: (id: number) => Promise<void>;
 }

@@ -4,6 +4,7 @@ import { IMeRequestValidator } from "../../controller/me/me.interfcae";
 import {
   RequestMeCreateEnroll,
   RequestMeCreateFreeCredit,
+  RequestMeDeleteAccount,
   RequestMeGetCredit,
   RequestMeGetEnrollByCourseId,
   RequestMeGetEnrollListByQuery,
@@ -281,6 +282,28 @@ export class MeRequestValidator implements IMeRequestValidator {
   createFreeCredit = (req: RequestMeCreateFreeCredit) => {
     try {
       const dto = this.requestMeCreateFreeCredit.parse(req);
+      return {
+        userId: dto.auth.userId,
+      };
+    } catch (error) {
+      throw new ServerError({
+        code: 400,
+        message: "Invalid Input",
+      });
+    }
+  };
+
+  private requestMeDeleteAccount = z
+    .object({
+      auth: z.object({
+        userId: z.number(),
+      }),
+    })
+    .strict();
+
+  deleteAccount = (req: RequestMeDeleteAccount) => {
+    try {
+      const dto = this.requestMeDeleteAccount.parse(req);
       return {
         userId: dto.auth.userId,
       };

@@ -59,6 +59,10 @@ export type ServiceMeCreateFreeCreditDto = {
   userId: number;
 };
 
+export type ServiceMeDeleteAccountDto = {
+  userId: number;
+};
+
 type ConstructorInputs = {
   userRepo: IUserRepo;
   userCreditRepo: IUserCreditRepo;
@@ -310,5 +314,19 @@ export class MeService {
       freeCredits: entity.freeCredits,
       freeCreditUpdatedAt: entity.freeCreditUpdatedAt,
     });
+  };
+
+  // [DELETE] /me/account
+  deleteAccount = async (dto: ServiceMeDeleteAccountDto) => {
+    const user = await this.userRepo.getById(dto.userId, { id: true });
+
+    if (!user) {
+      throw new ServerError({
+        code: 401,
+        message: "Unauthorized",
+      });
+    }
+
+    await this.userRepo.deleteById(dto.userId);
   };
 }
