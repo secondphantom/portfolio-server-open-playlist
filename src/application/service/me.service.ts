@@ -1,4 +1,5 @@
 import { EnrollDomain } from "../../domain/enroll.domain";
+import { UserCreditDomain } from "../../domain/user.credit.domain";
 import { EnrollListQueryDto } from "../../dto/enroll.list.query.dto";
 import { ServerError } from "../../dto/error";
 import {
@@ -7,6 +8,7 @@ import {
 } from "../../schema/schema";
 import { ICourseRepo } from "../interfaces/course.repo";
 import { IEnrollRepo } from "../interfaces/enroll.repo";
+import { IUserCreditRepo } from "../interfaces/user.credit.repo";
 import { IUserRepo } from "../interfaces/user.repo";
 
 export type ServiceMeCreateEnrollDto = {
@@ -49,8 +51,17 @@ export type ServiceMeGetEnrollListByQueryDto = {
   order?: "update" | "create";
 };
 
+export type ServiceMeGetCreditDto = {
+  userId: number;
+};
+
+export type ServiceMeCreateFreeCreditDto = {
+  userId: number;
+};
+
 type ConstructorInputs = {
   userRepo: IUserRepo;
+  userCreditRepo: IUserCreditRepo;
   enrollRepo: IEnrollRepo;
   courseRepo: ICourseRepo;
 };
@@ -63,11 +74,18 @@ export class MeService {
     return this.instance;
   };
   private enrollRepo: IEnrollRepo;
+  private userCreditRepo: IUserCreditRepo;
   private courseRepo: ICourseRepo;
   private userRepo: IUserRepo;
 
-  constructor({ enrollRepo, courseRepo, userRepo }: ConstructorInputs) {
+  constructor({
+    enrollRepo,
+    courseRepo,
+    userRepo,
+    userCreditRepo,
+  }: ConstructorInputs) {
     this.userRepo = userRepo;
+    this.userCreditRepo = userCreditRepo;
     this.enrollRepo = enrollRepo;
     this.courseRepo = courseRepo;
   }
@@ -248,5 +266,49 @@ export class MeService {
       enrolls,
       pagination,
     };
+  };
+
+  // [GET] /me/credit
+  getCredit = async (dto: ServiceMeGetCreditDto) => {
+    const userCredit = await this.userCreditRepo.getByUserId(dto.userId);
+
+    if (!userCredit) {
+      throw new ServerError({
+        code: 404,
+        message: "Not Found",
+      });
+    }
+
+    return userCredit;
+  };
+
+  // [POST] /me/credit/create-free-credit
+  createFreeCredit = async (dto: ServiceMeCreateFreeCreditDto) => {
+    const userCredit = await this.userCreditRepo.getByUserId(dto.userId);
+
+    if (!userCredit) {
+      throw new ServerError({
+        code: 404,
+        message: "Not Found",
+      });
+    }
+
+    const userCreditDomain = new UserCreditDomain({ ...userCredit });
+
+    const { success } = userCreditDomain.updateFreeCredit();
+
+    if (!success) {
+      throw new ServerError({
+        code: 400,
+        message: "Fail to get free credit",
+      });
+    }
+
+    const entity = userCreditDomain.getEntity();
+
+    await this.userCreditRepo.updateByUserId(entity.userId, {
+      freeCredits: entity.freeCredits,
+      freeCreditUpdatedAt: entity.freeCreditUpdatedAt,
+    });
   };
 }

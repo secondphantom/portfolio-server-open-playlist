@@ -63,3 +63,15 @@ export type RequestMeGetEnrollListByQuery = {
     order?: "update" | "create";
   };
 };
+
+export type RequestMeGetCredit = {
+  auth: {
+    userId: number;
+  };
+};
+
+export type RequestMeCreateFreeCredit = {
+  auth: {
+    userId: number;
+  };
+};

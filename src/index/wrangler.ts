@@ -114,6 +114,7 @@ export class WranglerSever {
       userRepo,
       courseRepo,
       enrollRepo,
+      userCreditRepo,
     });
 
     const channelService = ChannelService.getInstance({
@@ -482,6 +483,32 @@ export class WranglerSever {
         const result = await this.meController.updateEnrollProgressByCourseId({
           auth,
           content,
+        });
+        return this.createJsonResponse(result);
+      }
+    );
+
+    this.app.get(
+      "/api/me/credit",
+      withCookies,
+      this.verifyAuthMiddleware,
+      async (req: IRequest & AuthRequest) => {
+        const { auth } = req;
+        const result = await this.meController.getCredit({
+          auth,
+        });
+        return this.createJsonResponse(result);
+      }
+    );
+
+    this.app.post(
+      "/api/me/credit/create-free-credit",
+      withCookies,
+      this.verifyAuthMiddleware,
+      async (req: IRequest & AuthRequest) => {
+        const { auth } = req;
+        const result = await this.meController.createFreeCredit({
+          auth,
         });
         return this.createJsonResponse(result);
       }

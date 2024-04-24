@@ -3,6 +3,8 @@ import { errorResolver } from "../../dto/error.resolver";
 import { ControllerResponse } from "../../dto/response";
 import {
   RequestMeCreateEnroll,
+  RequestMeCreateFreeCredit,
+  RequestMeGetCredit,
   RequestMeGetEnrollByCourseId,
   RequestMeGetEnrollListByQuery,
   RequestMeGetProfile,
@@ -202,6 +204,56 @@ export class MeController {
         payload: {
           success: true,
           data: validData,
+        },
+      });
+    } catch (error) {
+      const { code, message, data } = errorResolver(error);
+      return new ControllerResponse({
+        code,
+        payload: {
+          success: false,
+          message,
+          data,
+        },
+      });
+    }
+  };
+
+  getCredit = async (req: RequestMeGetCredit) => {
+    try {
+      const dto = this.meRequestValidator.getCredit(req);
+      const data = await this.meService.getCredit(dto);
+
+      return new ControllerResponse({
+        code: 200,
+        payload: {
+          success: true,
+          data,
+        },
+      });
+    } catch (error) {
+      const { code, message, data } = errorResolver(error);
+      return new ControllerResponse({
+        code,
+        payload: {
+          success: false,
+          message,
+          data,
+        },
+      });
+    }
+  };
+
+  createFreeCredit = async (req: RequestMeCreateFreeCredit) => {
+    try {
+      const dto = this.meRequestValidator.createFreeCredit(req);
+      await this.meService.createFreeCredit(dto);
+
+      return new ControllerResponse({
+        code: 200,
+        payload: {
+          success: true,
+          message: "Success Created",
         },
       });
     } catch (error) {

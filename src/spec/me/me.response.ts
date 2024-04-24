@@ -34,3 +34,13 @@ export type ResponseMeGetEnrollListByQuery = {
     pageSize: number;
   };
 };
+
+export type ResponseMeGetCredit = {
+  userId: number;
+  freeCredits: number;
+  purchasedCredits: number;
+  freeCreditUpdatedAt: string;
+  purchasedCreditUpdatedAt: string;
+  createdAt: string;
+  updatedAt: string;
+};

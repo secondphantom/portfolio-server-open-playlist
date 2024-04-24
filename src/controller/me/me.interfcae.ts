@@ -1,5 +1,7 @@
 import {
   ServiceMeCreateEnrollDto,
+  ServiceMeCreateFreeCreditDto,
+  ServiceMeGetCreditDto,
   ServiceMeGetEnrollByCourseIdDto,
   ServiceMeGetEnrollListByQueryDto,
   ServiceMeGetProfileDto,
@@ -13,6 +15,8 @@ import {
 } from "../../spec/me/me.response";
 import {
   RequestMeCreateEnroll,
+  RequestMeCreateFreeCredit,
+  RequestMeGetCredit,
   RequestMeGetEnrollByCourseId,
   RequestMeGetEnrollListByQuery,
   RequestMeGetProfile,
@@ -37,6 +41,10 @@ export interface IMeRequestValidator {
   getEnrollListByQuery: (
     req: RequestMeGetEnrollListByQuery
   ) => ServiceMeGetEnrollListByQueryDto;
+  getCredit: (req: RequestMeGetCredit) => ServiceMeGetCreditDto;
+  createFreeCredit: (
+    req: RequestMeCreateFreeCredit
+  ) => ServiceMeCreateFreeCreditDto;
 }
 
 export interface IMeResponseValidator {

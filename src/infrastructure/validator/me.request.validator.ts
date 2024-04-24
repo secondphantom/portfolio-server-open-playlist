@@ -3,6 +3,8 @@ import z from "zod";
 import { IMeRequestValidator } from "../../controller/me/me.interfcae";
 import {
   RequestMeCreateEnroll,
+  RequestMeCreateFreeCredit,
+  RequestMeGetCredit,
   RequestMeGetEnrollByCourseId,
   RequestMeGetEnrollListByQuery,
   RequestMeGetProfile,
@@ -237,6 +239,50 @@ export class MeRequestValidator implements IMeRequestValidator {
       return {
         userId: dto.auth.userId,
         ...dto.query,
+      };
+    } catch (error) {
+      throw new ServerError({
+        code: 400,
+        message: "Invalid Input",
+      });
+    }
+  };
+
+  private requestMeGetCredit = z
+    .object({
+      auth: z.object({
+        userId: z.number(),
+      }),
+    })
+    .strict();
+
+  getCredit = (req: RequestMeGetCredit) => {
+    try {
+      const dto = this.requestMeGetCredit.parse(req);
+      return {
+        userId: dto.auth.userId,
+      };
+    } catch (error) {
+      throw new ServerError({
+        code: 400,
+        message: "Invalid Input",
+      });
+    }
+  };
+
+  private requestMeCreateFreeCredit = z
+    .object({
+      auth: z.object({
+        userId: z.number(),
+      }),
+    })
+    .strict();
+
+  createFreeCredit = (req: RequestMeCreateFreeCredit) => {
+    try {
+      const dto = this.requestMeCreateFreeCredit.parse(req);
+      return {
+        userId: dto.auth.userId,
       };
     } catch (error) {
       throw new ServerError({

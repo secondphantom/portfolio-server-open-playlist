@@ -67,4 +67,14 @@ export class UserCreditDomain {
     this.freeCreditUpdatedAt = updatedDate;
     return { success: true };
   };
+
+  getEntity = () => {
+    return {
+      userId: this.userId,
+      freeCredits: this.freeCredits,
+      purchasedCredits: this.purchasedCredits,
+      freeCreditUpdatedAt: this.freeCreditUpdatedAt,
+      purchasedCreditUpdatedAt: this.purchasedCreditUpdatedAt,
+    };
+  };
 }

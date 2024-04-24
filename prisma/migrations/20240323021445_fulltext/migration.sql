@@ -311,8 +311,8 @@ CREATE TABLE "UserCredits" (
     "user_id" BIGSERIAL NOT NULL,
 		"free_credits" INTEGER NOT NULL DEFAULT 0,
 		"purchased_credits" INTEGER NOT NULL DEFAULT 0,
-    "free_credit_received_at" TIMESTAMP(3) NOT NULL DEFAULT NOW(),
-    "purchased_credit_received_at" TIMESTAMP(3) NOT NULL DEFAULT NOW(),
+    "free_credit_updated_at" TIMESTAMP(3) NOT NULL DEFAULT NOW(),
+    "purchased_credit_updated_at" TIMESTAMP(3) NOT NULL DEFAULT NOW(),
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT NOW(),
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT NOW(),
 
