@@ -10,20 +10,28 @@ export type EnrollEntityInsert = typeof enrolls.$inferInsert;
 
 export type RepoCreateEnrollDto = Pick<
   Required<EnrollEntityInsert>,
-  "courseId" | "userId" | "chapterProgress" | "totalProgress" | "recentProgress"
+  | "courseId"
+  | "userId"
+  | "version"
+  | "chapterProgress"
+  | "totalProgress"
+  | "recentProgress"
 >;
 
 export class EnrollDomain {
   private courseId: number;
   private userId: number;
+  private version: number;
   private chapterProgress: EnrollChapterProgress;
   private totalProgress: number;
   private recentProgress: EnrollRecentProgress;
   private createdAt: Date | undefined;
   private updatedAt: Date | undefined;
+
   constructor({
     courseId,
     userId,
+    version,
     chapterProgress,
     totalProgress,
     recentProgress,
@@ -41,6 +49,7 @@ export class EnrollDomain {
     >) {
     this.courseId = courseId;
     this.userId = userId;
+    this.version = version;
     this.chapterProgress = chapterProgress === undefined ? {} : chapterProgress;
     this.totalProgress = this.updateProgress(this.chapterProgress);
     this.recentProgress = recentProgress ? recentProgress : { chapterIndex: 0 };
@@ -68,6 +77,7 @@ export class EnrollDomain {
     return {
       courseId: this.courseId,
       userId: this.userId,
+      version: this.version,
       chapterProgress: this.chapterProgress,
       totalProgress: this.totalProgress,
       recentProgress: this.recentProgress,
@@ -83,6 +93,7 @@ export class EnrollDomain {
       recentProgress: this.recentProgress,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
+      version: this.version,
     };
   };
 }

@@ -22,6 +22,7 @@ export type RepoCreateCourseDto = Pick<
 
 export class CourseDomain {
   private id: number | undefined;
+  private version: number;
   private videoId: string;
   private channelId: string;
   private categoryId: number;
@@ -58,9 +59,11 @@ export class CourseDomain {
     createdAt,
     updatedAt,
     publishedAt,
+    version,
   }: Omit<CourseEntityInsert, "chapters" | "extra"> &
     Partial<Pick<CourseEntityInsert, "chapters" | "extra">>) {
     this.id = id;
+    this.version = version === undefined ? 1 : version;
     this.videoId = videoId;
     this.channelId = channelId;
     this.categoryId = categoryId ? categoryId : 0;

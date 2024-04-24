@@ -149,6 +149,7 @@ export class MeRequestValidator implements IMeRequestValidator {
         .object({
           courseId: z.number(),
           chapterProgress: z.record(z.string(), z.number()),
+          version: z.number(),
         })
         .strict(),
     })

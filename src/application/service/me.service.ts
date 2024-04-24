@@ -32,6 +32,7 @@ export type ServiceMeUpdateEnrollByCourseIdDto = {
   userId: number;
   courseId: number;
   chapterProgress: EnrollChapterProgress;
+  version: number;
 };
 
 export type ServiceMeUpdateEnrollProgressByCourseIdDto = {
@@ -93,6 +94,7 @@ export class MeService {
 
     const course = await this.courseRepo.getById(courseId, {
       chapters: true,
+      version: true,
     });
 
     if (!course) {
@@ -105,6 +107,7 @@ export class MeService {
     const enrollDomain = new EnrollDomain({
       userId,
       courseId,
+      version: course.version,
     });
 
     enrollDomain.createInitProgress(course.chapters);
@@ -173,11 +176,13 @@ export class MeService {
     userId,
     courseId,
     chapterProgress,
+    version,
   }: ServiceMeUpdateEnrollByCourseIdDto) => {
     const enrollDomain = new EnrollDomain({
       courseId,
       userId,
       chapterProgress,
+      version,
     });
 
     const entity = enrollDomain.getEntity();
@@ -191,6 +196,7 @@ export class MeService {
         chapterProgress: entity.chapterProgress,
         totalProgress: entity.totalProgress,
         recentProgress: entity.recentProgress,
+        version: entity.version,
       }
     );
   };

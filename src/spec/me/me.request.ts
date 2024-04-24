@@ -37,6 +37,7 @@ export type RequestMeUpdateEnrollByCourseId = {
   };
   content: {
     courseId: number;
+    version: number;
     chapterProgress: { [key in string]: number };
   };
 };
