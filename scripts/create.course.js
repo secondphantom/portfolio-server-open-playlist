@@ -107,7 +107,8 @@ const run = async () => {
             method: "POST",
             body: JSON.stringify(body),
           });
-          return res(await resp.json());
+          const json = await resp.json();
+          return res({ ...json, ...body });
         })
     )
   );
