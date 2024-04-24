@@ -1,3 +1,9 @@
+export type ResponseChannelGetByChannelId = {
+  name: string;
+  channelId: string;
+  enrollCount: number;
+};
+
 export type ResponseChannelGetCourseListByQuery = {
   courses: {
     id: number;

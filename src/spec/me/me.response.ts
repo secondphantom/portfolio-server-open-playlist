@@ -39,8 +39,8 @@ export type ResponseMeGetCredit = {
   userId: number;
   freeCredits: number;
   purchasedCredits: number;
-  freeCreditUpdatedAt: string;
-  purchasedCreditUpdatedAt: string;
-  createdAt: string;
-  updatedAt: string;
+  freeCreditUpdatedAt: Date;
+  purchasedCreditUpdatedAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
 };
