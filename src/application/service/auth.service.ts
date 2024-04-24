@@ -9,6 +9,8 @@ import {
 } from "../interfaces/jwt.util";
 import { ENV } from "../../env";
 import { ServerError } from "../../dto/error";
+import { UserCreditDomain } from "../../domain/user.credit.domain";
+import { IUserCreditRepo } from "../interfaces/user.credit.repo";
 
 export type ServiceAuthSignUpDto = {
   email: string;
@@ -59,6 +61,7 @@ export class AuthService {
   static instance: AuthService | undefined;
   static getInstance = (inputs: {
     userRepo: IUserRepo;
+    userCreditRepo: IUserCreditRepo;
     cryptoUtil: ICryptoUtil;
     emailUtil: IEmailUtil;
     jwtUtil: IJwtUtil;
@@ -70,6 +73,7 @@ export class AuthService {
   };
 
   private userRepo: IUserRepo;
+  private userCreditRepo: IUserCreditRepo;
   private cryptoUtil: ICryptoUtil;
   private emailUtil: IEmailUtil;
   private jwtUtil: IJwtUtil;
@@ -77,18 +81,21 @@ export class AuthService {
 
   constructor({
     userRepo,
+    userCreditRepo,
     cryptoUtil,
     emailUtil,
     jwtUtil,
     ENV,
   }: {
     userRepo: IUserRepo;
+    userCreditRepo: IUserCreditRepo;
     cryptoUtil: ICryptoUtil;
     emailUtil: IEmailUtil;
     jwtUtil: IJwtUtil;
     ENV: C_ENV;
   }) {
     this.userRepo = userRepo;
+    this.userCreditRepo = userCreditRepo;
     this.cryptoUtil = cryptoUtil;
     this.emailUtil = emailUtil;
     this.jwtUtil = jwtUtil;
@@ -97,8 +104,7 @@ export class AuthService {
 
   // [POST] /auth/sign-up
   signUp = async ({ email, password, userName }: ServiceAuthSignUpDto) => {
-    // verify email is existed
-    const findUser = await this.userRepo.getUserByEmail(email, {
+    const findUser = await this.userRepo.getByEmail(email, {
       email: true,
       isEmailVerified: true,
     });
@@ -110,7 +116,6 @@ export class AuthService {
       });
     }
 
-    // create user
     const { key } = await this.cryptoUtil.encryptPassword(password);
 
     const userDomain = new UserDomain({
@@ -121,14 +126,11 @@ export class AuthService {
 
     const createUserDto = userDomain.getCreateUserDto();
 
-    await this.userRepo.createUser(createUserDto);
-
     const token = await this.jwtUtil.signEmailVerifyPayload({
       email: createUserDto.email,
       uuid: createUserDto.uuid,
     });
 
-    // send verification email
     const { success: successSendEmail } = await this.emailUtil.sendEmail({
       from: {
         email: `noreplay@${this.ENV.EMAIL_DOMAIN_URL}`,
@@ -149,6 +151,27 @@ export class AuthService {
         code: 500,
       });
     }
+
+    await this.userRepo.create(createUserDto);
+
+    const user = await this.userRepo.getByEmail(createUserDto.email, {
+      id: true,
+    });
+
+    if (!user) {
+      throw new ServerError({
+        message: "Fail to create user",
+        code: 500,
+      });
+    }
+
+    const userCreditDomain = new UserCreditDomain({
+      userId: user.id,
+    });
+
+    const createUserCreditDto = userCreditDomain.getCreateUserCreditDto();
+
+    await this.userCreditRepo.create(createUserCreditDto);
   };
 
   // [GET] /auth/verify-email
@@ -167,7 +190,7 @@ export class AuthService {
       uuid: string;
     }>(token);
 
-    const user = await this.userRepo.getUserByEmail(payload.email, {
+    const user = await this.userRepo.getByEmail(payload.email, {
       email: true,
       uuid: true,
       isEmailVerified: true,
@@ -187,7 +210,7 @@ export class AuthService {
       });
     }
 
-    await this.userRepo.updateUserByEmail(user.email, {
+    await this.userRepo.updateByEmail(user.email, {
       isEmailVerified: true,
     });
   };
@@ -196,7 +219,7 @@ export class AuthService {
   resendVerificationEmail = async ({
     email,
   }: ServiceAuthResendVerificationEmailDto) => {
-    const user = await this.userRepo.getUserByEmail(email, {
+    const user = await this.userRepo.getByEmail(email, {
       email: true,
       isEmailVerified: true,
       uuid: true,
@@ -245,7 +268,7 @@ export class AuthService {
 
   // [POST] /auth/sign-in
   signIn = async ({ email, password }: ServiceAuthSingInDto) => {
-    const user = await this.userRepo.getUserByEmail(email, {
+    const user = await this.userRepo.getByEmail(email, {
       isEmailVerified: true,
       hashKey: true,
       roleId: true,
@@ -339,7 +362,7 @@ export class AuthService {
     const { payload } =
       this.jwtUtil.decodePayload<JwtAuthSignPayload>(refreshToken);
 
-    const user = await this.userRepo.getUserById(payload.userId, {
+    const user = await this.userRepo.getById(payload.userId, {
       uuid: true,
       id: true,
       roleId: true,
@@ -370,7 +393,7 @@ export class AuthService {
 
   // find-password [POST] /auth/find-password
   findPassword = async (dto: ServiceAuthFindPasswordDto) => {
-    const user = await this.userRepo.getUserByEmail(dto.email, {
+    const user = await this.userRepo.getByEmail(dto.email, {
       id: true,
       email: true,
       uuid: true,
@@ -449,7 +472,7 @@ export class AuthService {
       dto.token
     );
 
-    const user = await this.userRepo.getUserByEmail(payload.email, {
+    const user = await this.userRepo.getByEmail(payload.email, {
       email: true,
       uuid: true,
       id: true,
@@ -464,7 +487,7 @@ export class AuthService {
 
     const { key } = await this.cryptoUtil.encryptPassword(dto.password);
 
-    await this.userRepo.updateUserById(user.id, {
+    await this.userRepo.updateById(user.id, {
       hashKey: key,
       uuid: UserDomain.getUuid(),
     });

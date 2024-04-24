@@ -16,6 +16,7 @@ import {
   primaryKey,
   jsonb,
   customType,
+  date,
 } from "drizzle-orm/pg-core";
 
 function genExpWithWeights(input: string[]) {
@@ -62,16 +63,16 @@ export const users = pgTable(
     profileImage: varchar("profile_image", { length: 300 }),
     extra: jsonb("extra").notNull().$type<UserExtra>(),
     createdAt: timestamp("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
+      .default(sql`now()`)
       .notNull(),
     updatedAt: timestamp("updated_at")
-      .default(sql`CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`)
+      .default(sql`now()`)
       .notNull(),
   },
   (table) => {
     return {
-      idxRole: index("idx_role").on(table.roleId),
-      uqEmail: uniqueIndex("uq_email").on(table.email),
+      idxRole: index("idx_user_role").on(table.roleId),
+      uqEmail: uniqueIndex("uq_user_email").on(table.email),
       idxCreatedAt: index("idx_user_created_at").on(table.createdAt), // DESC
     };
   }
@@ -86,10 +87,10 @@ export const channels = pgTable("Channels", {
   enrollCount: integer("enroll_count").notNull().default(0),
   extra: jsonb("extra").notNull().$type<ChannelExtra>(),
   createdAt: timestamp("created_at")
-    .default(sql`CURRENT_TIMESTAMP`)
+    .default(sql`now()`)
     .notNull(),
   updatedAt: timestamp("updated_at")
-    .default(sql`CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`)
+    .default(sql`now()`)
     .notNull(),
 });
 
@@ -100,12 +101,13 @@ export const courses = pgTable(
   "Courses",
   {
     id: bigint("id", { mode: "number" }).notNull().primaryKey().default(0),
+    version: integer("version").notNull().default(1),
     videoId: varchar("video_id", { length: 50 }).notNull(),
     channelId: varchar("channel_id", { length: 50 }).notNull(),
     categoryId: integer("category_id").notNull().default(0),
     language: varchar("language", { length: 10 }).notNull(),
     title: varchar("title", { length: 110 }).notNull(), //FULL TEXT
-    titleTsvector: tsvector("title_tsvector"),
+    titleTsvector: tsvector("title_tsvector").default(""),
     description: varchar("description", { length: 5010 }).notNull(),
     summary: varchar("summary", { length: 10000 }),
     chapters: jsonb("chapters").notNull().$type<CourseChapter[]>(),
@@ -114,10 +116,10 @@ export const courses = pgTable(
     duration: integer("duration").notNull(),
     extra: jsonb("extra").notNull().$type<CourseExtra>(),
     createdAt: timestamp("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
+      .default(sql`now()`)
       .notNull(),
     updatedAt: timestamp("updated_at")
-      .default(sql`CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`)
+      .default(sql`now()`)
       .notNull(),
     publishedAt: timestamp("published_at").notNull(),
   },
@@ -148,6 +150,7 @@ export const enrolls = pgTable(
   {
     userId: bigint("user_id", { mode: "number" }).notNull(),
     courseId: bigint("course_id", { mode: "number" }).notNull(),
+    version: integer("version").notNull(),
     chapterProgress: jsonb("chapter_progress")
       .notNull()
       .$type<EnrollChapterProgress>(),
@@ -156,10 +159,10 @@ export const enrolls = pgTable(
       .notNull()
       .$type<EnrollRecentProgress>(),
     createdAt: timestamp("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
+      .default(sql`now()`)
       .notNull(),
     updatedAt: timestamp("updated_at")
-      .default(sql`CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`)
+      .default(sql`now()`)
       .notNull(),
   },
   (table) => {
@@ -184,18 +187,41 @@ export const categories = pgTable(
     id: integer("id").notNull().primaryKey().default(0),
     name: varchar("name", { length: 100 }).notNull(),
     parentId: integer("parent_id").notNull(),
+    createdAt: timestamp("created_at")
+      .default(sql`now()`)
+      .notNull(),
+    updatedAt: timestamp("updated_at")
+      .default(sql`now()`)
+      .notNull(),
   },
   (table) => {
     return {
-      idxParentId: index("idx_parent_id").on(table.parentId),
+      idxParentId: index("idx_categories_parent_id").on(table.parentId),
+      idxCreatedAt: index("idx_categories_created_at").on(table.createdAt),
+      idxUpdatedAt: index("idx_categories_updated_at").on(table.updatedAt),
     };
   }
 );
 
-export const roles = pgTable("Roles", {
-  id: integer("id").notNull().primaryKey(),
-  name: varchar("name", { length: 100 }).notNull(),
-});
+export const roles = pgTable(
+  "Roles",
+  {
+    id: integer("id").notNull().primaryKey(),
+    name: varchar("name", { length: 100 }).notNull(),
+    createdAt: timestamp("created_at")
+      .default(sql`now()`)
+      .notNull(),
+    updatedAt: timestamp("updated_at")
+      .default(sql`now()`)
+      .notNull(),
+  },
+  (table) => {
+    return {
+      idxCreatedAt: index("idx_roles_created_at").on(table.createdAt),
+      idxUpdatedAt: index("idx_roles_updated_at").on(table.updatedAt),
+    };
+  }
+);
 
 export const channelsRelations = relations(channels, ({ many }) => {
   return {
@@ -224,6 +250,10 @@ export const usersRelations = relations(users, ({ many, one }) => {
       fields: [users.roleId],
       references: [roles.id],
     }),
+    credit: one(userCredits, {
+      fields: [users.id],
+      references: [userCredits.userId],
+    }),
   };
 });
 
@@ -249,5 +279,214 @@ export const categoriesRelations = relations(categories, ({ many }) => {
 export const roleRelations = relations(roles, ({ many }) => {
   return {
     users: many(users),
+  };
+});
+
+export const admins = pgTable(
+  "Admins",
+  {
+    id: bigint("id", { mode: "number" }).notNull().primaryKey().default(0),
+    email: varchar("email", { length: 320 }).notNull(),
+    roleId: smallint("role_id").notNull().default(0),
+    otpCode: varchar("otp_code", { length: 10 }),
+    otpExpirationAt: timestamp("otp_expiration_at")
+      .default(sql`now()`)
+      .notNull(),
+    profileName: varchar("profile_name", { length: 100 }).notNull(),
+    profileImage: varchar("profile_image", { length: 300 }),
+    createdAt: timestamp("created_at")
+      .default(sql`now()`)
+      .notNull(),
+    updatedAt: timestamp("updated_at")
+      .default(sql`now()`)
+      .notNull(),
+  },
+  (table) => {
+    return {
+      idxRole: index("idx_admin_role").on(table.roleId),
+      uqEmail: uniqueIndex("uq_admin_email").on(table.email),
+      idxCreatedAt: index("idx_admin_created_at").on(table.createdAt),
+    };
+  }
+);
+
+export const adminsRelation = relations(admins, ({ many }) => {
+  return {
+    notices: many(notices),
+  };
+});
+
+export type SessionData = {
+  device: any;
+  ip: string;
+  userAgent: string;
+};
+
+export const sessions = pgTable(
+  "AdminSessions",
+  {
+    id: bigint("id", { mode: "number" }).notNull().primaryKey().default(0),
+    sessionKey: varchar("session_key", { length: 50 }).notNull(),
+    adminId: bigint("admin_id", { mode: "number" }).notNull(),
+    data: jsonb("data").notNull().$type<SessionData>(),
+    createdAt: timestamp("created_at")
+      .default(sql`now()`)
+      .notNull(),
+    updatedAt: timestamp("updated_at")
+      .default(sql`now()`)
+      .notNull(),
+  },
+  (table) => {
+    return {
+      idxAdminId: index("idx_sessions_admin_id").on(table.adminId),
+      idxCreatedAt: index("idx_sessions_created_at").on(table.createdAt), // DESC
+      idxUpdatedAt: index("idx_sessions_published_at").on(table.updatedAt), // DESC
+      uqSessionId: uniqueIndex("uq_sessions_session_id").on(table.sessionKey),
+    };
+  }
+);
+
+export const adminRelation = relations(admins, ({ many }) => {
+  return {
+    sessions: many(sessions),
+  };
+});
+
+export const sessionRelation = relations(sessions, ({ one }) => {
+  return {
+    admin: one(admins, {
+      fields: [sessions.adminId],
+      references: [admins.id],
+    }),
+  };
+});
+
+export type HealthData = {
+  apis: {
+    method: string;
+    path: string;
+    status: number;
+    responseTime: number;
+  }[];
+};
+
+export const healths = pgTable(
+  "Healths",
+  {
+    id: bigint("id", { mode: "number" }).notNull().primaryKey().default(0),
+    version: bigint("version", { mode: "number" }).notNull(),
+    data: jsonb("data").notNull().$type<HealthData>(),
+    createdAt: timestamp("created_at")
+      .default(sql`now()`)
+      .notNull(),
+  },
+  (table) => {
+    return {
+      idxVersion: index("idx_healths_version").on(table.version),
+      idxCreatedAt: index("idx_healths_created_at").on(table.createdAt), // DESC
+    };
+  }
+);
+
+export type UserStatData = {
+  total: number;
+  dau: number;
+  wau: number;
+  mau: number;
+};
+
+export const userStats = pgTable(
+  "UserStats",
+  {
+    version: bigint("version", { mode: "number" }).notNull(),
+    eventAt: date("event_at", { mode: "date" }).notNull(),
+    data: jsonb("data").notNull().$type<UserStatData>(),
+    createdAt: timestamp("created_at")
+      .default(sql`now()`)
+      .notNull(),
+    updatedAt: timestamp("updated_at")
+      .default(sql`now()`)
+      .notNull(),
+  },
+  (table) => {
+    return {
+      pk: primaryKey({ columns: [table.version, table.eventAt] }),
+    };
+  }
+);
+
+export const userCredits = pgTable("UserCredits", {
+  userId: bigint("user_id", { mode: "number" }).notNull().primaryKey(),
+  freeCredits: integer("free_credits").notNull().default(0),
+  purchasedCredits: integer("purchased_credits").notNull().default(0),
+  freeCreditUpdatedAt: timestamp("free_credit_received_at")
+    .notNull()
+    .default(sql`now()`),
+  purchasedCreditUpdatedAt: timestamp("purchased_credit_received_at")
+    .notNull()
+    .default(sql`now()`),
+  createdAt: timestamp("created_at")
+    .default(sql`now()`)
+    .notNull(),
+  updatedAt: timestamp("updated_at")
+    .default(sql`now()`)
+    .notNull(),
+});
+
+export const userCreditRelation = relations(userCredits, ({ one }) => {
+  return {
+    user: one(users, {
+      fields: [userCredits.userId],
+      references: [users.id],
+    }),
+  };
+});
+
+export type NoticeConfig = { showHome: boolean };
+
+export const notices = pgTable(
+  "Notices",
+  {
+    id: bigint("id", { mode: "number" }).notNull().primaryKey().default(0),
+    adminId: bigint("admin_id", { mode: "number" }).notNull(),
+    title: varchar("title", { length: 200 }).notNull(),
+    content: varchar("content", { length: 10000 }).notNull(),
+    isDisplayedOn: boolean("is_displayed_on").default(false).notNull(),
+    displayStartDate: timestamp("display_start_date")
+      .default(sql`now()`)
+      .notNull(),
+    displayEndDate: timestamp("display_end_date")
+      .default(sql`now()`)
+      .notNull(),
+    createdAt: timestamp("created_at")
+      .default(sql`now()`)
+      .notNull(),
+    updatedAt: timestamp("updated_at")
+      .default(sql`now()`)
+      .notNull(),
+  },
+  (table) => {
+    return {
+      idxAdminId: index("idx_notices_admin_id").on(table.adminId),
+      idxIsDisplayedOn: index("idx_notices_is_displayed_on").on(
+        table.isDisplayedOn
+      ),
+      idxDisplayStartDate: index("idx_notices_display_start_date").on(
+        table.displayStartDate
+      ),
+      idxDisplayEndDate: index("idx_notices_display_end_date").on(
+        table.displayEndDate
+      ),
+      idxCreatedAt: index("idx_notices_created_at").on(table.createdAt),
+    };
+  }
+);
+
+export const noticeRelation = relations(notices, ({ one }) => {
+  return {
+    admin: one(admins, {
+      fields: [notices.adminId],
+      references: [admins.id],
+    }),
   };
 });

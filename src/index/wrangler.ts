@@ -25,6 +25,7 @@ import { ChannelRequestValidator } from "../infrastructure/validator/channel.req
 import { ChannelResponseValidator } from "../infrastructure/validator/channel.response.validator";
 import { ChannelService } from "../application/service/channel.service";
 import { ChannelController } from "../controller/channel/channel.controller";
+import { UserCreditRepo } from "../infrastructure/repo/user.credit.repo";
 
 type AuthPayload = {
   userId: number;
@@ -84,6 +85,7 @@ export class WranglerSever {
     const courseRepo = CourseRepo.getInstance(this.dbClient);
     const channelRepo = ChannelRepo.getInstance(this.dbClient);
     const enrollRepo = EnrollRepo.getInstance(this.dbClient);
+    const userCreditRepo = UserCreditRepo.getInstance(this.dbClient);
 
     const authRequestValidator = AuthRequestValidator.getInstance();
     const courseRequestValidator = CourseRequestValidator.getInstance();
@@ -99,6 +101,7 @@ export class WranglerSever {
       ENV: this.env,
       jwtUtil,
       userRepo,
+      userCreditRepo,
     });
 
     const courseService = CourseService.getInstance({

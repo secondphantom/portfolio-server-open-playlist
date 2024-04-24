@@ -40,13 +40,13 @@
     "@tsndr/cloudflare-worker-jwt": "^2.4.5",
     "axios": "^1.6.7",
     "cloudflare-mysql": "^0.9.4",
-    "drizzle-orm": "^0.29.3",
+    "drizzle-orm": "^0.29.5",
     "itty-router": "^4.0.27",
     "mimetext": "^3.0.16",
     "mysql2": "^3.9.1",
     "pg": "^8.11.3",
     "uuid": "^9.0.1",
-    "wrangler": "^3.37.0",
+    "wrangler": "^3.51.2",
     "wretch": "^2.8.0",
     "zod": "^3.22.4"
   }

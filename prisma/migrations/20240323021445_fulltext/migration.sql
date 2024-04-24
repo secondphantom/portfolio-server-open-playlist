@@ -1,3 +1,14 @@
+-- CreateTrigger
+CREATE OR REPLACE FUNCTION set_updated_at() RETURNS trigger AS
+$set_updated_at$
+BEGIN
+    IF NEW."updated_at" = OLD."updated_at" THEN
+        NEW."updated_at" = NOW();
+    END IF;
+    RETURN NEW;
+END;
+$set_updated_at$ LANGUAGE plpgsql;
+
 -- CreateTable
 CREATE TABLE "Users" (
     "id" BIGSERIAL NOT NULL,
@@ -217,16 +228,7 @@ CREATE TRIGGER channel_name_vector_update BEFORE INSERT OR UPDATE
 ON "Channels" FOR EACH ROW EXECUTE FUNCTION
 tsvector_update_trigger(name_tsvector, 'pg_catalog.simple', 'name');
 
--- CreateTrigger
-CREATE OR REPLACE FUNCTION set_updated_at() RETURNS trigger AS
-$set_updated_at$
-BEGIN
-    IF NEW."updated_at" = OLD."updated_at" THEN
-        NEW."updated_at" = NOW();
-    END IF;
-    RETURN NEW;
-END;
-$set_updated_at$ LANGUAGE plpgsql;
+
 
 -- SetTrigger
 CREATE TRIGGER table_update
