@@ -131,9 +131,26 @@ export class CourseDomain {
       chapterMap.set(time, { time, title });
     });
 
-    const chapters = Array.from(chapterMap.values());
+    const rawChapters = Array.from(chapterMap.values());
 
-    if (!chapters) return;
+    if (!rawChapters) return;
+
+    const chapters = rawChapters
+      .map((chapter, index) => {
+        if (index === rawChapters.length - 1) {
+          return chapter;
+        }
+
+        const nextChapter = rawChapters[index + 1];
+
+        if (chapter.time < nextChapter.time) {
+          return chapter;
+        }
+        return null;
+      })
+      .filter((v) => !!v) as { time: number; title: string }[];
+
+    if (chapters.length === 0) return;
 
     const orderedChapter = structuredClone(chapters).sort((a, b) => {
       return a.time - b.time;
