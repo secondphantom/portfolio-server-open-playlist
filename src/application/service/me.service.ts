@@ -96,6 +96,26 @@ export class MeService {
 
   // [POST] /me/enroll
   createEnroll = async ({ userId, courseId }: ServiceMeCreateEnrollDto) => {
+    const userCredit = await this.userCreditRepo.getByUserId(userId);
+
+    if (!userCredit) {
+      throw new ServerError({
+        code: 401,
+        message: "Unauthorized",
+      });
+    }
+
+    const userCreditDomain = new UserCreditDomain({ ...userCredit });
+
+    const { success } = userCreditDomain.consumeCreditForCreateEnroll();
+
+    if (!success) {
+      throw new ServerError({
+        code: 403,
+        message: "Insufficient credit",
+      });
+    }
+
     const enroll = await this.enrollRepo.getEnrollByUserIdAndCourseId(
       {
         userId,
@@ -137,6 +157,11 @@ export class MeService {
     const createEnrollDto = enrollDomain.getCreateEnrollDto();
 
     await this.enrollRepo.createEnroll(createEnrollDto);
+
+    await this.userCreditRepo.updateByUserId(userId, {
+      ...userCreditDomain.getEntity(),
+      userId: undefined,
+    });
   };
 
   // [GET] /me/profile

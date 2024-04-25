@@ -23,7 +23,8 @@ export class UserCreditDomain {
 
   private DEFAULT_FREE_CREDIT = 50;
   private DEFAULT_GET_FREE_CREDIT_EXP_SEC = 24 * 60 * 60;
-  private DEFAULT_CONSUME_FREE_CREDIT_FOR_CREATE_COURSE = 10;
+  private CONSUME_FREE_CREDIT_FOR_CREATE_COURSE = 10;
+  private CONSUME_FREE_CREDIT_FOR_CREATE_ENROLL = 20;
 
   constructor({
     userId,
@@ -70,11 +71,22 @@ export class UserCreditDomain {
   };
 
   consumeCreditForCreateCourse = () => {
-    if (this.freeCredits < this.DEFAULT_CONSUME_FREE_CREDIT_FOR_CREATE_COURSE) {
+    if (this.freeCredits < this.CONSUME_FREE_CREDIT_FOR_CREATE_COURSE) {
       return { success: false };
     }
 
-    this.freeCredits -= this.DEFAULT_CONSUME_FREE_CREDIT_FOR_CREATE_COURSE;
+    this.freeCredits -= this.CONSUME_FREE_CREDIT_FOR_CREATE_COURSE;
+    this.freeCreditUpdatedAt = new Date();
+
+    return { success: true };
+  };
+
+  consumeCreditForCreateEnroll = () => {
+    if (this.freeCredits < this.CONSUME_FREE_CREDIT_FOR_CREATE_ENROLL) {
+      return { success: false };
+    }
+
+    this.freeCredits -= this.CONSUME_FREE_CREDIT_FOR_CREATE_ENROLL;
     this.freeCreditUpdatedAt = new Date();
 
     return { success: true };
