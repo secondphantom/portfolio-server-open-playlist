@@ -139,6 +139,7 @@ export class WranglerSever {
       meService,
       meRequestValidator,
       meResponseValidator,
+      ENV: this.env,
     });
 
     this.channelController = ChannelController.getInstance({

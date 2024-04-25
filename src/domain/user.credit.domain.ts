@@ -56,7 +56,7 @@ export class UserCreditDomain {
     };
   };
 
-  updateFreeCredit = () => {
+  getFreeCredit = () => {
     const updatedDate = new Date();
     if (
       updatedDate.getTime() - this.freeCreditUpdatedAt.getTime() <=
@@ -76,7 +76,6 @@ export class UserCreditDomain {
     }
 
     this.freeCredits -= this.CONSUME_FREE_CREDIT_FOR_CREATE_COURSE;
-    this.freeCreditUpdatedAt = new Date();
 
     return { success: true };
   };
@@ -87,7 +86,6 @@ export class UserCreditDomain {
     }
 
     this.freeCredits -= this.CONSUME_FREE_CREDIT_FOR_CREATE_ENROLL;
-    this.freeCreditUpdatedAt = new Date();
 
     return { success: true };
   };

@@ -324,7 +324,7 @@ export class MeService {
 
     const userCreditDomain = new UserCreditDomain({ ...userCredit });
 
-    const { success } = userCreditDomain.updateFreeCredit();
+    const { success } = userCreditDomain.getFreeCredit();
 
     if (!success) {
       throw new ServerError({

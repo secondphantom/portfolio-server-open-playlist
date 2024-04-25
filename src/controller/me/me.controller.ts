@@ -1,6 +1,7 @@
 import { MeService } from "../../application/service/me.service";
 import { errorResolver } from "../../dto/error.resolver";
 import { ControllerResponse } from "../../dto/response";
+import { ENV } from "../../env";
 import {
   RequestMeCreateEnroll,
   RequestMeCreateFreeCredit,
@@ -15,31 +16,38 @@ import {
 } from "../../spec/me/me.request";
 import { IMeRequestValidator, IMeResponseValidator } from "./me.interfcae";
 
+type C_ENV = Pick<ENV, "CORS_CREDENTIAL">;
+type ConstructorInputs = {
+  meService: MeService;
+  meRequestValidator: IMeRequestValidator;
+  meResponseValidator: IMeResponseValidator;
+  ENV: C_ENV;
+};
+
 export class MeController {
   static instance: MeController | undefined;
-  static getInstance = ({
-    meService,
-    meRequestValidator,
-    meResponseValidator,
-  }: {
-    meService: MeService;
-    meRequestValidator: IMeRequestValidator;
-    meResponseValidator: IMeResponseValidator;
-  }) => {
+  static getInstance = (input: ConstructorInputs) => {
     if (this.instance) return this.instance;
-    this.instance = new MeController(
-      meService,
-      meRequestValidator,
-      meResponseValidator
-    );
+    this.instance = new MeController(input);
     return this.instance;
   };
 
-  constructor(
-    private meService: MeService,
-    private meRequestValidator: IMeRequestValidator,
-    private meResponseValidator: IMeResponseValidator
-  ) {}
+  private meService: MeService;
+  private meRequestValidator: IMeRequestValidator;
+  private meResponseValidator: IMeResponseValidator;
+  private ENV: C_ENV;
+
+  constructor({
+    meService,
+    meRequestValidator,
+    meResponseValidator,
+    ENV,
+  }: ConstructorInputs) {
+    this.meService = meService;
+    this.meRequestValidator = meRequestValidator;
+    this.meResponseValidator = meResponseValidator;
+    this.ENV = ENV;
+  }
 
   createEnroll = async (req: RequestMeCreateEnroll) => {
     try {
@@ -281,6 +289,20 @@ export class MeController {
           success: true,
           message: "Success Deleted",
         },
+        headers: [
+          {
+            name: "Set-Cookie",
+            value: `accessToken=; Path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT; HttpOnly; Secure; SameSite=${
+              this.ENV.CORS_CREDENTIAL === "true" ? "None" : "Strict"
+            }`,
+          },
+          {
+            name: "Set-Cookie",
+            value: `refreshToken=; Path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT; HttpOnly; Secure; SameSite=${
+              this.ENV.CORS_CREDENTIAL === "true" ? "None" : "Strict"
+            }`,
+          },
+        ],
       });
     } catch (error) {
       const { code, message, data } = errorResolver(error);
