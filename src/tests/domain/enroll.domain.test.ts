@@ -6,6 +6,7 @@ describe("enroll domain", () => {
       const enrollDomain = new EnrollDomain({
         courseId: 0,
         userId: 0,
+        version: 1,
       });
 
       const totalProgress = enrollDomain["totalProgress"];
@@ -17,6 +18,7 @@ describe("enroll domain", () => {
         courseId: 0,
         userId: 0,
         chapterProgress: {},
+        version: 1,
       });
 
       const totalProgress = enrollDomain["totalProgress"];
@@ -32,6 +34,7 @@ describe("enroll domain", () => {
           "1": 1,
           "2": 0,
         },
+        version: 1,
       });
 
       const totalProgress = enrollDomain["totalProgress"];
@@ -44,6 +47,7 @@ describe("enroll domain", () => {
     const enrollDomain = new EnrollDomain({
       courseId: 0,
       userId: 0,
+      version: 1,
     });
 
     const chapters = [

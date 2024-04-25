@@ -1,12 +1,15 @@
 import { ChannelDomain } from "../../domain/channel.domain";
 import { CourseDomain } from "../../domain/course.domain";
+import { UserCreditDomain } from "../../domain/user.credit.domain";
 import { CourseListQueryDto } from "../../dto/course.list.query.dto";
 import { ServerError } from "../../dto/error";
 import { IChannelRepo } from "../interfaces/channel.repo";
 import { ICourseRepo } from "../interfaces/course.repo";
+import { IUserCreditRepo } from "../interfaces/user.credit.repo";
 import { IYoutubeApi } from "../interfaces/youtbue.api";
 
 export type ServiceCourseCreateDto = {
+  userId: number;
   videoId: string;
 };
 
@@ -26,13 +29,16 @@ export type ServiceCourseGetListByQueryDto = {
   language?: string;
 };
 
+type ConstructorInputs = {
+  courseRepo: ICourseRepo;
+  channelRepo: IChannelRepo;
+  youtubeApi: IYoutubeApi;
+  userCreditRepo: IUserCreditRepo;
+};
+
 export class CourseService {
   static instance: CourseService | undefined;
-  static getInstance = (inputs: {
-    courseRepo: ICourseRepo;
-    channelRepo: IChannelRepo;
-    youtubeApi: IYoutubeApi;
-  }) => {
+  static getInstance = (inputs: ConstructorInputs) => {
     if (this.instance) return this.instance;
     this.instance = new CourseService(inputs);
     return this.instance;
@@ -41,23 +47,42 @@ export class CourseService {
   private courseRepo: ICourseRepo;
   private youtubeApi: IYoutubeApi;
   private channelRepo: IChannelRepo;
+  private userCreditRepo: IUserCreditRepo;
 
   constructor({
     courseRepo,
     channelRepo,
     youtubeApi,
-  }: {
-    courseRepo: ICourseRepo;
-    channelRepo: IChannelRepo;
-    youtubeApi: IYoutubeApi;
-  }) {
+    userCreditRepo,
+  }: ConstructorInputs) {
     this.courseRepo = courseRepo;
     this.channelRepo = channelRepo;
     this.youtubeApi = youtubeApi;
+    this.userCreditRepo = userCreditRepo;
   }
 
   // [POST] /courses
-  createCourse = async ({ videoId }: ServiceCourseCreateDto) => {
+  createCourse = async ({ videoId, userId }: ServiceCourseCreateDto) => {
+    const userCredit = await this.userCreditRepo.getByUserId(userId);
+
+    if (!userCredit) {
+      throw new ServerError({
+        code: 401,
+        message: "Unauthorized",
+      });
+    }
+
+    const userCreditDomain = new UserCreditDomain({ ...userCredit });
+
+    const { success } = userCreditDomain.consumeCreditForCreateCourse();
+
+    if (!success) {
+      throw new ServerError({
+        code: 403,
+        message: "Insufficient credit",
+      });
+    }
+
     const course = await this.courseRepo.getByVideoId(videoId, {
       id: true,
     });
@@ -103,6 +128,11 @@ export class CourseService {
 
     const createCourseDto = courseDomain.getCreateCourseDto();
     await this.courseRepo.create(createCourseDto);
+
+    await this.userCreditRepo.updateByUserId(userId, {
+      ...userCreditDomain.getEntity(),
+      userId: undefined,
+    });
   };
   // [GET] /courses/:id
   getCourseById = async (dto: ServiceCourseGetByIdDto) => {

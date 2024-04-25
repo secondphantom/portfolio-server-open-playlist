@@ -23,6 +23,7 @@ export class UserCreditDomain {
 
   private DEFAULT_FREE_CREDIT = 50;
   private DEFAULT_GET_FREE_CREDIT_EXP_SEC = 24 * 60 * 60;
+  private DEFAULT_CONSUME_FREE_CREDIT_FOR_CREATE_COURSE = 10;
 
   constructor({
     userId,
@@ -65,6 +66,17 @@ export class UserCreditDomain {
 
     this.freeCredits = this.DEFAULT_FREE_CREDIT;
     this.freeCreditUpdatedAt = updatedDate;
+    return { success: true };
+  };
+
+  consumeCreditForCreateCourse = () => {
+    if (this.freeCredits < this.DEFAULT_CONSUME_FREE_CREDIT_FOR_CREATE_COURSE) {
+      return { success: false };
+    }
+
+    this.freeCredits -= this.DEFAULT_CONSUME_FREE_CREDIT_FOR_CREATE_COURSE;
+    this.freeCreditUpdatedAt = new Date();
+
     return { success: true };
   };
 

@@ -2,7 +2,7 @@ import { CourseService } from "../../application/service/course.service";
 import { errorResolver } from "../../dto/error.resolver";
 import { ControllerResponse } from "../../dto/response";
 import {
-  RequestCourseCreateBody,
+  RequestCourseCreate,
   RequestCourseGetById,
   RequestCourseListByQuery,
 } from "../../spec/course/course.request";
@@ -37,9 +37,9 @@ export class CourseController {
     private courseResponseValidator: ICourseResponseValidator
   ) {}
 
-  createCourse = async (body: RequestCourseCreateBody) => {
+  createCourse = async (req: RequestCourseCreate) => {
     try {
-      const dto = this.courseRequestValidator.createCourse(body);
+      const dto = this.courseRequestValidator.createCourse(req);
       await this.courseService.createCourse(dto);
 
       return new ControllerResponse({

@@ -1,7 +1,7 @@
 import z from "zod";
 import { ICourseRequestValidator } from "../../controller/course/course.interface";
 import {
-  RequestCourseCreateBody,
+  RequestCourseCreate,
   RequestCourseGetById,
   RequestCourseListByQuery,
 } from "../../spec/course/course.request";
@@ -20,19 +20,24 @@ export class CourseRequestValidator implements ICourseRequestValidator {
   constructor() {}
 
   private requestCourseCreateBody = z.object({
-    url: z
-      .string()
-      .regex(
-        /^(https:\/\/)(www.youtube.com\/watch\?v=|youtu.be\/).+$/,
-        "Invalid YouTube URL"
-      ),
+    auth: z.object({
+      userId: z.number(),
+    }),
+    content: z.object({
+      url: z
+        .string()
+        .regex(
+          /^(https:\/\/)(www.youtube.com\/watch\?v=|youtu.be\/).+$/,
+          "Invalid YouTube URL"
+        ),
+    }),
   });
 
-  createCourse = (body: RequestCourseCreateBody) => {
+  createCourse = (body: RequestCourseCreate) => {
     try {
-      const { url } = this.requestCourseCreateBody.parse(body);
-      const videoId = this.getIDfromURL(url);
-      return { videoId };
+      const { auth, content } = this.requestCourseCreateBody.parse(body);
+      const videoId = this.getIDfromURL(content.url);
+      return { videoId, userId: auth.userId };
     } catch (error) {
       throw new ServerError({
         code: 400,

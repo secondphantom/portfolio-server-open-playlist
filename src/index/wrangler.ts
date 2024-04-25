@@ -108,6 +108,7 @@ export class WranglerSever {
       channelRepo,
       courseRepo,
       youtubeApi,
+      userCreditRepo,
     });
 
     const meService = MeService.getInstance({
@@ -358,8 +359,13 @@ export class WranglerSever {
       this.verifyAuthMiddleware,
       this.withContentMiddleware,
       async (req: IRequest & AuthRequest & ContentRequest) => {
-        const content = req.content;
-        const result = await this.courseController.createCourse(content);
+        const { content, auth } = req;
+        const result = await this.courseController.createCourse({
+          auth: {
+            userId: auth ? auth.userId : (undefined as any),
+          },
+          content,
+        });
         return this.createJsonResponse(result);
       }
     );

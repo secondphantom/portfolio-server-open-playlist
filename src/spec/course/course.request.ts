@@ -1,5 +1,10 @@
-export type RequestCourseCreateBody = {
-  url: string;
+export type RequestCourseCreate = {
+  auth: {
+    userId: number;
+  };
+  content: {
+    url: string;
+  };
 };
 
 export type RequestCourseGetById = {

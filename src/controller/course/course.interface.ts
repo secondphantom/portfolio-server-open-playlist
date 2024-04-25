@@ -4,7 +4,7 @@ import {
   ServiceCourseGetListByQueryDto,
 } from "../../application/service/course.service";
 import {
-  RequestCourseCreateBody,
+  RequestCourseCreate,
   RequestCourseGetById,
   RequestCourseListByQuery,
 } from "../../spec/course/course.request";
@@ -14,7 +14,7 @@ import {
 } from "../../spec/course/course.response";
 
 export interface ICourseRequestValidator {
-  createCourse: (body: RequestCourseCreateBody) => ServiceCourseCreateDto;
+  createCourse: (req: RequestCourseCreate) => ServiceCourseCreateDto;
   getCourseById: (query: RequestCourseGetById) => ServiceCourseGetByIdDto;
   getCourseListByQuery: (
     query: RequestCourseListByQuery
