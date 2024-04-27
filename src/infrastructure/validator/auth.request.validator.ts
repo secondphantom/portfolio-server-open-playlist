@@ -141,7 +141,7 @@ export class AuthRequestValidator implements IAuthRequestValidator {
       return dto;
     } catch (error) {
       throw new ServerError({
-        code: 401,
+        code: 400,
         message: "Unauthorized",
       });
     }
