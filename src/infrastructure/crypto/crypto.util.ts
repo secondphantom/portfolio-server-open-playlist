@@ -98,6 +98,6 @@ export class CryptoUtil implements ICryptoUtil {
       .map((byte) => String.fromCharCode(byte))
       .join("");
 
-    return keyStrNew == keyStr;
+    return keyStrNew === keyStr;
   };
 }
