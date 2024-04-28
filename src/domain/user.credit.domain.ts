@@ -65,7 +65,7 @@ export class UserCreditDomain {
       return { success: false };
     }
 
-    this.freeCredits = this.DEFAULT_FREE_CREDIT;
+    this.freeCredits += this.DEFAULT_FREE_CREDIT;
     this.freeCreditUpdatedAt = updatedDate;
     return { success: true };
   };
