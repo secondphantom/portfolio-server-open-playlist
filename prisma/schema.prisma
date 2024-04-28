@@ -171,7 +171,7 @@ model UserCredits {
   updated_at                   DateTime @default(now()) @updatedAt
 }
 
-model Notices {
+model Announcements {
   id                 BigInt   @id @db.BigInt
   admin_id           BigInt   @db.BigInt()
   title              String   @db.VarChar(200)

@@ -325,7 +325,7 @@ BEFORE UPDATE ON "UserCredits"
 FOR EACH ROW EXECUTE PROCEDURE set_updated_at();
 
 -- CreateTable
-CREATE TABLE "Notices" (
+CREATE TABLE "Announcements" (
     "id" BIGSERIAL NOT NULL,
 		"admin_id" BIGINT NOT NULL,
 		"title" VARCHAR(200) NOT NULL,
@@ -336,25 +336,25 @@ CREATE TABLE "Notices" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT NOW(),
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT NOW(),
 
-    CONSTRAINT "Notices_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Announcements_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
-CREATE INDEX "Notices_admin_id_idx" ON "Notices"("admin_id");
+CREATE INDEX "Announcements_admin_id_idx" ON "Announcements"("admin_id");
 
 -- CreateIndex
-CREATE INDEX "Notices_is_displayed_on_idx" ON "Notices"("is_displayed_on");
+CREATE INDEX "Announcements_is_displayed_on_idx" ON "Announcements"("is_displayed_on");
 
 -- CreateIndex
-CREATE INDEX "Notices_display_start_date_idx" ON "Notices"("display_start_date" DESC);
+CREATE INDEX "Announcements_display_start_date_idx" ON "Announcements"("display_start_date" DESC);
 
 -- CreateIndex
-CREATE INDEX "Notices_display_end_date_idx" ON "Notices"("display_end_date" DESC);
+CREATE INDEX "Announcements_display_end_date_idx" ON "Announcements"("display_end_date" DESC);
 
 -- CreateIndex
-CREATE INDEX "Notices_created_at_idx" ON "Notices"("created_at" DESC);
+CREATE INDEX "Announcements_created_at_idx" ON "Announcements"("created_at" DESC);
 
 -- SetTrigger
 CREATE TRIGGER table_update
-BEFORE UPDATE ON "Notices"
+BEFORE UPDATE ON "Announcements"
 FOR EACH ROW EXECUTE PROCEDURE set_updated_at();

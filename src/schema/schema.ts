@@ -312,7 +312,7 @@ export const admins = pgTable(
 
 export const adminsRelation = relations(admins, ({ many }) => {
   return {
-    notices: many(notices),
+    announcements: many(announcements),
   };
 });
 
@@ -442,10 +442,10 @@ export const userCreditRelation = relations(userCredits, ({ one }) => {
   };
 });
 
-export type NoticeConfig = { showHome: boolean };
+export type AnnouncementConfig = { showHome: boolean };
 
-export const notices = pgTable(
-  "Notices",
+export const announcements = pgTable(
+  "Announcements",
   {
     id: bigint("id", { mode: "number" }).notNull().primaryKey().default(0),
     adminId: bigint("admin_id", { mode: "number" }).notNull(),
@@ -467,25 +467,25 @@ export const notices = pgTable(
   },
   (table) => {
     return {
-      idxAdminId: index("idx_notices_admin_id").on(table.adminId),
-      idxIsDisplayedOn: index("idx_notices_is_displayed_on").on(
+      idxAdminId: index("idx_announcements_admin_id").on(table.adminId),
+      idxIsDisplayedOn: index("idx_announcements_is_displayed_on").on(
         table.isDisplayedOn
       ),
-      idxDisplayStartDate: index("idx_notices_display_start_date").on(
+      idxDisplayStartDate: index("idx_announcements_display_start_date").on(
         table.displayStartDate
       ),
-      idxDisplayEndDate: index("idx_notices_display_end_date").on(
+      idxDisplayEndDate: index("idx_announcements_display_end_date").on(
         table.displayEndDate
       ),
-      idxCreatedAt: index("idx_notices_created_at").on(table.createdAt),
+      idxCreatedAt: index("idx_announcements_created_at").on(table.createdAt),
     };
   }
 );
 
-export const noticeRelation = relations(notices, ({ one }) => {
+export const announcementRelation = relations(announcements, ({ one }) => {
   return {
     admin: one(admins, {
-      fields: [notices.adminId],
+      fields: [announcements.adminId],
       references: [admins.id],
     }),
   };
