@@ -170,7 +170,9 @@ export class AuthController {
         },
       });
     } catch (error) {
-      const { code, message, data } = errorResolver(error);
+      const { code, message, data } = errorResolver<{
+        error?: { cause: string };
+      }>(error);
       return new ControllerResponse({
         code,
         payload: {
@@ -178,7 +180,7 @@ export class AuthController {
           message,
           data,
         },
-        ...(code === 400
+        ...(data && data.error?.cause === "INVALID_INPUT"
           ? {
               headers: [
                 {

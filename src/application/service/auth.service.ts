@@ -332,6 +332,11 @@ export class AuthService {
       throw new ServerError({
         code: 401,
         message: "Unauthorized",
+        data: {
+          error: {
+            cause: "INVALID_TOKEN",
+          },
+        },
       });
     }
 

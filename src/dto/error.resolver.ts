@@ -1,10 +1,10 @@
 import { ServerError } from "./error";
 
-export const errorResolver = (error: any) => {
+export const errorResolver = <T = any>(error: any) => {
   let message = {
     code: 500,
     message: "Internal Error",
-    data: undefined,
+    data: undefined as T,
   };
 
   if (!(error instanceof ServerError)) {

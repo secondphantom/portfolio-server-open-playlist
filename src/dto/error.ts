@@ -1,4 +1,4 @@
-export class ServerError extends Error {
+export class ServerError<T = any> extends Error {
   private code: number;
   private data: any;
   constructor({
@@ -8,7 +8,7 @@ export class ServerError extends Error {
   }: {
     code: number;
     message: string;
-    data?: any;
+    data?: T;
   }) {
     super(message);
     this.code = code;
