@@ -174,9 +174,6 @@ export default class CourseRepo implements ICourseRepo {
       }
     })(order);
     if (search) {
-      const sqlChunks: SQL[] = [];
-      sqlChunks.push(sql`select "courses"."id", "courses"."title", "courses"."video_id", "courses"."category_id", "courses"."created_at", "courses"."published_at", "courses"."enroll_count", "courses_enrolls"."data" as "enrolls", "courses_channel"."data" as "channel" from "Courses" 
-			"courses" left join lateral (select coalesce(json_agg(json_build_array("courses_enrolls"."user_id")), '[]'::json) as "data" from "Enrolls" "courses_enrolls" where ("courses_enrolls"."course_id" = "courses"."id" and "courses_enrolls"."user_id" = ${userId})) "courses_enrolls" on true left join lateral (select json_build_array("courses_channel"."name", "courses_channel"."channel_id") as "data" from (select * from "Channels" "courses_channel" where "courses_channel"."channel_id" = "courses"."channel_id" limit 1) "courses_channel") "courses_channel" on true order`);
       const courses = await db
         .select({
           id: sql`"Courses"."id"`,
@@ -186,11 +183,15 @@ export default class CourseRepo implements ICourseRepo {
           createdAt: sql`"Courses"."created_at"`,
           publishedAt: sql`"Courses"."published_at"`,
           enrollCount: sql`"Courses"."enroll_count"`,
-          enrolls: sql`"courses_enrolls"."data" as "enrolls"`,
+          ...(userId
+            ? { enrolls: sql`"courses_enrolls"."data" as "enrolls"` }
+            : {}),
           channel: sql`"courses_channel"."data" as "channel"`,
         })
         .from(
-          sql`"Courses" left join lateral (select coalesce(json_agg(json_build_object('userId',"courses_enrolls"."user_id")), '[]'::json) as "data" from "Enrolls" "courses_enrolls" where ("courses_enrolls"."course_id" = "Courses"."id" and "courses_enrolls"."user_id" = ${userId})) "courses_enrolls" on true left join lateral (select json_build_object('name',"courses_channel"."name",'channelId', "courses_channel"."channel_id") as "data" from (select * from "Channels" "courses_channel" where "courses_channel"."channel_id" = "Courses"."channel_id" limit 1) "courses_channel") "courses_channel" on true` as any
+          userId
+            ? (sql`"Courses" left join lateral (select coalesce(json_agg(json_build_object('userId',"courses_enrolls"."user_id")), '[]'::json) as "data" from "Enrolls" "courses_enrolls" where ("courses_enrolls"."course_id" = "Courses"."id" and "courses_enrolls"."user_id" = ${userId})) "courses_enrolls" on true left join lateral (select json_build_object('name',"courses_channel"."name",'channelId', "courses_channel"."channel_id") as "data" from (select * from "Channels" "courses_channel" where "courses_channel"."channel_id" = "Courses"."channel_id" limit 1) "courses_channel") "courses_channel" on true` as any)
+            : (sql`"Courses" left join lateral (select json_build_object('name',"courses_channel"."name",'channelId', "courses_channel"."channel_id") as "data" from (select * from "Channels" "courses_channel" where "courses_channel"."channel_id" = "Courses"."channel_id" limit 1) "courses_channel") "courses_channel" on true` as any)
         )
         .where(
           and(
