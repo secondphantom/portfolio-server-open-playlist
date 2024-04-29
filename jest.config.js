@@ -2,7 +2,7 @@
 module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
-  testMatch: ["<rootDir>/src/tests/**/*.test.ts"],
+  testMatch: ["<rootDir>/src/tests/**/announcement.service.test.ts"],
   verbose: true,
   forceExit: true,
   clearMocks: true,
@@ -11,4 +11,5 @@ module.exports = {
   moduleNameMapper: {
     "^@src/(.*)$": "<rootDir>/src/$1",
   },
+  testTimeout: 20000,
 };

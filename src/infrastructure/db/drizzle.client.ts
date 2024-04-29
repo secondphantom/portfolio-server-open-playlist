@@ -33,4 +33,16 @@ export class DrizzleClient {
 
     return { db, client };
   };
+
+  using = async <T = any>(callback: (db: Db) => Promise<T>) => {
+    const { db, client } = await this.getDb();
+    try {
+      const result = await callback(db);
+      return result;
+    } catch (error: any) {
+      throw new Error(error.message);
+    } finally {
+      await this.endDb(client);
+    }
+  };
 }
