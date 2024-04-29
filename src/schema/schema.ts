@@ -416,7 +416,10 @@ export const userStats = pgTable(
 );
 
 export const userCredits = pgTable("UserCredits", {
-  userId: bigint("user_id", { mode: "number" }).notNull().primaryKey(),
+  userId: bigint("user_id", { mode: "number" })
+    .notNull()
+    .primaryKey()
+    .default(0),
   freeCredits: integer("free_credits").notNull().default(0),
   purchasedCredits: integer("purchased_credits").notNull().default(0),
   freeCreditUpdatedAt: timestamp("free_credit_updated_at")
@@ -450,6 +453,7 @@ export const announcements = pgTable(
     id: bigint("id", { mode: "number" }).notNull().primaryKey().default(0),
     adminId: bigint("admin_id", { mode: "number" }).notNull(),
     title: varchar("title", { length: 200 }).notNull(),
+    titleTsvector: tsvector("title_tsvector").default(""),
     content: varchar("content", { length: 10000 }).notNull(),
     isDisplayedOn: boolean("is_displayed_on").default(false).notNull(),
     displayStartDate: timestamp("display_start_date")

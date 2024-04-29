@@ -329,6 +329,7 @@ CREATE TABLE "Announcements" (
     "id" BIGSERIAL NOT NULL,
 		"admin_id" BIGINT NOT NULL,
 		"title" VARCHAR(200) NOT NULL,
+		"title_tsvector" TSVECTOR,
 		"content" VARCHAR(10000) NOT NULL,
 		"is_displayed_on" BOOLEAN NOT NULL DEFAULT false,
     "display_start_date" TIMESTAMP(3) NOT NULL DEFAULT NOW(),
@@ -353,6 +354,14 @@ CREATE INDEX "Announcements_display_end_date_idx" ON "Announcements"("display_en
 
 -- CreateIndex
 CREATE INDEX "Announcements_created_at_idx" ON "Announcements"("created_at" DESC);
+
+-- CreateIndex
+CREATE INDEX "Announcements_title_tsvector_idx" ON "Announcements" USING GIN ("title_tsvector");
+
+-- CreateTrigger
+CREATE TRIGGER Announcement_title_vector_update BEFORE INSERT OR UPDATE
+ON "Announcements" FOR EACH ROW EXECUTE FUNCTION
+tsvector_update_trigger(title_tsvector, 'pg_catalog.simple', title);
 
 -- SetTrigger
 CREATE TRIGGER table_update

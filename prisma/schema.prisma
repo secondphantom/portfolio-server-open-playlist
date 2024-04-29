@@ -172,15 +172,16 @@ model UserCredits {
 }
 
 model Announcements {
-  id                 BigInt   @id @db.BigInt
-  admin_id           BigInt   @db.BigInt()
-  title              String   @db.VarChar(200)
-  content            String   @db.VarChar(10000)
-  is_displayed_on    Boolean  @default(false) @db.Boolean
-  display_start_date DateTime @default(now())
-  display_end_date   DateTime @default(now())
-  created_at         DateTime @default(now())
-  updated_at         DateTime @default(now()) @updatedAt
+  id                 BigInt                   @id @db.BigInt
+  admin_id           BigInt                   @db.BigInt()
+  title              String                   @db.VarChar(200)
+  title_tsvector     Unsupported("TSVECTOR")?
+  content            String                   @db.VarChar(10000)
+  is_displayed_on    Boolean                  @default(false) @db.Boolean
+  display_start_date DateTime                 @default(now())
+  display_end_date   DateTime                 @default(now())
+  created_at         DateTime                 @default(now())
+  updated_at         DateTime                 @default(now()) @updatedAt
 
   @@index([admin_id])
   @@index([is_displayed_on])
