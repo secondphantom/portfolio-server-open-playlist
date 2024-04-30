@@ -1,5 +1,5 @@
 export type RequestAnnouncementGetById = {
-  id: number;
+  id: string;
 };
 
 export type RequestAnnouncementGetListByQuery = {

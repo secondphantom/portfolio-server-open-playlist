@@ -26,6 +26,11 @@ import { ChannelResponseValidator } from "../infrastructure/validator/channel.re
 import { ChannelService } from "../application/service/channel.service";
 import { ChannelController } from "../controller/channel/channel.controller";
 import { UserCreditRepo } from "../infrastructure/repo/user.credit.repo";
+import { AnnouncementRepo } from "../infrastructure/repo/announcement.repo";
+import { AnnouncementRequestValidator } from "../infrastructure/validator/announcement.request.validator";
+import { AnnouncementResponseValidator } from "../infrastructure/validator/announcement.response.validator";
+import { AnnouncementService } from "../application/service/announcement.service";
+import { AnnouncementController } from "../controller/announcement/announcement.controller";
 
 type AuthPayload = {
   userId: number;
@@ -72,6 +77,7 @@ export class WranglerSever {
   private channelController: ChannelController;
 
   private dbClient: DrizzleClient;
+  private announcementController: AnnouncementController;
 
   constructor(private env: ENV, private ctx: ExecutionContext) {
     this.dbClient = DrizzleClient.getInstance(this.env);
@@ -86,6 +92,7 @@ export class WranglerSever {
     const channelRepo = ChannelRepo.getInstance(this.dbClient);
     const enrollRepo = EnrollRepo.getInstance(this.dbClient);
     const userCreditRepo = UserCreditRepo.getInstance(this.dbClient);
+    const announcementRepo = AnnouncementRepo.getInstance(this.dbClient);
 
     const authRequestValidator = AuthRequestValidator.getInstance();
     const courseRequestValidator = CourseRequestValidator.getInstance();
@@ -94,6 +101,10 @@ export class WranglerSever {
     const meResponseValidator = MeResponseValidator.getInstance();
     const channelRequestValidator = ChannelRequestValidator.getInstance();
     const channelResponseValidator = ChannelResponseValidator.getInstance();
+    const announcementRequestValidator =
+      AnnouncementRequestValidator.getInstance();
+    const announcementResponseValidator =
+      AnnouncementResponseValidator.getInstance();
 
     const authService = AuthService.getInstance({
       cryptoUtil,
@@ -123,6 +134,10 @@ export class WranglerSever {
       courseRepo,
     });
 
+    const announcementService = AnnouncementService.getInstance({
+      announcementRepo,
+    });
+
     this.authController = AuthController.getInstance({
       authService,
       authRequestValidator,
@@ -146,6 +161,12 @@ export class WranglerSever {
       channelService,
       channelRequestValidator,
       channelResponseValidator,
+    });
+
+    this.announcementController = AnnouncementController.getInstance({
+      announcementRequestValidator,
+      announcementResponseValidator,
+      announcementService,
     });
 
     this.verifyAuthMiddleware = async (req: IRequest) => {
@@ -212,6 +233,7 @@ export class WranglerSever {
     this.initCourseRouter();
     this.initMeRouter();
     this.initChannelRouter();
+    this.initAnnouncementRouter();
 
     this.app.all("*", () =>
       this.createJsonResponse(
@@ -561,6 +583,34 @@ export class WranglerSever {
         params: {
           channelId: params["id"],
         },
+      });
+      return this.createJsonResponse(result);
+    });
+  };
+
+  private initAnnouncementRouter = () => {
+    this.app.get("/api/announcements", async (req: IRequest) => {
+      const { query } = req;
+      const result =
+        await this.announcementController.getAnnouncementListByQuery({
+          ...query,
+        });
+      return this.createJsonResponse(result);
+    });
+
+    this.app.get(
+      "/api/announcements/is-displayed-on",
+      async (req: IRequest) => {
+        const result =
+          await this.announcementController.getAnnouncementIsDisplayedOn();
+        return this.createJsonResponse(result);
+      }
+    );
+
+    this.app.get("/api/announcements/:id", async (req: IRequest) => {
+      const { params, auth } = req;
+      const result = await this.announcementController.getAnnouncementById({
+        id: params.id,
       });
       return this.createJsonResponse(result);
     });
