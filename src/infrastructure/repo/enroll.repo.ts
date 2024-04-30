@@ -7,7 +7,7 @@ import {
   EnrollEntitySelect,
   RepoCreateEnrollDto,
 } from "../../domain/enroll.domain";
-import { Db, DrizzleClient } from "../db/drizzle.client";
+import { DrizzleClient } from "../db/drizzle.client";
 import { CourseEntitySelect } from "../../domain/course.domain";
 import { UserEntitySelect } from "../../domain/user.domain";
 import { SQL, and, eq, sql } from "drizzle-orm";
@@ -30,29 +30,27 @@ export class EnrollRepo implements IEnrollRepo {
         }
       | { [key in keyof EnrollEntitySelect]?: boolean }
   ) => {
-    const { db, client } = await this.drizzleClient.getDb();
-    const enroll = await db.query.enrolls.findFirst({
-      where: (enroll, { eq, and }) => {
-        return and(eq(enroll.userId, userId), eq(enroll.courseId, courseId));
-      },
-      columns: columns
-        ? (columns as { [key in keyof EnrollEntitySelect]: boolean })
-        : undefined,
-    });
-    await this.drizzleClient.endDb(client);
+    const enroll = await this.drizzleClient.using((db) =>
+      db.query.enrolls.findFirst({
+        where: (enroll, { eq, and }) => {
+          return and(eq(enroll.userId, userId), eq(enroll.courseId, courseId));
+        },
+        columns: columns
+          ? (columns as { [key in keyof EnrollEntitySelect]: boolean })
+          : undefined,
+      })
+    );
 
     return enroll;
   };
 
   createEnroll = async (enroll: RepoCreateEnrollDto) => {
-    const { db, client } = await this.drizzleClient.getDb();
-    await Promise.all([
-      db.execute(
+    await this.drizzleClient.usingTrx(async (tx) => {
+      await tx.execute(
         sql`UPDATE "Courses" SET enroll_count = enroll_count + 1 WHERE id = ${enroll.courseId}`
-      ),
-      db.insert(schema.enrolls).values(enroll),
-    ]);
-    await this.drizzleClient.endDb(client);
+      );
+      await tx.insert(schema.enrolls).values(enroll);
+    });
   };
 
   getEnrollByUserIdAndCourseIdWith = async <
@@ -82,29 +80,29 @@ export class EnrollRepo implements IEnrollRepo {
         | { [key in keyof UserEntitySelect]?: boolean };
     }
   ) => {
-    const { db, client } = await this.drizzleClient.getDb();
-    const enroll = await db.query.enrolls.findFirst({
-      where: (enrolls, { eq, and }) => {
-        return and(
-          eq(enrolls.courseId, where.courseId),
-          eq(enrolls.userId, where.userId)
-        );
-      },
-      columns: columns?.enroll,
-      with: {
-        course: columns?.course
-          ? {
-              columns: columns?.course,
-            }
-          : undefined,
-        user: columns?.user
-          ? {
-              columns: columns?.user,
-            }
-          : undefined,
-      },
-    });
-    await this.drizzleClient.endDb(client);
+    const enroll = await this.drizzleClient.using((db) =>
+      db.query.enrolls.findFirst({
+        where: (enrolls, { eq, and }) => {
+          return and(
+            eq(enrolls.courseId, where.courseId),
+            eq(enrolls.userId, where.userId)
+          );
+        },
+        columns: columns?.enroll,
+        with: {
+          course: columns?.course
+            ? {
+                columns: columns?.course,
+              }
+            : undefined,
+          user: columns?.user
+            ? {
+                columns: columns?.user,
+              }
+            : undefined,
+        },
+      })
+    );
 
     return enroll as any;
   };
@@ -113,55 +111,55 @@ export class EnrollRepo implements IEnrollRepo {
     where: { userId: number; courseId: number },
     value: Partial<EnrollEntitySelect>
   ) => {
-    const { db, client } = await this.drizzleClient.getDb();
-    await db
-      .update(schema.enrolls)
-      .set(value)
-      .where(
-        and(
-          eq(schema.enrolls.userId, where.userId),
-          eq(schema.enrolls.courseId, where.courseId)
+    await this.drizzleClient.using((db) =>
+      db
+        .update(schema.enrolls)
+        .set(value)
+        .where(
+          and(
+            eq(schema.enrolls.userId, where.userId),
+            eq(schema.enrolls.courseId, where.courseId)
+          )
         )
-      );
-    await this.drizzleClient.endDb(client);
+    );
   };
 
   getEnrollListByQuery = async (query: QueryEnrollListDto) => {
     const { userId, pageSize, order, page } = query;
-    const { db, client } = await this.drizzleClient.getDb();
-    const enrolls = await db.query.enrolls.findMany({
-      where: (enroll, { eq }) => {
-        return eq(enroll.userId, userId);
-      },
-      orderBy: (course, { asc, desc }) => {
-        switch (order) {
-          case "update":
-            return [desc(course.updatedAt)];
-          case "create":
-            return [desc(course.createdAt)];
-          default:
-            return [];
-        }
-      },
-      offset: (page - 1) * pageSize,
-      limit: pageSize,
-      columns: {
-        courseId: true,
-        totalProgress: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-      with: {
-        course: {
-          columns: {
-            id: true,
-            videoId: true,
-            title: true,
+    const enrolls = await this.drizzleClient.using((db) =>
+      db.query.enrolls.findMany({
+        where: (enroll, { eq }) => {
+          return eq(enroll.userId, userId);
+        },
+        orderBy: (course, { asc, desc }) => {
+          switch (order) {
+            case "update":
+              return [desc(course.updatedAt)];
+            case "create":
+              return [desc(course.createdAt)];
+            default:
+              return [];
+          }
+        },
+        offset: (page - 1) * pageSize,
+        limit: pageSize,
+        columns: {
+          courseId: true,
+          totalProgress: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+        with: {
+          course: {
+            columns: {
+              id: true,
+              videoId: true,
+              title: true,
+            },
           },
         },
-      },
-    });
-    await this.drizzleClient.endDb(client);
+      })
+    );
     return enrolls;
   };
 
@@ -200,8 +198,9 @@ export class EnrollRepo implements IEnrollRepo {
     }
 
     sqlChunks.push(sql`WHERE user_id = ${userId} AND course_id = ${courseId}`);
-    const { db, client } = await this.drizzleClient.getDb();
-    await db.execute(sql.join(sqlChunks, sql.raw(" ")));
-    await this.drizzleClient.endDb(client);
+
+    await this.drizzleClient.using((db) =>
+      db.execute(sql.join(sqlChunks, sql.raw(" ")))
+    );
   };
 }

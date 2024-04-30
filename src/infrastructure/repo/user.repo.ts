@@ -2,12 +2,9 @@ import { eq } from "drizzle-orm";
 
 import * as schema from "../../schema/schema";
 
-import {
-  IUserRepo,
-  UpdateUserDto,
-} from "../../application/interfaces/user.repo";
+import { IUserRepo } from "../../application/interfaces/user.repo";
 import { RepoCreateUserDto, UserEntitySelect } from "../../domain/user.domain";
-import { Db, DrizzleClient } from "../db/drizzle.client";
+import { DrizzleClient } from "../db/drizzle.client";
 
 export class UserRepo implements IUserRepo {
   static instance: UserRepo | undefined;
@@ -27,26 +24,23 @@ export class UserRepo implements IUserRepo {
         }
       | { [key in keyof UserEntitySelect]?: boolean }
   ) => {
-    const { db, client } = await this.drizzleClient.getDb();
-    const user = await db.query.users.findFirst({
-      where: (user, { eq }) => {
-        return eq(user.email, email);
-      },
-      columns: columns
-        ? (columns as { [key in keyof UserEntitySelect]: boolean })
-        : undefined,
-    });
-    await this.drizzleClient.endDb(client);
+    const user = await this.drizzleClient.using((db) =>
+      db.query.users.findFirst({
+        where: (user, { eq }) => {
+          return eq(user.email, email);
+        },
+        columns: columns
+          ? (columns as { [key in keyof UserEntitySelect]: boolean })
+          : undefined,
+      })
+    );
     return user;
   };
 
   updateByEmail = async (email: string, value: Partial<UserEntitySelect>) => {
-    const { db, client } = await this.drizzleClient.getDb();
-    await db
-      .update(schema.users)
-      .set(value)
-      .where(eq(schema.users.email, email));
-    await this.drizzleClient.endDb(client);
+    await this.drizzleClient.using((db) =>
+      db.update(schema.users).set(value).where(eq(schema.users.email, email))
+    );
   };
 
   getById = async <T extends keyof UserEntitySelect = any>(
@@ -57,34 +51,34 @@ export class UserRepo implements IUserRepo {
         }
       | { [key in keyof UserEntitySelect]?: boolean }
   ) => {
-    const { db, client } = await this.drizzleClient.getDb();
-    const user = await db.query.users.findFirst({
-      where: (user, { eq }) => {
-        return eq(user.id, id);
-      },
-      columns: columns
-        ? (columns as { [key in keyof UserEntitySelect]: boolean })
-        : undefined,
-    });
-    await this.drizzleClient.endDb(client);
+    const user = await this.drizzleClient.using((db) =>
+      db.query.users.findFirst({
+        where: (user, { eq }) => {
+          return eq(user.id, id);
+        },
+        columns: columns
+          ? (columns as { [key in keyof UserEntitySelect]: boolean })
+          : undefined,
+      })
+    );
     return user;
   };
 
   create = async (user: RepoCreateUserDto) => {
-    const { db, client } = await this.drizzleClient.getDb();
-    await db.insert(schema.users).values(user as any);
-    await this.drizzleClient.endDb(client);
+    await this.drizzleClient.using((db) =>
+      db.insert(schema.users).values(user as any)
+    );
   };
 
   updateById = async (id: number, value: Partial<UserEntitySelect>) => {
-    const { db, client } = await this.drizzleClient.getDb();
-    await db.update(schema.users).set(value).where(eq(schema.users.id, id));
-    await this.drizzleClient.endDb(client);
+    await this.drizzleClient.using((db) =>
+      db.update(schema.users).set(value).where(eq(schema.users.id, id))
+    );
   };
 
   deleteById = async (id: number) => {
-    const { db, client } = await this.drizzleClient.getDb();
-    await db.delete(schema.users).where(eq(schema.users.id, id));
-    await this.drizzleClient.endDb(client);
+    await this.drizzleClient.using((db) =>
+      db.delete(schema.users).where(eq(schema.users.id, id))
+    );
   };
 }

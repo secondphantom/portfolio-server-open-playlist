@@ -4,7 +4,7 @@ import {
   ChannelEntitySelect,
   RepoCreateChannelDto,
 } from "../../domain/channel.domain";
-import { Db, DrizzleClient } from "../db/drizzle.client";
+import { DrizzleClient } from "../db/drizzle.client";
 
 export class ChannelRepo implements IChannelRepo {
   static instance: ChannelRepo | undefined;
@@ -24,22 +24,22 @@ export class ChannelRepo implements IChannelRepo {
         }
       | { [key in keyof ChannelEntitySelect]?: boolean }
   ) => {
-    const { db, client } = await this.drizzleClient.getDb();
-    const channel = await db.query.channels.findFirst({
-      where: (channel, { eq }) => {
-        return eq(channel.channelId, channelId);
-      },
-      columns: columns
-        ? (columns as { [key in keyof ChannelEntitySelect]: boolean })
-        : undefined,
-    });
-    await this.drizzleClient.endDb(client);
+    const channel = await this.drizzleClient.using((db) =>
+      db.query.channels.findFirst({
+        where: (channel, { eq }) => {
+          return eq(channel.channelId, channelId);
+        },
+        columns: columns
+          ? (columns as { [key in keyof ChannelEntitySelect]: boolean })
+          : undefined,
+      })
+    );
     return channel;
   };
 
   create = async (channel: RepoCreateChannelDto) => {
-    const { db, client } = await this.drizzleClient.getDb();
-    await db.insert(schema.channels).values(channel);
-    await this.drizzleClient.endDb(client);
+    await this.drizzleClient.using((db) =>
+      db.insert(schema.channels).values(channel)
+    );
   };
 }

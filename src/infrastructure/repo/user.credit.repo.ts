@@ -18,21 +18,21 @@ export class UserCreditRepo implements IUserCreditRepo {
   constructor(private drizzleClient: DrizzleClient) {}
 
   create = async (userCredit: RepoCreateUserCreditDto) => {
-    const { db, client } = await this.drizzleClient.getDb();
-    await db.insert(schema.userCredits).values(userCredit);
-    await this.drizzleClient.endDb(client);
+    await this.drizzleClient.using((db) =>
+      db.insert(schema.userCredits).values(userCredit)
+    );
   };
 
   updateByUserId = async (
     userId: number,
     value: Partial<UserCreditEntitySelect>
   ) => {
-    const { db, client } = await this.drizzleClient.getDb();
-    await db
-      .update(schema.userCredits)
-      .set(value)
-      .where(eq(schema.userCredits.userId, userId));
-    await this.drizzleClient.endDb(client);
+    this.drizzleClient.using((db) =>
+      db
+        .update(schema.userCredits)
+        .set(value)
+        .where(eq(schema.userCredits.userId, userId))
+    );
   };
 
   getByUserId = async <T extends keyof UserCreditEntitySelect>(
@@ -43,16 +43,16 @@ export class UserCreditRepo implements IUserCreditRepo {
         }
       | { [key in keyof UserCreditEntitySelect]?: boolean }
   ) => {
-    const { db, client } = await this.drizzleClient.getDb();
-    const userCredit = await db.query.userCredits.findFirst({
-      where: (value, { eq }) => {
-        return eq(value.userId, userId);
-      },
-      columns: columns
-        ? (columns as { [key in keyof UserCreditEntitySelect]: boolean })
-        : undefined,
-    });
-    await this.drizzleClient.endDb(client);
+    const userCredit = await this.drizzleClient.using((db) =>
+      db.query.userCredits.findFirst({
+        where: (value, { eq }) => {
+          return eq(value.userId, userId);
+        },
+        columns: columns
+          ? (columns as { [key in keyof UserCreditEntitySelect]: boolean })
+          : undefined,
+      })
+    );
 
     return userCredit;
   };
