@@ -13,47 +13,49 @@ export class CourseResponseValidator implements ICourseResponseValidator {
 
   constructor() {}
 
-  private responseCourseGetById = z.object({
-    id: z.number(),
-    videoId: z.string(),
-    language: z.string(),
-    title: z.string(),
-    description: z.string(),
-    summary: z.string().nullable(),
-    chapters: z.array(z.object({ time: z.number(), title: z.string() })),
-    enrollCount: z.number(),
-    duration: z.number(),
-    createdAt: z.date(),
-    publishedAt: z.date(),
-    channel: z
-      .object({
-        channelId: z.string(),
-        name: z.string(),
-      })
-      .strict(),
-    enrolls: z
-      .array(
-        z
-          .object({
-            userId: z.number(),
-            totalProgress: z.number(),
-            updatedAt: z.date(),
-            chapterProgress: z.record(z.string(), z.number()),
-            recentProgress: z.object({
-              chapterIndex: z.number(),
-            }),
-          })
-          .strict()
-      )
-      .optional(),
-    category: z
-      .object({
-        id: z.number(),
-        name: z.string(),
-      })
-      .strict()
-      .nullable(),
-  });
+  private responseCourseGetById = z
+    .object({
+      id: z.number(),
+      videoId: z.string(),
+      language: z.string(),
+      title: z.string(),
+      description: z.string(),
+      summary: z.string().nullable(),
+      chapters: z.array(z.object({ time: z.number(), title: z.string() })),
+      enrollCount: z.number(),
+      duration: z.number(),
+      createdAt: z.date(),
+      publishedAt: z.date(),
+      channel: z
+        .object({
+          channelId: z.string(),
+          name: z.string(),
+        })
+        .strict(),
+      enrolls: z
+        .array(
+          z
+            .object({
+              userId: z.number(),
+              totalProgress: z.number(),
+              updatedAt: z.date(),
+              chapterProgress: z.record(z.string(), z.number()),
+              recentProgress: z.object({
+                chapterIndex: z.number(),
+              }),
+            })
+            .strict()
+        )
+        .optional(),
+      category: z
+        .object({
+          id: z.number(),
+          name: z.string(),
+        })
+        .strict()
+        .nullable(),
+    })
+    .strict();
 
   getCourseById = (data: any) => {
     try {
@@ -67,28 +69,30 @@ export class CourseResponseValidator implements ICourseResponseValidator {
     }
   };
 
-  private responseCourseListGetQuery = z.object({
-    courses: z.array(
-      z.object({
-        id: z.number(),
-        videoId: z.string(),
-        title: z.string(),
-        categoryId: z.number(),
-        enrollCount: z.number(),
-        createdAt: z.date(),
-        publishedAt: z.date(),
-        enrolls: z.array(z.object({ userId: z.number() })).optional(),
-        channel: z.object({
-          name: z.string(),
-          channelId: z.string(),
-        }),
-      })
-    ),
-    pagination: z.object({
-      currentPage: z.number(),
-      pageSize: z.number(),
-    }),
-  });
+  private responseCourseListGetQuery = z
+    .object({
+      courses: z.array(
+        z.object({
+          id: z.number(),
+          videoId: z.string(),
+          title: z.string(),
+          categoryId: z.number(),
+          enrollCount: z.number(),
+          createdAt: z.date(),
+          publishedAt: z.date(),
+          enrolls: z.array(z.object({ userId: z.number() })).optional(),
+          channel: z.object({
+            name: z.string(),
+            channelId: z.string(),
+          }),
+        })
+      ),
+      pagination: z.object({
+        currentPage: z.number(),
+        pageSize: z.number(),
+      }),
+    })
+    .strict();
 
   getCourseListByQuery = (data: any) => {
     try {

@@ -13,18 +13,20 @@ export class MeResponseValidator implements IMeResponseValidator {
 
   constructor() {}
 
-  private responseMeGetEnrollByCourseId = z.object({
-    userId: z.number(),
-    courseId: z.number(),
-    chapterProgress: z.record(z.string(), z.number()),
-    totalProgress: z.number(),
-    updatedAt: z.date(),
-    course: z.object({
-      title: z.string(),
-      chapters: z.array(z.object({ time: z.number(), title: z.string() })),
-      videoId: z.string(),
-    }),
-  });
+  private responseMeGetEnrollByCourseId = z
+    .object({
+      userId: z.number(),
+      courseId: z.number(),
+      chapterProgress: z.record(z.string(), z.number()),
+      totalProgress: z.number(),
+      updatedAt: z.date(),
+      course: z.object({
+        title: z.string(),
+        chapters: z.array(z.object({ time: z.number(), title: z.string() })),
+        videoId: z.string(),
+      }),
+    })
+    .strict();
 
   getEnrollsByCourseId = (data: any) => {
     try {
@@ -38,25 +40,27 @@ export class MeResponseValidator implements IMeResponseValidator {
     }
   };
 
-  private responseMeGetEnrollListByQuery = z.object({
-    enrolls: z.array(
-      z.object({
-        createdAt: z.date(),
-        updatedAt: z.date(),
-        courseId: z.number(),
-        totalProgress: z.number(),
-        course: z.object({
-          id: z.number(),
-          videoId: z.string(),
-          title: z.string(),
-        }),
-      })
-    ),
-    pagination: z.object({
-      currentPage: z.number(),
-      pageSize: z.number(),
-    }),
-  });
+  private responseMeGetEnrollListByQuery = z
+    .object({
+      enrolls: z.array(
+        z.object({
+          createdAt: z.date(),
+          updatedAt: z.date(),
+          courseId: z.number(),
+          totalProgress: z.number(),
+          course: z.object({
+            id: z.number(),
+            videoId: z.string(),
+            title: z.string(),
+          }),
+        })
+      ),
+      pagination: z.object({
+        currentPage: z.number(),
+        pageSize: z.number(),
+      }),
+    })
+    .strict();
 
   getEnrollListByQuery = (data: any) => {
     try {

@@ -6,7 +6,6 @@ import {
   RequestCourseListByQuery,
 } from "../../spec/course/course.request";
 import { ServerError } from "../../dto/error";
-import { ServiceCourseGetListByQueryDto } from "../../application/service/course.service";
 import { zodIntTransform } from "./lib/zod.util";
 
 export class CourseRequestValidator implements ICourseRequestValidator {

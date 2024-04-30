@@ -13,7 +13,6 @@ import {
   RequestAuthFindPassword,
 } from "../../spec/auth/auth.requests";
 import { ServerError } from "../../dto/error";
-import { ServiceAuthFindPasswordDto } from "../../application/service/auth.service";
 
 export class AuthRequestValidator implements IAuthRequestValidator {
   static instance: AuthRequestValidator | undefined;

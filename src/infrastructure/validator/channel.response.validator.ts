@@ -12,28 +12,30 @@ export class ChannelResponseValidator implements IChannelResponseValidator {
 
   constructor() {}
 
-  private responseChannelGetCourseListByQuery = z.object({
-    courses: z.array(
-      z.object({
-        id: z.number(),
-        videoId: z.string(),
-        title: z.string(),
-        categoryId: z.number(),
-        enrollCount: z.number(),
-        createdAt: z.date(),
-        publishedAt: z.date(),
-        enrolls: z.array(z.object({ userId: z.number() })).optional(),
-        channel: z.object({
-          name: z.string(),
-          channelId: z.string(),
-        }),
-      })
-    ),
-    pagination: z.object({
-      currentPage: z.number(),
-      pageSize: z.number(),
-    }),
-  });
+  private responseChannelGetCourseListByQuery = z
+    .object({
+      courses: z.array(
+        z.object({
+          id: z.number(),
+          videoId: z.string(),
+          title: z.string(),
+          categoryId: z.number(),
+          enrollCount: z.number(),
+          createdAt: z.date(),
+          publishedAt: z.date(),
+          enrolls: z.array(z.object({ userId: z.number() })).optional(),
+          channel: z.object({
+            name: z.string(),
+            channelId: z.string(),
+          }),
+        })
+      ),
+      pagination: z.object({
+        currentPage: z.number(),
+        pageSize: z.number(),
+      }),
+    })
+    .strict();
 
   getCourseListByQuery = (data: any) => {
     try {

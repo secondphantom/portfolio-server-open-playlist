@@ -14,7 +14,6 @@ import {
   RequestMeUpdateProfile,
 } from "../../spec/me/me.request";
 import { ServerError } from "../../dto/error";
-import { ServiceMeUpdateEnrollByCourseIdDto } from "../../application/service/me.service";
 import { zodIntTransform } from "./lib/zod.util";
 
 export class MeRequestValidator implements IMeRequestValidator {
