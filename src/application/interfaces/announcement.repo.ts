@@ -25,14 +25,15 @@ export type SimpleAnnouncementListDto = {
 export type QueryAnnouncement = Pick<
   AnnouncementEntitySelect,
   "id" | "title" | "createdAt" | "isDisplayedOn"
-> &
-  Pick<AdminEntitySelect, "profileName" | "id">;
+> & {
+  admin: Pick<AdminEntitySelect, "profileName" | "id">;
+};
 
 export interface IAnnouncementRepo {
   create: (dto: AnnouncementEntityInsert) => Promise<void>;
   getListByQuery: (
     query: QueryAnnouncementListDto
-  ) => Promise<AnnouncementEntitySelect[]>;
+  ) => Promise<QueryAnnouncement[]>;
   getById: <T extends keyof AnnouncementEntitySelect>(
     id: number,
     columns?:

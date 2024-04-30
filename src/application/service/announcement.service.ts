@@ -123,8 +123,8 @@ export class AnnouncementService {
 
     if (announcements.length === 0) {
       throw new ServerError({
-        code: 200,
-        message: "Empty",
+        code: 404,
+        message: "Not Found",
       });
     }
 
