@@ -416,10 +416,7 @@ export const userStats = pgTable(
 );
 
 export const userCredits = pgTable("UserCredits", {
-  userId: bigint("user_id", { mode: "number" })
-    .notNull()
-    .primaryKey()
-    .default(0),
+  userId: bigint("user_id", { mode: "number" }).notNull().primaryKey(),
   freeCredits: integer("free_credits").notNull().default(0),
   purchasedCredits: integer("purchased_credits").notNull().default(0),
   freeCreditUpdatedAt: timestamp("free_credit_updated_at")

@@ -69,8 +69,10 @@ export class AnnouncementController {
     req: RequestAnnouncementGetListByQuery
   ) => {
     try {
+      const dto =
+        this.announcementRequestValidator.getAnnouncementListByQuery(req);
       const data = await this.announcementService.getAnnouncementListByQuery(
-        req
+        dto
       );
       const validData =
         this.announcementResponseValidator.getAnnouncementListByQuery(data);
