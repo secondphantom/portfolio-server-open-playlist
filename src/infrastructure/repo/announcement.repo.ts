@@ -147,7 +147,7 @@ export class AnnouncementRepo implements IAnnouncementRepo {
         }
       | { [key in keyof AnnouncementEntitySelect]?: boolean }
   ) => {
-    const announcement = this.drizzleClient.using((db) =>
+    const announcement = await this.drizzleClient.using((db) =>
       db.query.announcements.findFirst({
         where: (value, { eq }) => {
           return eq(value.id, id);
@@ -178,7 +178,7 @@ export class AnnouncementRepo implements IAnnouncementRepo {
         | { [key in keyof AdminEntitySelect]?: boolean };
     }
   ) => {
-    const announcement = this.drizzleClient.using((db) =>
+    const announcement = await this.drizzleClient.using((db) =>
       db.query.announcements.findFirst({
         where: (value, { eq }) => {
           return eq(value.id, id);

@@ -27,7 +27,7 @@ export class UserCreditRepo implements IUserCreditRepo {
     userId: number,
     value: Partial<UserCreditEntitySelect>
   ) => {
-    this.drizzleClient.using((db) =>
+    await this.drizzleClient.using((db) =>
       db
         .update(schema.userCredits)
         .set(value)
