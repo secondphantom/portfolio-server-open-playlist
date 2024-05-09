@@ -118,6 +118,9 @@ export class AnnouncementService {
         title: true,
         createdAt: true,
         isDisplayedOn: true,
+        displayEndDate: true,
+        displayStartDate: true,
+        updatedAt: true,
       }
     );
 

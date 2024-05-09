@@ -87,6 +87,9 @@ export class AnnouncementResponseValidator
       title: z.string(),
       createdAt: z.date(),
       isDisplayedOn: z.boolean(),
+      displayStartDate: z.date(),
+      displayEndDate: z.date(),
+      updatedAt: z.date(),
     })
     .strict();
 

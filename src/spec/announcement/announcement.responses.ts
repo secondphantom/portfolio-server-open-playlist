@@ -35,4 +35,7 @@ export type ResponseAnnouncementGetIsDisplayedOn = {
   title: string;
   createdAt: Date;
   isDisplayedOn: boolean;
+  displayStartDate: Date;
+  displayEndDate: Date;
+  updatedAt: Date;
 };
