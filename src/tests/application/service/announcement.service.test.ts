@@ -46,7 +46,7 @@ describe("announcement service", () => {
 
   beforeAll(async () => {
     const dbClient = DrizzleClient.getInstance({
-      DATABASE_URL_RAILWAY_POSTGRES: process.env.DATABASE_URL_RAILWAY_POSTGRES!,
+      DATABASE_URL: process.env.DATABASE_URL!,
       LOG_LEVEL: "dev",
     });
     announcementRepo = AnnouncementRepo.getInstance(dbClient);

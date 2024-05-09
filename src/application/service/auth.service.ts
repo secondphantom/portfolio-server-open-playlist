@@ -52,10 +52,7 @@ export type ServiceAuthResetPasswordTokenDto = {
   password: string;
 };
 
-type C_ENV = Pick<
-  ENV,
-  "DATABASE_HOST" | "DOMAIN_URL" | "SERVICE_NAME" | "EMAIL_DOMAIN_URL"
->;
+type C_ENV = Pick<ENV, "DOMAIN_URL" | "SERVICE_NAME" | "EMAIL_DOMAIN_URL">;
 
 export class AuthService {
   static instance: AuthService | undefined;

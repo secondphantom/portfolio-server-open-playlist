@@ -10,7 +10,7 @@ import { ENV } from "../../env";
 import { PgTransaction } from "drizzle-orm/pg-core";
 import { ExtractTablesWithRelations } from "drizzle-orm";
 
-type C_ENV = Pick<ENV, "DATABASE_URL_RAILWAY_POSTGRES" | "LOG_LEVEL">;
+type C_ENV = Pick<ENV, "DATABASE_URL" | "LOG_LEVEL">;
 
 export type Db = NodePgDatabase<typeof schema>;
 export type Tx = PgTransaction<
@@ -34,7 +34,7 @@ export class DrizzleClient {
 
   getDb = async () => {
     const client = new Client({
-      connectionString: this.ENV.DATABASE_URL_RAILWAY_POSTGRES,
+      connectionString: this.ENV.DATABASE_URL,
     });
     await client.connect();
     const db = drizzle(client, {

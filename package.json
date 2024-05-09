@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "watch": "tsc -w",
-    "dev": "wrangler dev --remote --config wrangler.dev.toml --ip 0.0.0.0",
+    "dev": "wrangler dev --remote --config wrangler.local.toml --ip 0.0.0.0",
     "deploy-dev": "wrangler deploy --config wrangler.dev.toml",
-    "deploy-beta": "wrangler deploy --config wrangler.beta.toml",
+    "deploy-production": "wrangler deploy --config wrangler.production.toml",
     "test": "cross-env NODE_ENV=test DOTENV_CONFIG_PATH=./.env.test jest --runInBand --silent=false --config=jest.config.js",
     "temp": "cross-env NODE_ENV=test node dist/infrastructure/db/drizzle.client.js",
     "migrations:generate": "drizzle-kit generate:mysql --config=drizzle.config.ts",

@@ -17,11 +17,9 @@ import {
 } from "../../spec/auth/auth.requests";
 import { IAuthRequestValidator } from "./auth.interface";
 
-type C_ENV = Pick<ENV, "CORS_CREDENTIAL">;
 type ConstructorInputs = {
   authService: AuthService;
   authRequestValidator: IAuthRequestValidator;
-  ENV: C_ENV;
 };
 
 export class AuthController {
@@ -34,9 +32,7 @@ export class AuthController {
 
   private authRequestValidator: IAuthRequestValidator;
   private authService: AuthService;
-  private ENV: C_ENV;
-  constructor({ ENV, authRequestValidator, authService }: ConstructorInputs) {
-    this.ENV = ENV;
+  constructor({ authRequestValidator, authService }: ConstructorInputs) {
     this.authRequestValidator = authRequestValidator;
     this.authService = authService;
   }
@@ -128,15 +124,11 @@ export class AuthController {
         headers: [
           {
             name: "Set-Cookie",
-            value: `accessToken=${accessToken}; Path=/; HttpOnly; Secure; SameSite=${
-              this.ENV.CORS_CREDENTIAL === "true" ? "None" : "Strict"
-            }`,
+            value: `accessToken=${accessToken}; Path=/; HttpOnly; Secure; SameSite=Strict`,
           },
           {
             name: "Set-Cookie",
-            value: `refreshToken=${refreshToken}; Path=/; HttpOnly; Secure; SameSite=${
-              this.ENV.CORS_CREDENTIAL === "true" ? "None" : "Strict"
-            }`,
+            value: `refreshToken=${refreshToken}; Path=/; HttpOnly; Secure; SameSite=Strict`,
           },
         ],
         payload: {
@@ -185,15 +177,11 @@ export class AuthController {
               headers: [
                 {
                   name: "Set-Cookie",
-                  value: `accessToken=; Path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT; HttpOnly; Secure; SameSite=${
-                    this.ENV.CORS_CREDENTIAL === "true" ? "None" : "Strict"
-                  }`,
+                  value: `accessToken=; Path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT; HttpOnly; Secure; SameSite=Strict`,
                 },
                 {
                   name: "Set-Cookie",
-                  value: `refreshToken=; Path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT; HttpOnly; Secure; SameSite=${
-                    this.ENV.CORS_CREDENTIAL === "true" ? "None" : "Strict"
-                  }`,
+                  value: `refreshToken=; Path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT; HttpOnly; Secure; SameSite=Strict`,
                 },
               ],
             }
@@ -213,15 +201,11 @@ export class AuthController {
         headers: [
           {
             name: "Set-Cookie",
-            value: `accessToken=${accessToken}; Path=/; HttpOnly; Secure; SameSite=${
-              this.ENV.CORS_CREDENTIAL === "true" ? "None" : "Strict"
-            }`,
+            value: `accessToken=${accessToken}; Path=/; HttpOnly; Secure; SameSite=Strict`,
           },
           {
             name: "Set-Cookie",
-            value: `refreshToken=${refreshToken}; Path=/; HttpOnly; Secure; SameSite=${
-              this.ENV.CORS_CREDENTIAL === "true" ? "None" : "Strict"
-            }`,
+            value: `refreshToken=${refreshToken}; Path=/; HttpOnly; Secure; SameSite=Strict`,
           },
         ],
         payload: {
@@ -241,15 +225,11 @@ export class AuthController {
         headers: [
           {
             name: "Set-Cookie",
-            value: `accessToken=; Path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT; HttpOnly; Secure; SameSite=${
-              this.ENV.CORS_CREDENTIAL === "true" ? "None" : "Strict"
-            }`,
+            value: `accessToken=; Path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT; HttpOnly; Secure; SameSite=Strict`,
           },
           {
             name: "Set-Cookie",
-            value: `refreshToken=; Path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT; HttpOnly; Secure; SameSite=${
-              this.ENV.CORS_CREDENTIAL === "true" ? "None" : "Strict"
-            }`,
+            value: `refreshToken=; Path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT; HttpOnly; Secure; SameSite=Strict`,
           },
         ],
       });
@@ -263,15 +243,11 @@ export class AuthController {
         headers: [
           {
             name: "Set-Cookie",
-            value: `accessToken=; Path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT; HttpOnly; Secure; SameSite=${
-              this.ENV.CORS_CREDENTIAL === "true" ? "None" : "Strict"
-            }`,
+            value: `accessToken=; Path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT; HttpOnly; Secure; SameSite=Strict`,
           },
           {
             name: "Set-Cookie",
-            value: `refreshToken=; Path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT; HttpOnly; Secure; SameSite=${
-              this.ENV.CORS_CREDENTIAL === "true" ? "None" : "Strict"
-            }`,
+            value: `refreshToken=; Path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT; HttpOnly; Secure; SameSite=Strict`,
           },
         ],
         payload: {

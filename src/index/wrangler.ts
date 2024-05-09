@@ -141,7 +141,6 @@ export class WranglerSever {
     this.authController = AuthController.getInstance({
       authService,
       authRequestValidator,
-      ENV: this.env,
     });
 
     this.courseController = CourseController.getInstance({

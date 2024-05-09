@@ -11,8 +11,7 @@ describe.skip("channel repo", () => {
 
   beforeAll(() => {
     const dbClient = new DrizzleClient({
-      DATABASE_URL_RAILWAY_POSTGRES:
-        process.env["DATABASE_URL_RAILWAY_POSTGRES"]!,
+      DATABASE_URL: process.env["DATABASE_URL"]!,
       LOG_LEVEL: "verbose",
     });
     channelRepo = new ChannelRepo(dbClient);
