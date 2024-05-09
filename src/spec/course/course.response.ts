@@ -10,6 +10,7 @@ export type ResponseCourseGetById = {
   duration: number;
   createdAt: Date;
   publishedAt: Date;
+  version: number;
   channel: {
     channelId: string;
     name: string;
@@ -20,6 +21,7 @@ export type ResponseCourseGetById = {
     updatedAt: Date;
     chapterProgress: { [key in string]: number };
     recentProgress: { chapterIndex: number };
+    version: number;
   }[];
   category: {
     id: number;

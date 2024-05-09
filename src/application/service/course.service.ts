@@ -154,6 +154,7 @@ export class CourseService {
           duration: true,
           createdAt: true,
           publishedAt: true,
+          version: true,
         },
         channel: {
           channelId: true,
@@ -165,6 +166,7 @@ export class CourseService {
           updatedAt: true,
           chapterProgress: true,
           recentProgress: true,
+          version: true,
         },
         category: {
           id: true,

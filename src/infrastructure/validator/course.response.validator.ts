@@ -26,6 +26,7 @@ export class CourseResponseValidator implements ICourseResponseValidator {
       duration: z.number(),
       createdAt: z.date(),
       publishedAt: z.date(),
+      version: z.number(),
       channel: z
         .object({
           channelId: z.string(),
@@ -43,6 +44,7 @@ export class CourseResponseValidator implements ICourseResponseValidator {
               recentProgress: z.object({
                 chapterIndex: z.number(),
               }),
+              version: z.number(),
             })
             .strict()
         )
