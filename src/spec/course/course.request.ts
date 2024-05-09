@@ -16,6 +16,15 @@ export type RequestCourseGetById = {
   };
 };
 
+export type RequestCourseGetByVideoId = {
+  auth: {
+    userId?: number;
+  };
+  params: {
+    videoId: string;
+  };
+};
+
 export type RequestCourseListByQuery = {
   auth: {
     userId?: number;

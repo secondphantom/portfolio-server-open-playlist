@@ -117,6 +117,76 @@ export default class CourseRepo implements ICourseRepo {
     return course as any;
   };
 
+  getByVideoIdWith = async <
+    T extends keyof CourseEntitySelect,
+    W1 extends keyof EnrollEntitySelect,
+    W2 extends keyof ChannelEntitySelect,
+    W3 extends keyof CategoryEntitySelect
+  >(
+    where: {
+      videoId: string;
+      userId?: number;
+    },
+    columns?: {
+      course?:
+        | {
+            [key in T]?: boolean;
+          }
+        | { [key in keyof CourseEntitySelect]?: boolean };
+      enroll?:
+        | {
+            [key in W1]?: boolean;
+          }
+        | { [key in keyof EnrollEntitySelect]?: boolean };
+      channel?:
+        | {
+            [key in W2]?: boolean;
+          }
+        | { [key in keyof ChannelEntitySelect]?: boolean };
+      category?:
+        | {
+            [key in W3]?: boolean;
+          }
+        | {
+            [key in keyof CategoryEntitySelect]?: boolean;
+          };
+    }
+  ) => {
+    const course = await this.drizzleClient.using((db) =>
+      db.query.courses.findFirst({
+        where: (course, { eq }) => {
+          return eq(course.videoId, where.videoId);
+        },
+        columns: columns?.course,
+        with: {
+          enrolls: where.userId
+            ? {
+                where: (enroll, { eq, and }) => {
+                  return and(
+                    eq(enroll.videoId, where.videoId),
+                    eq(enroll.userId, where.userId!)
+                  );
+                },
+                columns: columns?.enroll,
+              }
+            : undefined,
+          channel: columns?.channel
+            ? {
+                columns: columns?.channel,
+              }
+            : undefined,
+          category: columns?.category
+            ? {
+                columns: columns?.category,
+              }
+            : undefined,
+        },
+      })
+    );
+
+    return course as any;
+  };
+
   getById = async <T extends keyof CourseEntitySelect>(
     id: number,
     columns?:

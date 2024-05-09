@@ -150,6 +150,7 @@ export const enrolls = pgTable(
   {
     userId: bigint("user_id", { mode: "number" }).notNull(),
     courseId: bigint("course_id", { mode: "number" }).notNull(),
+    videoId: varchar("video_id", { length: 50 }).notNull(),
     version: integer("version").notNull(),
     chapterProgress: jsonb("chapter_progress")
       .notNull()

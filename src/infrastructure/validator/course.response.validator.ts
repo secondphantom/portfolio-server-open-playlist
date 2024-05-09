@@ -71,6 +71,20 @@ export class CourseResponseValidator implements ICourseResponseValidator {
     }
   };
 
+  private responseCourseGetByVideoId = this.responseCourseGetById;
+
+  getCourseByVideoId = (data: any) => {
+    try {
+      const dto = this.responseCourseGetByVideoId.parse(data);
+      return dto;
+    } catch (error) {
+      throw new ServerError({
+        code: 400,
+        message: "Invalid Response",
+      });
+    }
+  };
+
   private responseCourseListGetQuery = z
     .object({
       courses: z.array(

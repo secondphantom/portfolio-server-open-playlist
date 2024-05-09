@@ -16,10 +16,12 @@ export type RepoCreateEnrollDto = Pick<
   | "chapterProgress"
   | "totalProgress"
   | "recentProgress"
+  | "videoId"
 >;
 
 export class EnrollDomain {
   private courseId: number;
+  private videoId: string;
   private userId: number;
   private version: number;
   private chapterProgress: EnrollChapterProgress;
@@ -37,6 +39,7 @@ export class EnrollDomain {
     recentProgress,
     createdAt,
     updatedAt,
+    videoId,
   }: Omit<
     EnrollEntityInsert,
     "chapterProgress" | "totalProgress" | "recentProgress"
@@ -48,6 +51,7 @@ export class EnrollDomain {
       >
     >) {
     this.courseId = courseId;
+    this.videoId = videoId;
     this.userId = userId;
     this.version = version;
     this.chapterProgress = chapterProgress === undefined ? {} : chapterProgress;
@@ -81,6 +85,7 @@ export class EnrollDomain {
       chapterProgress: this.chapterProgress,
       totalProgress: this.totalProgress,
       recentProgress: this.recentProgress,
+      videoId: this.videoId,
     };
   };
 

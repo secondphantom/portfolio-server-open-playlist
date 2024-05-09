@@ -137,6 +137,7 @@ export class MeService {
     const course = await this.courseRepo.getById(courseId, {
       chapters: true,
       version: true,
+      videoId: true,
     });
 
     if (!course) {
@@ -150,6 +151,7 @@ export class MeService {
       userId,
       courseId,
       version: course.version,
+      videoId: course.videoId,
     });
 
     enrollDomain.createInitProgress(course.chapters);
@@ -230,6 +232,7 @@ export class MeService {
       userId,
       chapterProgress,
       version,
+      videoId: "temp",
     });
 
     const entity = enrollDomain.getEntity();

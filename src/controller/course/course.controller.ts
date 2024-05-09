@@ -4,6 +4,7 @@ import { ControllerResponse } from "../../dto/response";
 import {
   RequestCourseCreate,
   RequestCourseGetById,
+  RequestCourseGetByVideoId,
   RequestCourseListByQuery,
 } from "../../spec/course/course.request";
 import {
@@ -67,6 +68,32 @@ export class CourseController {
       const dto = this.courseRequestValidator.getCourseById(req);
       const data = await this.courseService.getCourseById(dto);
       const validData = this.courseResponseValidator.getCourseById(data);
+
+      return new ControllerResponse({
+        code: 200,
+        payload: {
+          success: true,
+          data: validData,
+        },
+      });
+    } catch (error) {
+      const { code, message, data } = errorResolver(error);
+      return new ControllerResponse({
+        code,
+        payload: {
+          success: false,
+          message,
+          data,
+        },
+      });
+    }
+  };
+
+  getCourseByVideoId = async (req: RequestCourseGetByVideoId) => {
+    try {
+      const dto = this.courseRequestValidator.getCourseByVideoId(req);
+      const data = await this.courseService.getCourseByVideoId(dto);
+      const validData = this.courseResponseValidator.getCourseByVideoId(data);
 
       return new ControllerResponse({
         code: 200,

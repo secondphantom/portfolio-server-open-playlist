@@ -105,6 +105,7 @@ FOR EACH ROW EXECUTE PROCEDURE set_updated_at();
 CREATE TABLE "Enrolls" (
     "user_id" BIGINT NOT NULL,
     "course_id" BIGINT NOT NULL,
+		"video_id" VARCHAR(50) NOT NULL,
 		"version" INTEGER NOT NULL,
     "chapter_progress" JSONB NOT NULL,
     "total_progress" REAL NOT NULL,
@@ -126,6 +127,9 @@ CREATE INDEX "Enrolls_user_id_updated_at_idx" ON "Enrolls"("user_id", "updated_a
 
 -- CreateIndex
 CREATE INDEX "Enrolls_updated_at_idx" ON "Enrolls"("updated_at" DESC);
+
+-- CreateIndex
+CREATE INDEX "Enrolls_user_id_video_id_idx" ON "Enrolls"("user_id", "video_id");
 
 -- SetTrigger
 CREATE TRIGGER table_update

@@ -410,6 +410,25 @@ export class WranglerSever {
         return this.createJsonResponse(result);
       }
     );
+
+    this.app.get(
+      "/api/courses/videos/:id",
+      withCookies,
+      this.authMiddleware,
+      async (req: IRequest & AuthRequestOptional) => {
+        const { params, auth } = req;
+
+        const result = await this.courseController.getCourseByVideoId({
+          auth: {
+            userId: auth ? auth.userId : undefined,
+          },
+          params: {
+            videoId: params.id,
+          },
+        });
+        return this.createJsonResponse(result);
+      }
+    );
   };
 
   private initMeRouter = () => {

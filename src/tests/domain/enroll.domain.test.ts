@@ -7,6 +7,7 @@ describe("enroll domain", () => {
         courseId: 0,
         userId: 0,
         version: 1,
+        videoId: "videoId",
       });
 
       const totalProgress = enrollDomain["totalProgress"];
@@ -19,6 +20,7 @@ describe("enroll domain", () => {
         userId: 0,
         chapterProgress: {},
         version: 1,
+        videoId: "videoId",
       });
 
       const totalProgress = enrollDomain["totalProgress"];
@@ -35,6 +37,7 @@ describe("enroll domain", () => {
           "2": 0,
         },
         version: 1,
+        videoId: "videoId",
       });
 
       const totalProgress = enrollDomain["totalProgress"];
@@ -48,6 +51,7 @@ describe("enroll domain", () => {
       courseId: 0,
       userId: 0,
       version: 1,
+      videoId: "videoId",
     });
 
     const chapters = [

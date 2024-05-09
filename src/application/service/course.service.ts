@@ -18,6 +18,11 @@ export type ServiceCourseGetByIdDto = {
   courseId: number;
 };
 
+export type ServiceCourseGetByVideoIdDto = {
+  userId?: number;
+  videoId: string;
+};
+
 export type ServiceCourseGetListByQueryDto = {
   userId?: number;
   page?: number;
@@ -139,6 +144,57 @@ export class CourseService {
     const course = await this.courseRepo.getByIdWith(
       {
         courseId: dto.courseId,
+        userId: dto.userId,
+      },
+      {
+        course: {
+          id: true,
+          videoId: true,
+          language: true,
+          title: true,
+          description: true,
+          summary: true,
+          chapters: true,
+          enrollCount: true,
+          duration: true,
+          createdAt: true,
+          publishedAt: true,
+          version: true,
+        },
+        channel: {
+          channelId: true,
+          name: true,
+        },
+        enroll: {
+          userId: true,
+          totalProgress: true,
+          updatedAt: true,
+          chapterProgress: true,
+          recentProgress: true,
+          version: true,
+        },
+        category: {
+          id: true,
+          name: true,
+        },
+      }
+    );
+
+    if (!course) {
+      throw new ServerError({
+        code: 404,
+        message: "Not Found",
+      });
+    }
+
+    return course;
+  };
+
+  // [GET] /courses/:videoId
+  getCourseByVideoId = async (dto: ServiceCourseGetByVideoIdDto) => {
+    const course = await this.courseRepo.getByVideoIdWith(
+      {
+        videoId: dto.videoId,
         userId: dto.userId,
       },
       {

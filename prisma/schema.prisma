@@ -77,6 +77,7 @@ model Courses {
 model Enrolls {
   user_id          BigInt   @db.BigInt()
   course_id        BigInt   @db.BigInt()
+  video_id         String   @db.VarChar(50)
   version          Int      @db.Integer()
   chapter_progress Json     @db.JsonB()
   total_progress   Float    @db.Real()
@@ -89,6 +90,7 @@ model Enrolls {
   @@index([user_id, created_at(sort: Desc)])
   @@index([user_id, updated_at(sort: Desc)])
   @@index([updated_at(sort: Desc)])
+  @@index([user_id, video_id])
 }
 
 model Categories {

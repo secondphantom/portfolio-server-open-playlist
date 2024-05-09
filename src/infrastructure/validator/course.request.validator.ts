@@ -3,6 +3,7 @@ import { ICourseRequestValidator } from "../../controller/course/course.interfac
 import {
   RequestCourseCreate,
   RequestCourseGetById,
+  RequestCourseGetByVideoId,
   RequestCourseListByQuery,
 } from "../../spec/course/course.request";
 import { ServerError } from "../../dto/error";
@@ -74,6 +75,34 @@ export class CourseRequestValidator implements ICourseRequestValidator {
   getCourseById = (req: RequestCourseGetById) => {
     try {
       const dto = this.requestCourseGetById.parse(req);
+      return {
+        ...dto.params,
+        userId: dto.auth.userId,
+      };
+    } catch (error) {
+      throw new ServerError({
+        code: 400,
+        message: "Invalid Input",
+      });
+    }
+  };
+
+  private requestCourseGetByVideoId = z
+    .object({
+      auth: z.object({
+        userId: z.number().optional(),
+      }),
+      params: z
+        .object({
+          videoId: z.string(),
+        })
+        .strict(),
+    })
+    .strict();
+
+  getCourseByVideoId = (req: RequestCourseGetByVideoId) => {
+    try {
+      const dto = this.requestCourseGetByVideoId.parse(req);
       return {
         ...dto.params,
         userId: dto.auth.userId,

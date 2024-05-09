@@ -30,6 +30,7 @@ describe.skip("enroll repo", () => {
       totalProgress: 0,
       recentProgress: { chapterIndex: 0 },
       version: 1,
+      videoId: "videoId",
     } satisfies RepoCreateEnrollDto;
 
     await enrollRepo.createEnroll(createEnrollDto);
