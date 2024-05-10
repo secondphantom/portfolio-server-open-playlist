@@ -218,9 +218,7 @@ export class WranglerSever {
       methods: ["GET", "POST", "PATCH"],
       origins: [...this.env.CORS_ALLOW_ORIGIN.split(",")],
       headers: {
-        ...(this.env.CORS_CREDENTIAL === "true" && {
-          "Access-Control-Allow-Credentials": true,
-        }),
+        "Access-Control-Allow-Credentials": true,
       },
     });
 
@@ -365,12 +363,16 @@ export class WranglerSever {
       this.authMiddleware,
       async (req: IRequest & AuthRequest) => {
         const { query, auth } = req;
+        console.log({ query, auth });
+
         const result = await this.courseController.getCourseListByQuery({
           auth: {
             userId: auth ? auth.userId : undefined,
           },
           query,
         });
+        console.log(result);
+
         return this.createJsonResponse(result);
       }
     );

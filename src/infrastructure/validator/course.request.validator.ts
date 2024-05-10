@@ -19,19 +19,25 @@ export class CourseRequestValidator implements ICourseRequestValidator {
 
   constructor() {}
 
-  private requestCourseCreateBody = z.object({
-    auth: z.object({
-      userId: z.number(),
-    }),
-    content: z.object({
-      url: z
-        .string()
-        .regex(
-          /^(https:\/\/)(www.youtube.com\/watch\?v=|youtu.be\/).+$/,
-          "Invalid YouTube URL"
-        ),
-    }),
-  });
+  private requestCourseCreateBody = z
+    .object({
+      auth: z
+        .object({
+          userId: z.number(),
+        })
+        .strict(),
+      content: z
+        .object({
+          url: z
+            .string()
+            .regex(
+              /^(https:\/\/)(www.youtube.com\/watch\?v=|youtu.be\/).+$/,
+              "Invalid YouTube URL"
+            ),
+        })
+        .strict(),
+    })
+    .strict();
 
   createCourse = (body: RequestCourseCreate) => {
     try {
@@ -39,6 +45,8 @@ export class CourseRequestValidator implements ICourseRequestValidator {
       const videoId = this.getIDfromURL(content.url);
       return { videoId, userId: auth.userId };
     } catch (error) {
+      console.log(error);
+
       throw new ServerError({
         code: 400,
         message: "Invalid Input",
@@ -61,9 +69,11 @@ export class CourseRequestValidator implements ICourseRequestValidator {
 
   private requestCourseGetById = z
     .object({
-      auth: z.object({
-        userId: z.number().optional(),
-      }),
+      auth: z
+        .object({
+          userId: z.number().optional(),
+        })
+        .strict(),
       params: z
         .object({
           courseId: zodIntTransform,
@@ -89,9 +99,11 @@ export class CourseRequestValidator implements ICourseRequestValidator {
 
   private requestCourseGetByVideoId = z
     .object({
-      auth: z.object({
-        userId: z.number().optional(),
-      }),
+      auth: z
+        .object({
+          userId: z.number().optional(),
+        })
+        .strict(),
       params: z
         .object({
           videoId: z.string(),
@@ -117,9 +129,11 @@ export class CourseRequestValidator implements ICourseRequestValidator {
 
   private requestCourseListByQuery = z
     .object({
-      auth: z.object({
-        userId: z.number().optional(),
-      }),
+      auth: z
+        .object({
+          userId: z.number().optional(),
+        })
+        .strict(),
       query: z
         .object({
           page: zodIntTransform.optional(),

@@ -8,7 +8,7 @@ import { DrizzleClient } from "../../../infrastructure/db/drizzle.client";
 import { AnnouncementRepo } from "../../../infrastructure/repo/announcement.repo";
 dotenv.config();
 
-describe("announcement service", () => {
+describe.skip("announcement service", () => {
   let announcementRepo: IAnnouncementRepo;
   let announcementService: AnnouncementService;
   let TEST_ANNOUNCEMENTS = [

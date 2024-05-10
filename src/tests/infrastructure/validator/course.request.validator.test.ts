@@ -62,11 +62,17 @@ describe("course request validator", () => {
   ])("$message", async ({ dto, throwError }) => {
     if (throwError) {
       expect(() => {
-        validator.createCourse(dto as any);
+        validator.createCourse({
+          auth: { userId: 0 },
+          content: { url: dto.url },
+        });
       }).toThrow();
       return;
     }
-    const { videoId } = validator.createCourse(dto as any);
+    const { videoId } = validator.createCourse({
+      auth: { userId: 0 },
+      content: { url: dto.url },
+    });
     expect(videoId).toEqual(dto.videoId);
     return;
   });
