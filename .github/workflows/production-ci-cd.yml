@@ -1,0 +1,35 @@
+name: production-ci-cd
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  beta-ci-cd:
+    runs-on: ubuntu-latest
+    environment: production
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{matrix.node-version}}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{matrix.node-version}}
+      - name: npm install
+        run: npm ci
+      - name: run test
+        run: npm run test
+      - name: Notify Discord on failure
+        if: failure()
+        run: |
+          curl -X POST -H "Content-Type: application/json" -d '{
+            "content": "GitHub Actions 작업이 실패했습니다. [이 링크를 클릭하여 확인하세요](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+          }' ${{secrets.DISCORD_WEBHOOK_URL}}
+      - name: Deploy production worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          command: deploy ${{vars.MAIN}} --name ${{vars.NAME}} --compatibility-date ${{vars.COMPATIBILITY_DATE}} --node-compat true --var SERVICE_NAME:"${{vars.SERVICE_NAME}}" AUTH_EMAIL_VERIFY_EXP_DURATION_SEC:${{vars.AUTH_EMAIL_VERIFY_EXP_DURATION_SEC}} AUTH_RESET_PASSWORD_EXP_DURATION_SEC:${{vars.AUTH_RESET_PASSWORD_EXP_DURATION_SEC}} AUTH_SIGN_IN_ACCESS_EXP_DURATION_SEC:${{vars.AUTH_SIGN_IN_ACCESS_EXP_DURATION_SEC}} AUTH_SIGN_IN_REFRESH_EXP_DURATION_SEC:${{vars.AUTH_SIGN_IN_REFRESH_EXP_DURATION_SEC}} COMPATIBILITY_DATE:${{vars.COMPATIBILITY_DATE}} CORS_ALLOW_ORIGIN:${{vars.CORS_ALLOW_ORIGIN}} DOMAIN_URL:${{vars.DOMAIN_URL}} EMAIL_DOMAIN_URL:${{vars.EMAIL_DOMAIN_URL}} LOG_LEVEL:${{vars.LOG_LEVEL}} AUTH_EMAIL_VERIFY_JWT_SECRET:${{secrets.AUTH_EMAIL_VERIFY_JWT_SECRET}} AUTH_RESET_PASSWORD_JWT_SECRET:${{secrets.AUTH_RESET_PASSWORD_JWT_SECRET}} AUTH_SIGN_IN_ACCESS_JWT_SECRET:${{secrets.AUTH_SIGN_IN_ACCESS_JWT_SECRET}} AUTH_SIGN_IN_REFRESH_JWT_SECRET:${{secrets.AUTH_SIGN_IN_REFRESH_JWT_SECRET}} CLOUDFLARE_API_TOKEN:${{secrets.CLOUDFLARE_API_TOKEN}} DATABASE_URL:${{secrets.DATABASE_URL}} YOUTUBE_DATA_API_KEY:${{secrets.YOUTUBE_DATA_API_KEY}}
