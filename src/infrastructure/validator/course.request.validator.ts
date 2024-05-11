@@ -45,8 +45,6 @@ export class CourseRequestValidator implements ICourseRequestValidator {
       const videoId = this.getIDfromURL(content.url);
       return { videoId, userId: auth.userId };
     } catch (error) {
-      console.log(error);
-
       throw new ServerError({
         code: 400,
         message: "Invalid Input",

@@ -363,7 +363,6 @@ export class WranglerSever {
       this.authMiddleware,
       async (req: IRequest & AuthRequest) => {
         const { query, auth } = req;
-        console.log({ query, auth });
 
         const result = await this.courseController.getCourseListByQuery({
           auth: {
@@ -371,7 +370,6 @@ export class WranglerSever {
           },
           query,
         });
-        console.log(result);
 
         return this.createJsonResponse(result);
       }
