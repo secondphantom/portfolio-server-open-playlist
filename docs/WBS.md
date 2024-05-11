@@ -1,193 +1,213 @@
 ---
 title: "WBS"
 dateCreated: "2024-02-08"
-dateModified: "2024-03-13"
+dateModified: "2024-05-11"
 ---
 ## server
-
-- [X] auth api
-  - [X] sign-up
-    - [X] service
-    - [X] controller
-      - [X] validator
-    - [X] infra
-      - [X] email sender
-      - [X] user repo
-      - [X] jwt
-      - [X] hash
-    - [X] domain
-      - [X] user
-  - [X] resend-verify-email
-    - [X] service
-    - [X] controller
-      - [X] vlidator
-  - [X] verify-email
-    - [X] service
-    - [X] controller
-      - [X] validator
-  - [X] sign-in
-    - [X] service
-    - [X] controller
-      - [X] validator
-  - [X] verify-access-token
-    - [X] service
-    - [X] contoller
-  - [X] refresh-access-token
-    - [X] service
-    - [X] controller
-  - [X] sign-out
-    - [X] controller
-  - [X] find-password
-    - [X] service
-    - [X] controller
-  - [X] verify-reset-password-token
-  - [X] reset-password
-- [X] me api
-  - [X] profile
-    - [X] get
-      - [X] service
-      - [X] controlleri
-    - [X] update
-      - [X] service
-      - [X] controller
-        - [X] validator
-  - [X] enrolls
-    - [X] create enroll
-      - [X] service
-      - [X] controller
-        - [X] validator
-      - [X] infra
-        - [X] enroll repo
-    - [X] get enrolls by query
-      - [X] service
-      - [X] controller
-        - [X] validator
-    - [X] get enrolls by course_id
-      - [X] service
-      - [X] controller
-        - [X] request validator
-        - [X] reponse validator
-      - [X] infra
-        - [X] get enroll with course
-    - [X] update enrolls by course_id
-      - [X] service
-      - [X] controller
-        - [X] validator
-      - [X] infra
-        - [X] update enroll repo by user_id, course_id
-- [X] course api
-  - [X] create course
-    - [X] service
-    - [X] controller
-      - [X] validator
-    - [X] infra
-      - [X] youtube api
-      - [X] course repo
-      - [X] channel repo
-    - [X] domain
-      - [X] channel
-      - [X] course
-  - [X] get courses by query
-    - [X] init
-      - [X] create course scripts
-    - [X] service
-    - [X] controller
-      - [X] validator
-  - [X] get course by id
-    - [X] service
-      - [X] policy
-        - [X] update enroll counts
-    - [X] controller
-      - [X] validator
-    - [X] infra
-      - [X] config repo
-- [X] channel api
-  - [X] get channel by channel_id
-    - [X] service
-    - [X] controller
-      - [X] validator
-  - [X] get courses list by channel id
-- [ ] admin api
-
+- [x] auth api
+	- [x] sign-up
+		- [x] service
+		- [x] controller
+			- [x] validator
+		- [x] infra
+			- [x] email sender
+			- [x] user repo
+			- [x] jwt
+			- [x] hash
+		- [x] domain
+			- [x] user
+	- [x] resend-verify-email
+		- [x] service
+		- [x] controller
+			- [x] vlidator
+	- [x] verify-email
+		- [x] service
+		- [x] controller
+			- [x] validator
+	- [x] sign-in
+		- [x] service
+		- [x] controller
+			- [x] validator
+	- [x] verify-access-token
+		- [x] service
+		- [x] contoller
+	- [x] refresh-access-token
+		- [x] service
+		- [x] controller
+	- [x] sign-out
+		- [x] controller
+	- [x] find-password
+		- [x] service
+		- [x] controller
+	- [x] verify-reset-password-token
+	- [x] reset-password
+- [x] me api
+	- [x] profile
+		- [x] get
+			- [x] service
+			- [x] controlleri
+		- [x] update
+			- [x] service
+			- [x] controller
+				- [x] validator
+	- [x] enrolls
+		- [x] create enroll
+			- [ ] service
+				- [ ] check credit
+			- [x] controller
+				- [x] validator
+			- [x] infra
+				- [x] enroll repo
+				- [ ] credit repo
+			- [ ] UserCredits schema
+				- user_id
+				- free_credits
+				- purchased_credits
+				- last_free_credit_received_at
+				- updated_at
+				- created_at
+		- [x] get enrolls by query
+			- [x] service
+			- [x] controller
+				- [x] validator
+		- [x] get enrolls by course_id
+			- [x] service
+			- [x] controller
+				- [x] request validator
+				- [x] reponse validator
+			- [x] infra
+				- [x] get enroll with course
+		- [x] update enrolls by course_id
+			- [x] service
+			- [x] controller
+				- [x] validator
+			- [x] infra
+				- [x] update enroll repo by user_id, course_id
+	- [x] credits
+		- [x] create free credit
+			- [x] service
+			- [x] controller
+			- [x] infra
+				- [x] repo credit update credit
+		- [ ] create purchaed credit
+			- [ ] service
+			- [ ] controller
+			- [ ] infra
+		- [x] get credits
+			- [x] service
+			- [x] controller
+			- [x] infra
+				- [x] repo credit get by userid
+- [x] course api
+	- [x] create course
+		- [x] service
+		- [x] controller
+			- [x] validator
+		- [x] infra
+			- [x] youtube api
+			- [x] course repo
+			- [x] channel repo
+		- [x] domain
+			- [x] channel
+			- [x] course
+	- [x] get courses by query
+		- [x] init
+			- [x] create course scripts
+		- [x] service
+		- [x] controller
+			- [x] validator
+	- [x] get course by id
+		- [x] service
+			- [x] policy
+				- [x] update enroll counts
+		- [x] controller
+			- [x] validator
+		- [x] infra
+			- [x] config repo
+- [x] channel api
+	- [x] get channel by channel_id
+		- [x] service
+		- [x] controller
+			- [x] validator
+	- [x] get courses list by channel id
 ## client
-
-- [X] /
-  - [X] header
-    - [X] nav
-  - [X] main
-    - [X] create course search bar
-    - [X] recent created courses
-- [X] /auth
-  - [X] middleware
-    - [X] check auth
-  - [X] /sign-up
-  - [X] /sign-in
-  - [X] /verify-email
-  - [X] /resend-verification-email
-  - [X] /find-password
-  - [X] /reset-password
-- [X] /courses
-  - [X] /couses?
-    - [X] card
-      - [X] enroll state
-    - [X] search bar video url
-    - [X] order dropdown
-    - [X] pagination
-    - [X] meta
-  - [X] /courses/:id
-    - [X] header
-      - [X] title
-      - [X] links
-        - [X] channel
-        - [X] youtube
-      - [X] enroll / watch btn
-        - [X] watch
-        - [X] enroll
-          - [X] check login
-            - [X] login modal
-    - [X] body
-      - [X] descpription
-        - [X] plain text to rich text schema
-      - [X] chapters
-        - [X] total duration
-    - [X] meta
-- [X] /watch
-  - [X] middleware
-    - [X] check auth
-  - [X] /course/:id
-    - [X] header
-      - [X] title
-      - [X] chapters on/off toggle
-      - [X] dashboard btn
-    - [X] footer
-      - [X] nav
-        - [X] prev
-        - [X] next
-      - [X] complete
-      - [X] settings
-    - [X] sidebar
-      - [X] chapter
-        - [X] header
-          - [X] title
-          - [X] progress
-        - [X] main
-          - [X] chapter
-            - [X] title
-            - [X] complete
-            - [X] duration
-    - [X] meta
-- [X] /channel/:id
-  - [X] /courses
-    - [X] header
-      - [X] name
-      - [X] youtube link
-    - [X] courses
-      - [X] /channel/:id/courses?
-        - [X] order
-      - [X] pgination
-    - [X] meta
-- [X] /me
-  - [X] /me/profile
-  - [X] /me/enrolls
-    - [X] order
-    - [X] pagination
+- [x] /
+	- [x] header
+		- [x] nav
+	- [x] main
+		- [x] create course search bar
+		- [x] recent created courses
+- [x] /auth
+	- [x] middleware
+		- [x] check auth
+	- [x] /sign-up
+	- [x] /sign-in
+	- [x] /verify-email
+	- [x] /resend-verification-email
+	- [x] /find-password
+	- [x] /reset-password
+- [x] /courses
+	- [x] /couses?
+		- [x] card
+			- [x] enroll state
+		- [x] search bar video url
+		- [x] order dropdown
+		- [x] pagination
+		- [x] meta
+	- [x] /courses/:id
+		- [X] header
+			- [X] title
+			- [X] links
+				- [X] channel
+				- [X] youtube
+			- [X] enroll / watch btn
+				- [X] watch
+				- [X] enroll 
+					- [X] check login
+						- [X] login modal
+		- [X] body
+			- [x] descpription
+				- [x] plain text to rich text schema
+			- [x] chapters
+				- [x] total duration
+		- [x] meta
+- [x] /watch
+	- [X] middleware
+		- [X] check auth
+	- [x] /course/:id
+		- [x] header
+			- [x] title
+			- [x] chapters on/off toggle
+			- [x] dashboard btn
+		- [x] footer
+			- [x] nav
+				- [x] prev
+				- [x] next
+			- [x] complete
+			- [x] settings
+		- [x] sidebar
+			- [x] chapter
+				- [x] header
+					- [x] title
+					- [x] progress
+				- [x] main
+					- [x] chapter
+						- [x] title
+						- [x] complete
+						- [x] duration
+		- [x] meta
+- [x] /channel/:id
+	- [x] /courses
+		- [x] header
+			- [x] name
+			- [x] youtube link
+		- [x] courses
+			- [x] /channel/:id/courses?
+				- [x] order
+			- [x] pgination
+		- [x] meta
+- [x] /me
+	- [x] /me/profile
+	- [x] /me/enrolls
+		- [x] order
+		- [x] pagination

@@ -1,145 +1,242 @@
 ---
 title: "History"
 dateCreated: "2024-02-09"
-dateModified: "2024-03-13"
+dateModified: "2024-05-11"
 ---
 ## Server
-
-- `20240209`
-  - feat: add crypto util with test
-  - feat: add user shcema and connect db
-  - feat: add use domain
-  - feat: add dbClint and user repo with test
+- `20240209` 
+	- feat: add crypto util with test
+	- feat: add user shcema and connect db
+	- feat: add use domain
+	- feat: add dbClint and user repo with test
 - `20240210`
-  - feat: add jwt util
+	- feat: add jwt util
 - `20240213`
-  - feat: add jwt util test
-  - feat :add email util
-  - refactor: icreate instance by singleton
-  - feat: add auth sign-up service
-  - refactor: env inputs
+	- feat: add jwt util test
+	- feat :add email util
+	- refactor: icreate instance by singleton 
+	- feat: add auth sign-up service
+	- refactor: env inputs
 - `20240214`
-  - fix: connect database
-  - refactor: create instance by singleton
+	- fix: connect database
+	- refactor: create instance by singleton
 - `20240216`
-  - feat: add auth sign-in controller
-  - feat: add auth sign-in validator
-  - feat: add wrangler server index
-  - add resent-verification-email diagram
-  - add verify-is-login diagram
-  - feat: add email verification api
-  - feat: add resend email verfication api
-  - feat: add auth sign in api
-  - feat: add refresh token when sign in
+	- feat: add auth sign-in controller
+	- feat: add auth sign-in validator
+	- feat: add wrangler server index
+	- add resent-verification-email diagram
+	- add verify-is-login diagram
+	- feat: add email verification api
+	- feat: add resend email verfication api
+	- feat: add auth sign in api
+	- feat: add refresh token when sign in
 - `20240217`
-  - feat: add auth verify access token api
-  - feat: add auth refresh access token api
-  - feat: add schema
+	- feat: add auth verify access token api
+	- feat: add auth refresh access token api
+	- feat: add schema
 - `20240218`
-  - feat: add channel domain
-  - feat: add course domain
-  - feat: add youtube data api and test
-  - feat: add channel repo
-  - feat: add course repo
-  - feat: add course domain test
+	- feat: add channel domain
+	- feat: add course domain
+	- feat: add youtube data api and test
+	- feat: add channel repo
+	- feat: add course repo
+	- feat: add course domain test
 - `20240219`
-  - feat: add prisma schema
-  - feat: add create course api
-  - feat: enroll domain and test
-  - feat: add getCourseById method
+	- feat: add prisma schema 
+	- feat: add create course api
+	- feat: enroll domain and test
+	- feat: add getCourseById method
 - `20240220`
-  - feat: add renroll repo and test
-  - feat: create enroll api
-  - refactor: get body by middleware
-  - feat: add getCourseByIdWith at repo
-  - feat: add service about get course by id
-  - feat: get courser by id controller and validator
-  - feat: add get course by id api
-  - feat: add sign-out
+	- feat: add renroll repo and test
+	- feat: create enroll api
+	- refactor: get body by middleware
+	- feat: add getCourseByIdWith at repo
+	- feat: add service about get course by id
+	- feat: get courser by id controller and validator
+	- feat: add get course by id api
+	- feat: add sign-out
 - `20240221`
-  - feat: add updating user repo by id
-  - feat: add update profile api
-  - feat: add getting enrolls by course id api
-  - feat: add update enroll repo by course id
-  - feat: ad update enroll by course id api
-  - refactor: split auth input when required auth req
-  - fix: parsing chapters at course doamin
+	- feat: add updating user repo by id
+	- feat: add update profile api
+	- feat: add getting enrolls by course id api
+	- feat: add update enroll repo by course id
+	- feat: ad update enroll by course id api
+	- refactor: split auth input when required auth req
+	- fix: parsing chapters at course doamin
 - `20240223`
-  - feat: add creacte course scripts
+	- feat: add creacte course scripts
 - `20240226`
-  - feat: add getting course list by query repo method
-  - feat: add course by query service
-  - refactor: change spec, etc name
-  - fix: get course list by serach query repo response
-  - feat: add getting course list by query api
-  - feat: add getting course list by query with channel api
-  - feat: getting channel by id api
-  - feat: add api about find-password
-  - feat: add method about count up enroll_count field when cerate enroll
+	- feat: add getting course list by query repo method
+	- feat: add course by query service
+	- refactor: change spec, etc name
+	- fix: get course list by serach query repo response
+	- feat: add getting course list by query api
+	- feat: add getting course list by query with channel api
+	- feat: getting channel by id api
+	- feat: add api about find-password
+	- feat: add method about count up enroll_count field when cerate enroll
 - `20240306`
-  - feat: add recent progress column at enrolls
-  - feat: add update enroll progress method at repo
-  - feat: add update enroll progress api
+	- feat: add recent progress column at enrolls
+	- feat: add update enroll progress method at repo
+	- feat: add update enroll progress api
 - `20240307`
-  - feat: update chapter at domain when duplicated chapter
-  - feat: add enroll's chapterProgress property when get courseById api
-  - feat: add order by 'create' when get course list
+	- feat: update chapter at domain when duplicated chapter
+	- feat: add enroll's chapterProgress property when get courseById api
+	- feat: add order by 'create' when get course list
 - `20240308`
-  - feat: get user profile api
+	- feat: get user profile api
 - `20240309`
-  - fix: cors about http methods
-  - fix: sign out
-  - feat: add recentProgress field when get course by id
-  - fix: create course about timestamp parser at domain
+	- fix: cors about http methods
+	- fix: sign out
+	- feat: add recentProgress field when get course by id
+	- fix: create course about timestamp parser at domain
 - `20240312`
-  - fix: extracting chapter's title about em dash
-  - fix: update profile name validator about max
+	- fix: extracting chapter's title about em dash
+	- fix: update profile name validator about max
 - `20240313`
-  - chore: add npm run script about deploy
-  - fix: delete cookie when verify refresh token fail
-  - feat: reset uuid when reset password
-  - fix: test code
-  - feat: add workflow for beta
+	- chore: add npm run script about deploy
+	- fix: delete cookie when verify refresh token fail
+	- feat: reset uuid when reset password
+	- fix: test code
+	- feat: add workflow for beta
+- `20240424`
+	- feat: updated table schema
+	- refactor: repo's method name
+	- feat: adding credit repo and credit domain
+	- feat: adding user credit when sign up
+	- fix: about courser and enroll version
+	- feat: adding user credit api
+	- feat: adding and refactoring response type at spec
+	- feat: adding delete account api
+	- fix: create course when description have other time stamp
+- `20240425`
+	- feat: consume credit when create course
+	- feat: consuming credit when creating enroll
+- `20240426`
+	- fix: deleting cookies when deleting account
+- `20240427`
+	- fix: verify access token when invalid input
+- `20240428`
+	- fix: verify acces token when invalid by error cause
+	- feat: change a policy about getting free credit
+	- fix: verify password
+- `20240429`
+	- refactor: change the table name from notice to announcements
+	- feat: add a title_tsvector filed at announcements table
+	- fix: query course list when search
+- `20240430`
+	- feat: add announcement service and test
+	- feat: adding a usingTrx method at drizzleClient
+	- refactor: changing query method by using
+	- feat: adding announcement requests and responses spec
+	- feat: adding announcement validator and controller
+	- feat: adding announcement api end point
+- `20240501`
+	- fix: input validator about get announcement list
+- `20240509`
+	- fix: add await when quering
+	- fix: response about is displayed on announcemen
+	- fix: adding version field when getting course by id
+	- refactor: about env
+	- feat: adding get course by video id api
+- `20240511`
+	- fix: course request validator test
+	- feat: update dev github actions
+	- feat: adding a deploy production github actions
 
 ## Client
-
 - `20240227`
-  - init: client project setting
+	- init: client project setting
 - `20240301`
-  - feat: add auth pages
+	- feat: add auth pages
 - `20240307`
-  - feat: add course pages
-  - feat: add channel course page
-  - feat: add home pages
+	- feat: add course pages
+	- feat: add channel course page
+	- feat: add home pages
 - `20240308`
-  - feat: add me profile, enrolls pages
-  - refactor: auth provider by zustand
-  - feat: add loading indicator
-  - refactor: layout about root
+	- feat: add me profile, enrolls pages
+	- refactor: auth provider by zustand
+	- feat: add loading indicator
+	- refactor: layout about root
 - `20240309 - 20240311`
-  - refactor: auth routes about unauthorized redirecting
-  - refactor: show password input toggle
-  - refactor: layout about nav, footer
-  - feat: add and refactor ui components
-  - feat: add global default values
-  - feat: add loading modal
-  - refactor: common components
-  - feat: add some libs
-  - fix: get channel courses about query params
-  - refactor: courses route pages
-  - refactor: me route pages
-  - refactor: misc pages and file
-  - feat: add watch route pages
+	- refactor: auth routes about unauthorized redirecting
+	- refactor: show password input toggle
+	- refactor: layout about nav, footer
+	- feat: add and refactor ui components
+	- feat: add global default values
+	- feat: add loading modal
+	- refactor: common components
+	- feat: add some libs
+	- fix: get channel courses about query params
+	- refactor: courses route pages
+	- refactor: me route pages
+	- refactor: misc pages and file
+	- feat: add watch route pages
 - `20240312`
-  - fix: watch course page about revalidate
-  - fix: updating use name about max length
-  - feat: add meta auth, channels
-  - fix: router.push at same url
+	- fix: watch course page about revalidate
+	- fix: updating use name about max length
+	- feat: add meta auth, channels
+	- fix: router.push at same url
 - `20240313`
-  - refactor: env name
-  - refactor: password input at reset password page
-  - feat: add meta
-  - chore: delete console.log
-  - feat: get access cookies by refresh token
-  - feat: add access key route
-  - refactor: adding asChaild proprety at link button
+	- refactor: env name
+	- refactor: password input at reset password page
+	- feat: add meta
+	- chore: delete console.log
+	- feat: get access cookies by refresh token
+	- feat: add access key route
+	- refactor: adding asChaild proprety at link button
+- `20240424`
+	- feat: adding acceptTermsAndConditions when sign up
+	- feat: adding privacy and terms pages
+- `20240425`
+	- feat: adding me credit page
+	- feat: me account page
+- `20240426`
+	- feat: adding verify user auth at pages
+	- feat: adding watch now and enroll pages
+	- feat: adding share btn at watch pages
+	- fix: share btn when windows is undefined
+	- feat: adding chapter shallow route and initizing chapter by params
+- `20240427`
+	- feat: adding watch custom page
+	- feat: adding meta data at watch pages
+	- feat: adding auto skip and auto complete
+	- fix: get chapter with duration
+	- fix: go course route at watch now and custom
+	- fix: verify auth when invailid input
+	- feat: adding user credit provider
+- `20240428`
+	- fix: verify access token
+	- refactor: reload auth, credit
+	- feat: showing credit info when create course
+	- feat: adding watch now btn at course id page
+	- feat: adding fetch cache when create course
+	- fix: save custom chapter when order is not okay
+	- feat: adding dynamic video url at watch custom page
+	- feat: showing custom modal when videoId undefined
+	- fix: get total duration at custom page
+	- feat: adding watch custom route at main
+	- feat: Add a credit consume alert at enroll btn
+	- fix: loading credit form about remain duration
+	- fix: reloading auth when delete account
+- `20240429`
+	- refactor: progress bar
+- `20240501`
+	- feat: adding top notification
+	- misc: move sign out btn from profile to account
+	- feat: adding footer sub nav
+	- feat: adding announcements table page
+	- fix: getting total duration at watch custom page
+	- feat: adding announcement id page
+- `20240509`
+	- fix: rendring mdx
+	- fix: showing top notification when updated
+	- feat: adding a reset button about complete chapter history
+	- feat: adding about page
+	- refactor: change course id to videoId
+- `20240510`
+	- fix: render pagination at channel id page
+	- feat: adding obfuscator
+	- refactor: link compoenent for prefetch
+	- refactor: import file, env import
+	- fix: loading sub module

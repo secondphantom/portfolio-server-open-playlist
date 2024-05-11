@@ -2,11 +2,11 @@
 ## 개요
 유튜브에 긴 강의 영상을 챕터별로 관리할수 있는 웹앱
 ## 링크
-https://beta.openplaylist.net/access?key=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdXRob3IiOiJTZWNvbmQgUGhhbnRvbSIsImVtYWlsIjoic2Vjb25kMnBoYW50b21AZ21haWwuY29tIiwiaWF0IjoxNzEwMzAwMTk4fQ.bXR8m8B162DCR47wJ94OG-cZSA4ALsGqnQz54we3DuM
+https://openplaylist.net
 ## 기술스택
 ### 백엔드
 - NodeJs, TypeScript 
-- mysql
+- mysql, postgresql
 ### 프론트
 - TypeScript
 - NextJs, React
@@ -18,6 +18,7 @@ https://beta.openplaylist.net/access?key=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ey
 - 라이브러리
   - Jest
   - Drizzle ORM
+  - Prisma
   - Zod
   - YouTube Data API
 #### 프론트
@@ -31,7 +32,12 @@ https://beta.openplaylist.net/access?key=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ey
   - Axios
   - Zod
 ## 아키텍쳐
-![](./docs//images/open_playlist_architecture.png)
+### production / dev
+![](./docs//images/open_playlist-architecture-production.png)
+### local 
+![](./docs//images/open_playlist-architecture-local.png)
+## ERD
+![](./docs//images/open_playlist-erd.png)
 ## 문제해결
 ### Access 또는 Refresh 토큰 탈취시 대응 방안
 #### 문제점
@@ -60,12 +66,14 @@ https://beta.openplaylist.net/access?key=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ey
 - get courses by channel
 - order courser by create, recent, popular
 ### /me
-- update use name
+- update profile
 - get enrolls
+- get credit
 ### /watch
 - watch enroll course
 - complete chapter
 - auto update recent watch course
+- watch custom course
 
 
 ## Docs
@@ -73,3 +81,4 @@ https://beta.openplaylist.net/access?key=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ey
 - [FlowChart](./docs/FlowChart.md)
 - [WBS](./docs/WBS.md)
 - [History](./docs/History.md)
+- [ERD](./docs/ERD.md)
