@@ -1,178 +1,232 @@
 ---
-title: "IA-refactor"
+title: "IA"
 dateCreated: "2024-01-15"
-dateModified: "2024-03-13"
+dateModified: "2024-03-27"
 ---
-# IA
 
 ## 목적
-
-- youtube의 재생목록을 강의처럼 수강 할 수 있는 웹앱
+- youtube의 재생목록을 강의처럼 수강 할 수 있는 앱
 
 ## IA
-
 ### Client
 
 #### /
-
 - /
-  - view
-    - header
-      - url search
-    - main
-      - recent created
-    - footer
-      - about
-      - privacy
-      - coatact
-      - cookies
-
+	- view
+		- header
+			- url search
+		- main
+			- recent created
+		- footer
+			- about
+			- privacy
+			- coatact
+			- cookies
 #### /users
-
 - /users/signup
-  - view
-    - email
-    - password
-    - password confirm
-    - sign up
+	- view
+		- email
+		- password
+		- password confirm
+		- sign up
 - /users/signin
-  - view
-    - email
-    - password
-    - sign in
+	- view 
+		- email
+		- password
+		- sign in
 - /users/find-password
-  - view
-    - email
+	- view
+		- email
 - /users/:id
-  - view
-    - tab
-      - profile
-      - enrolls
+	- view
+		- tab
+			- profile
+			- enrolls
 - /users/enrolls
-  - query
-
+	- query
 #### /courses
-
 - /courses
-  - view
-    - tab
-      - category
-    - query
-      - category
-      - order
-        - recent
-        - popular
+	- view
+		- tab
+			- category
+		- query
+			- category
+			- order
+				- recent
+				- popular
 - /courses/:courseId
-  - view
-    - not found
-      - view
-        - create
-    - find
-      - header
-        - title
-        - enrolls
-        - youtube link
-        - channel name
-      - main
-        - description
-        - sections
-      - side
-        - enroll / watch
-
+	- view
+		- not found
+			- view
+				- create
+		- find
+			- header
+				- title
+				- enrolls
+				- youtube link
+				- channel name
+			- main
+				- description
+				- sections
+			- side
+				- enroll / watch
 #### /channels
-
 - /channels/:channelId/courses
-  - view
-    - header
-      - channel name
-      - youtube link
-    - videos
-      - query
-        - recent
-        - popular
-
+	- view
+		- header
+			- channel name
+			- youtube link
+		- videos
+			- query
+				- recent
+				- popular
 #### /watch
-
 - /watch/courses/:coursesId
-  - view
-    - header
-      - title
-    - sidebar
-      - chapter and progress
-    - footer
-      - prev, next, settings, complete btn
+	- view
+		- header
+			- title
+		- sidebar
+			- chapter and progress
+		- footer
+			- prev, next, settings, complete btn
+#### /me
+- /me/enrolls
+	- view
+- /me/profile
+	- view
+- /me/credits
+	- view
+		- free
+		- purchaed
+- /me/billing
+	- view
+		- cross tab
+			- payment methods
+			- billing history
+### Admin
+- /dashboard
+	- view
+		- tab
+			- dashboard
+			- health
+			- users
+			- courses
+			- channels
+			- categorys
+			- roles
+		- dashboard
+			- users
+				- active user
+				- total register
+			- total channels
+			- total courses
+			- health
+				- database
+				- external
+-  /health
+	- view
+		- /stats
+			- database
+				- get course
+				- get channel
+				- get user
+			- external
+				- youtube api
+- /sessions
+	- view
+		- list
+			- ip
+			- device
+			- current session
+- /sessions/:id
+	- view
+		- ip, device, current session
+		- logout
+- /admins
+	- view
+		- create
+		- list
+			- id
+			- email
+			- profileName
+			- profileImage
+			- role
+			- delete
+- /users
+	- view
+		- tab
+			- /stats
+				- total
+				- mau
+				- dau
+				- cumulative month, day
+			- /list
+				- id
+				- role
+				- order
+					- recent
+				- edit
+- /users/:id
+	- view
+		- edit
+- /courses 
+	- view
+		- tab
+			- /stats
+				- total
+				- cumulative month, day
+				- by category
+			- /list
+				- query
+					- id
+					- title
+					- category
+					- channelId
+					- createdAt
+					- ganerated_ai
+					- edit
+- /courses/:id
+	- view
+		- edit
+- /channels
+	- view 
+		- tab
+			- /stats
+				- total
+				- cumulative month, day
+			- /list
+				- query
+					- channelId
+					- createdAt
+- /categorys
+	- view
+		- tab
+			- /list
+				- edit, create, delete
+				- query
+					- name
+- /roles
+	- view
+		- tab
+			- /list
+				- create, edit, delete
+- /email
+	- view
+		- tab
+			- /send
+				- from
+				- to
+				- message
+			- /recieve
+				- from
+				- to
+				- message
 
-#### /admin
-
-- /admin/dashboard
-  - view
-    - tab
-      - users
-      - courses
-      - channels
-      - categorys
-      - roles
-    - dashboard
-      - users
-        - MAU
-        - total user
-      - total channels
-      - total courses
-- /admin/users
-  - view
-    - tab
-      - /statics
-        - total
-        - mau
-        - dau
-        - cumulative month, day
-      - /list
-        - id
-        - role
-        - order
-          - recent
-        - edit
-- /admin/users/:id
-  - view
-    - edit
-- /admin/courses
-  - view
-    - tab
-      - /statics
-        - total
-        - cumulative month, day
-        - by category
-      - /list
-        - query
-          - id
-          - title
-          - category
-          - channelId
-          - createdAt
-          - ganerated_ai
-          - edit
-- /admin/courses/:id
-  - view
-    - edit
-- /admin/channels
-  - view
-    - tab
-      - /statics
-        - total
-        - cumulative month, day
-      - /list
-        - query
-          - channelId
-          - createdAt
-- /admin/categorys
-  - view
-    - tab
-      - /list
-        - edit, create, delete
-        - query
-          - name
-- /admin/roles
-  - view
-    - tab
-      - /list
-        - create, edit, delete
+- /notifications
+	- view
+		- /list
+			- title, description, createdAt, updatedAt
+		- /create
+			- title, description, mark down viewer
+		- /:id
+			- edit			- edit

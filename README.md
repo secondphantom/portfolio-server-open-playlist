@@ -6,7 +6,7 @@ https://openplaylist.net
 ## 기술스택
 ### 백엔드
 - NodeJs, TypeScript 
-- mysql, postgresql
+- postgresql
 ### 프론트
 - TypeScript
 - NextJs, React
@@ -33,11 +33,11 @@ https://openplaylist.net
   - Zod
 ## 아키텍쳐
 ### production / dev
-![](./docs//images/open_playlist-architecture-production.png)
+![](image/README/open_playlist-architecture-production.png)
 ### local 
-![](./docs//images/open_playlist-architecture-local.png)
+![](image/README/open_playlist-architecture-local.png)
 ## ERD
-![](./docs//images/open_playlist-erd.png)
+![](image/README/open_playlist-erd.png)
 ## 문제해결
 ### Access 또는 Refresh 토큰 탈취시 대응 방안
 #### 문제점
@@ -57,28 +57,35 @@ https://openplaylist.net
 #### diagram
 ![](./docs//images/problem-diagram.png)
 ## 기능
-### /courses
+#### 1. `courses`
 - create course by youtube video
 - enroll course
 - search course by youtube url
 - order courser by create, recent, popular
-### /channels
+#### 2. `channels`
 - get courses by channel
 - order courser by create, recent, popular
-### /me
+#### 3. `me`
 - update profile
 - get enrolls
 - get credit
-### /watch
+#### 4. `watch`
 - watch enroll course
 - complete chapter
 - auto update recent watch course
 - watch custom course
-
-
 ## Docs
 - [IA](./docs/IA.md)
 - [FlowChart](./docs/FlowChart.md)
 - [WBS](./docs/WBS.md)
 - [History](./docs/History.md)
 - [ERD](./docs/ERD.md)
+## Screenshots
+![1715406633181](image/README/1715406633181.png)
+![1715406644578](image/README/1715406644578.png)
+![1715406654574](image/README/1715406654574.png)
+![1715406665470](image/README/1715406665470.png)
+![1715406676691](image/README/1715406676691.png)
+![1715406686265](image/README/1715406686265.png)
+![1715406734609](image/README/1715406734609.png)
+![1715406709002](image/README/1715406709002.png)
