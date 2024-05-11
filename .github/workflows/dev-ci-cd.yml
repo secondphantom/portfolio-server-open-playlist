@@ -5,7 +5,7 @@ on:
     branches: ["dev"]
 
 jobs:
-  beta-ci-cd:
+  dev-ci-cd:
     runs-on: ubuntu-latest
     environment: dev
     strategy:

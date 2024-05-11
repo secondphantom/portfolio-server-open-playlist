@@ -5,7 +5,7 @@ on:
     branches: ["main"]
 
 jobs:
-  beta-ci-cd:
+  production-ci-cd:
     runs-on: ubuntu-latest
     environment: production
     strategy:
