@@ -22,12 +22,18 @@ export type JwtResetPasswordPayload = {
 };
 
 export interface IJwtUtil {
-  signAuthAccessPayload: (payload: JwtAuthSignPayload) => Promise<string>;
-  signAuthRefreshPayload: (payload: JwtAuthSignPayload) => Promise<string>;
-  signEmailVerifyPayload: (payload: JwtEmailVerifyPayload) => Promise<string>;
+  signAuthAccessPayload: (
+    payload: JwtAuthSignPayload
+  ) => Promise<{ token: string; expirationDate: Date }>;
+  signAuthRefreshPayload: (
+    payload: JwtAuthSignPayload
+  ) => Promise<{ token: string; expirationDate: Date }>;
+  signEmailVerifyPayload: (
+    payload: JwtEmailVerifyPayload
+  ) => Promise<{ token: string; expirationDate: Date }>;
   signResetPasswordPayload: (
     payload: JwtResetPasswordPayload
-  ) => Promise<string>;
+  ) => Promise<{ token: string; expirationDate: Date }>;
 
   verifyAuthAccessToken: (token: string) => Promise<boolean>;
   verifyAuthRefreshToken: (token: string) => Promise<boolean>;

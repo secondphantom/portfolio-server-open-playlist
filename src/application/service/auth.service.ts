@@ -123,7 +123,7 @@ export class AuthService {
 
     const createUserDto = userDomain.getCreateUserDto();
 
-    const token = await this.jwtUtil.signEmailVerifyPayload({
+    const { token } = await this.jwtUtil.signEmailVerifyPayload({
       email: createUserDto.email,
       uuid: createUserDto.uuid,
     });
@@ -302,21 +302,21 @@ export class AuthService {
       });
     }
 
-    const token = this.getSignAuthToken({
+    const tokenAndExpDate = this.getSignAuthTokenAndExpDate({
       userId: user.id,
       roleId: user.roleId,
       uuid: user.uuid,
     });
 
-    return token;
+    return tokenAndExpDate;
   };
 
-  private getSignAuthToken = async (payload: JwtAuthSignPayload) => {
-    const accessToken = await this.jwtUtil.signAuthAccessPayload(payload);
-    const refreshToken = await this.jwtUtil.signAuthRefreshPayload(payload);
+  private getSignAuthTokenAndExpDate = async (payload: JwtAuthSignPayload) => {
+    const access = await this.jwtUtil.signAuthAccessPayload(payload);
+    const refresh = await this.jwtUtil.signAuthRefreshPayload(payload);
     return {
-      accessToken,
-      refreshToken,
+      access,
+      refresh,
     };
   };
 
@@ -384,13 +384,13 @@ export class AuthService {
       });
     }
 
-    const token = this.getSignAuthToken({
+    const tokenAndExpDate = this.getSignAuthTokenAndExpDate({
       userId: user.id,
       roleId: user.roleId,
       uuid: user.uuid,
     });
 
-    return token;
+    return tokenAndExpDate;
   };
 
   // find-password [POST] /auth/find-password
@@ -409,7 +409,7 @@ export class AuthService {
       });
     }
 
-    const token = await this.jwtUtil.signResetPasswordPayload({
+    const { token } = await this.jwtUtil.signResetPasswordPayload({
       email: user.email,
       uuid: user.uuid,
     });

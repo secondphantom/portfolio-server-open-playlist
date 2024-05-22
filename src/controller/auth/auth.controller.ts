@@ -32,6 +32,7 @@ export class AuthController {
 
   private authRequestValidator: IAuthRequestValidator;
   private authService: AuthService;
+
   constructor({ authRequestValidator, authService }: ConstructorInputs) {
     this.authRequestValidator = authRequestValidator;
     this.authService = authService;
@@ -117,18 +118,22 @@ export class AuthController {
   signIn = async (body: RequestAuthSignIn) => {
     try {
       const dto = this.authRequestValidator.signIn(body);
-      const { accessToken, refreshToken } = await this.authService.signIn(dto);
+      const { access, refresh } = await this.authService.signIn(dto);
 
       return new ControllerResponse({
         code: 200,
         headers: [
           {
             name: "Set-Cookie",
-            value: `accessToken=${accessToken}; Path=/; HttpOnly; Secure; SameSite=Strict`,
+            value: `accessToken=${
+              access.token
+            }; Path=/; HttpOnly; Secure; SameSite=Strict; expires=${access.expirationDate.toUTCString()}`,
           },
           {
             name: "Set-Cookie",
-            value: `refreshToken=${refreshToken}; Path=/; HttpOnly; Secure; SameSite=Strict`,
+            value: `refreshToken=${
+              refresh.token
+            }; Path=/; HttpOnly; Secure; SameSite=Strict; expires=${refresh.expirationDate.toUTCString()}`,
           },
         ],
         payload: {
@@ -193,19 +198,24 @@ export class AuthController {
   refreshAccessToken = async (cookies: ServiceAuthRefreshAccessTokenDto) => {
     try {
       const dto = this.authRequestValidator.refreshAccessToken(cookies);
-      const { accessToken, refreshToken } =
-        await this.authService.refreshAccessToken(dto);
+      const { access, refresh } = await this.authService.refreshAccessToken(
+        dto
+      );
 
       return new ControllerResponse({
         code: 200,
         headers: [
           {
             name: "Set-Cookie",
-            value: `accessToken=${accessToken}; Path=/; HttpOnly; Secure; SameSite=Strict`,
+            value: `accessToken=${
+              access.token
+            }; Path=/; HttpOnly; Secure; SameSite=Strict; expires=${access.expirationDate.toUTCString()}`,
           },
           {
             name: "Set-Cookie",
-            value: `refreshToken=${refreshToken}; Path=/; HttpOnly; Secure; SameSite=Strict`,
+            value: `refreshToken=${
+              refresh.token
+            }; Path=/; HttpOnly; Secure; SameSite=Strict; expires=${refresh.expirationDate.toUTCString()}`,
           },
         ],
         payload: {

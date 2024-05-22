@@ -33,54 +33,66 @@ export class JwtUtil implements IJwtUtil {
 
   signAuthAccessPayload = async (payload: JwtAuthSignPayload) => {
     const nowSec = Math.floor(Date.now() / 1000);
+    const exp =
+      nowSec + parseInt(this.ENV.AUTH_SIGN_IN_ACCESS_EXP_DURATION_SEC);
     const token = await jwt.sign(
       {
         ...payload,
         iat: nowSec,
-        exp: nowSec + parseInt(this.ENV.AUTH_SIGN_IN_ACCESS_EXP_DURATION_SEC),
+        exp,
       },
       this.ENV.AUTH_SIGN_IN_ACCESS_JWT_SECRET
     );
-    return token;
+    const expirationDate = new Date(exp * 1000);
+
+    return { token, expirationDate };
   };
 
   signAuthRefreshPayload = async (payload: JwtAuthSignPayload) => {
     const nowSec = Math.floor(Date.now() / 1000);
+    const exp =
+      nowSec + parseInt(this.ENV.AUTH_SIGN_IN_REFRESH_EXP_DURATION_SEC);
     const token = await jwt.sign(
       {
         ...payload,
         iat: nowSec,
-        exp: nowSec + parseInt(this.ENV.AUTH_SIGN_IN_REFRESH_EXP_DURATION_SEC),
+        exp,
       },
       this.ENV.AUTH_SIGN_IN_REFRESH_JWT_SECRET
     );
-    return token;
+    const expirationDate = new Date(exp * 1000);
+    return { token, expirationDate };
   };
 
   signEmailVerifyPayload = async (payload: JwtEmailVerifyPayload) => {
     const nowSec = Math.floor(Date.now() / 1000);
+    const exp = nowSec + parseInt(this.ENV.AUTH_EMAIL_VERIFY_EXP_DURATION_SEC);
     const token = await jwt.sign(
       {
         ...payload,
         iat: nowSec,
-        exp: nowSec + parseInt(this.ENV.AUTH_EMAIL_VERIFY_EXP_DURATION_SEC),
+        exp,
       },
       this.ENV.AUTH_EMAIL_VERIFY_JWT_SECRET
     );
-    return token;
+    const expirationDate = new Date(exp * 1000);
+    return { token, expirationDate };
   };
 
   signResetPasswordPayload = async (payload: JwtResetPasswordPayload) => {
     const nowSec = Math.floor(Date.now() / 1000);
+    const exp =
+      nowSec + parseInt(this.ENV.AUTH_RESET_PASSWORD_EXP_DURATION_SEC);
     const token = await jwt.sign(
       {
         ...payload,
         iat: nowSec,
-        exp: nowSec + parseInt(this.ENV.AUTH_RESET_PASSWORD_EXP_DURATION_SEC),
+        exp,
       },
       this.ENV.AUTH_RESET_PASSWORD_JWT_SECRET
     );
-    return token;
+    const expirationDate = new Date(exp * 1000);
+    return { token, expirationDate };
   };
 
   verifyAuthAccessToken = async (token: string) => {
